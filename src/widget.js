@@ -6,9 +6,10 @@ define(function(require, exports, module) {
 
     var Base = require('base');
     var $ = require('$');
+    var DAParser = require('./daparser');
 
     // options 中的这些属性会直接添加到实例上
-    var attrOptions = ['element', 'template', 'model'];
+    var attrOptions = ['element', 'model'];
 
     // 事件代理参数中，'event selector' 的分隔符
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -16,14 +17,20 @@ define(function(require, exports, module) {
 
     var Widget = Base.extend({
 
-        // 如果 options 中未传入 element，则用 $(this.template) 来构建
-        template: '<div></div>',
+        options: {
+            // 如果 options 中未传入 element，则用 $(template) 来构建
+            template: '<div></div>',
+
+            // 默认开启 data-api 解析
+            dataAPI: true
+        },
 
         // 初始化方法，确定组件创建的基本流程
         initialize: function(options) {
             this.cid = uniqueId();
             this.initOptions(options);
             this.parseElement();
+            this.parseDataAPI();
             this.delegateEvents();
             this.init();
         },
@@ -47,14 +54,48 @@ define(function(require, exports, module) {
         // 子类可覆盖，以支持从 Handlebars 等模板构建
         parseElement: function() {
             var element = this.element;
-            var template = this.template;
+            var template = this.options.template;
 
             if (element) {
                 this.element = element instanceof $ ? element : $(element);
             }
-            // 未传入时，从 template 构建
+            // 未传入 element 时，从 template 构建
             else if (template) {
                 this.element = $(template);
+            }
+
+            if (!this.element) {
+                throw 'element is invalid';
+            }
+        },
+
+        // 解析 DOM 结构中的 data-api 配置
+        parseDataAPI: function() {
+            if (this.options.dataAPI === false) return;
+
+            this.dataAPI = DAParser.parse(this.element[0]);
+            this._parseActionsFromDataAPI();
+        },
+
+        // 解析 data-action，转换为事件代理
+        _parseActionsFromDataAPI: function() {
+            var actions = this.dataAPI['action'];
+            if (!actions) return;
+            var events = this.events || (this.events = {});
+
+            for (var action in actions) {
+                var m = action.split(/\s+/);
+                var event = m[0];
+                var method = m[1];
+
+                // 默认是 click 事件
+                if (!method) {
+                    method = event;
+                    event = 'click';
+                }
+
+                var uids = actions[action];
+                events[event + ' .' + uids.join(',.')] = method;
             }
         },
 
