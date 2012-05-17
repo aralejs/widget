@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
 
     // Widget
-    // -----------
+    // ------------------------------------
     // UI 组件的基类，主要负责 View 层的管理
 
     var Base = require('base');
@@ -10,89 +10,54 @@ define(function(require, exports, module) {
     // options 中的这些属性会直接添加到实例上
     var attrOptions = ['element', 'template', 'model'];
 
-    // 事件代理属性中，'event selector' 的分隔符
+    // 事件代理参数中，'event selector' 的分隔符
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
 
     var Widget = Base.extend({
 
-        // 如果 options 中未传入 element，默认会用 $('<div>') 来构建
-        element: '<div>',
+        // 如果 options 中未传入 element，则用 $(this.template) 来构建
+        template: '<div></div>',
 
-        // 初始化方法，完成基本操作。子类覆盖时，一般需要调用父类的
+        // 初始化方法。子类覆盖时，需要调用父类的
         initialize: function(options) {
             this.cid = uniqueId();
-            this._initOptions(options);
-            this._initElement();
-            this.delegateEvents();
+            initOptions(this, options);
         },
 
-        // 渲染方法，提供给子类覆盖，这是子类中最核心的一个方法
-        // 约定：render 方法需要需要返回 this
+        // 渲染方法，子类一般无需覆盖
         render: function() {
-            // 比如
-            // this.$element.html(this.template(this.model));
+            this.prepareElement();
+            this.delegateEvents();
+            this.renderUI();
             return this;
         },
 
-        // 移除掉对应的 DOM 元素、卸载掉注册的事件等
-        destroy: function() {
-            Widget.superclass.destroy.call(this);
-            this.undelegateEvents();
-        },
+        // 根据 options、events 等属性，构建好 this.element
+        // 子类可覆盖，以支持从 Handlebars 等模板构建
+        prepareElement: function() {
+            var element = this.element;
+            var template = this.template;
 
-        // 在当前 view 的 element 内寻找匹配节点
-        $: function(selector) {
-            return this.$element.find(selector);
-        },
-
-        // 重设 view 的 element, 并将事件代理转移过去
-        setElement: function(element, delegate) {
-            this.undelegateEvents();
-            this._initElement(element);
-
-            if (delegate !== false) {
-                this.delegateEvents();
+            if (element) {
+                this.element = element instanceof $ ? element : $(element);
+            }
+            // 未传入时，从 template 构建
+            else if (template) {
+                this.element = $(template);
             }
         },
 
-        _initOptions: function(options) {
-            var proto = this.constructor.prototype;
-            proto.options || (proto.options = {});
-
-            // 将 proto 上的特殊 attributes 放到 proto.options 上，以便合并
-            setAttrOptions(proto.options, this);
-
-            // 合并 options
-            options = this.setOptions(options).options;
-
-            // 将 options 上的特殊 attributes 放回 this 上
-            setAttrOptions(this, options);
+        // 将 widget 渲染到页面上，提供给子类覆盖
+        renderUI: function() {
+            // Such as: this.element.appendTo(document.body);
         },
 
-        // 根据传入的选项，构建 this.$element 属性
-        _initElement: function(element) {
-            element = element || this.element;
-            var $element = element instanceof $ ? element : $(element);
-
-            // 只取匹配的第一个
-            $element = $element.eq(0);
-            element = $element[0];
-
-            // 无效 element
-            if (!element || !element.nodeType) {
-                throw 'Invalid element';
-            }
-
-            this.element = element;
-            this.$element = $element;
-        },
-
-        // 绑定代理事件
+        // 绑定代理事件。events 参数为：
         //     {
-        //       'mousedown .title':  'edit',
-        //       'click .button':     'save'
-        //       'click .open':       function(e) { ... }
+        //       'mousedown .title': 'edit',
+        //       'click .button': 'save'
+        //       'click .open': function(e) { ... }
         //     }
         //
         delegateEvents: function(events) {
@@ -115,13 +80,22 @@ define(function(require, exports, module) {
                 var selector = match[2] || null;
 
                 eventName += '.delegateEvents' + this.cid;
-                this.$element.on(eventName, selector, bind(method, this));
+                this.element.on(eventName, selector, bind(method, this));
             }
         },
 
-        // 卸载绑定的代理事件
         undelegateEvents: function() {
-            this.$element.off('.delegateEvents' + this.cid);
+            this.element.off('.delegateEvents' + this.cid);
+        },
+
+        // 在当前 widget 内寻找匹配节点
+        $: function(selector) {
+            return this.element.find(selector);
+        },
+
+        destroy: function() {
+            Widget.superclass.destroy.call(this);
+            this.undelegateEvents();
         }
     });
 
@@ -129,6 +103,7 @@ define(function(require, exports, module) {
 
 
     // Helpers
+    // ----------------------------
 
     var idCounter = 0;
 
@@ -142,6 +117,21 @@ define(function(require, exports, module) {
 
         var v = obj[prop];
         return isFunction(v) ? v() : v;
+    }
+
+
+    function initOptions(that, options) {
+        var proto = that.constructor.prototype;
+        proto.options || (proto.options = {});
+
+        // 将 proto 上的特殊 attributes 放到 proto.options 上，以便合并
+        setAttrOptions(proto.options, that);
+
+        // 合并 options
+        options = that.setOptions(options).options;
+
+        // 将 options 上的特殊 attributes 放回 this 上
+        setAttrOptions(that, options);
     }
 
 
