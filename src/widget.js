@@ -19,23 +19,37 @@ define(function(require, exports, module) {
         // 如果 options 中未传入 element，则用 $(this.template) 来构建
         template: '<div></div>',
 
-        // 初始化方法。子类覆盖时，需要调用父类的
+        // 初始化方法，确定组件创建的基本流程
         initialize: function(options) {
             this.cid = uniqueId();
-            initOptions(this, options);
-        },
-
-        // 渲染方法，子类一般无需覆盖
-        render: function() {
-            this.prepareElement();
+            this.initOptions(options);
+            this.init();
+            this.parseElement();
             this.delegateEvents();
-            this.renderUI();
-            return this;
         },
 
-        // 根据 options、events 等属性，构建好 this.element
+        // 初始化配置等信息。子类覆盖时，需要调用父类的
+        initOptions: function(options) {
+            var proto = this.constructor.prototype;
+            proto.options || (proto.options = {});
+
+            // 将 proto 上的特殊 attributes 放到 proto.options 上，以便合并
+            setAttrOptions(proto.options, this);
+
+            // 合并 options
+            options = this.setOptions(options).options;
+
+            // 将 options 上的特殊 attributes 放回 this 上
+            setAttrOptions(this, options);
+        },
+
+        // 提供给子类覆盖的初始化方法
+        init: function() {
+        },
+
+        // 根据 options 等属性，构建好 this.element
         // 子类可覆盖，以支持从 Handlebars 等模板构建
-        prepareElement: function() {
+        parseElement: function() {
             var element = this.element;
             var template = this.template;
 
@@ -46,11 +60,6 @@ define(function(require, exports, module) {
             else if (template) {
                 this.element = $(template);
             }
-        },
-
-        // 将 widget 渲染到页面上，提供给子类覆盖
-        renderUI: function() {
-            // Such as: this.element.appendTo(document.body);
         },
 
         // 绑定代理事件。events 参数为：
@@ -88,6 +97,13 @@ define(function(require, exports, module) {
             this.element.off('.delegateEvents' + this.cid);
         },
 
+        // 将 widget 渲染到页面上，提供给子类覆盖
+        // 约定：覆盖后，统一 `return this`
+        render: function() {
+            // Such as: this.element.appendTo(document.body);
+            return this;
+        },
+
         // 在当前 widget 内寻找匹配节点
         $: function(selector) {
             return this.element.find(selector);
@@ -117,21 +133,6 @@ define(function(require, exports, module) {
 
         var v = obj[prop];
         return isFunction(v) ? v() : v;
-    }
-
-
-    function initOptions(that, options) {
-        var proto = that.constructor.prototype;
-        proto.options || (proto.options = {});
-
-        // 将 proto 上的特殊 attributes 放到 proto.options 上，以便合并
-        setAttrOptions(proto.options, that);
-
-        // 合并 options
-        options = that.setOptions(options).options;
-
-        // 将 options 上的特殊 attributes 放回 this 上
-        setAttrOptions(that, options);
     }
 
 
