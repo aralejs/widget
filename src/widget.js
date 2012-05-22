@@ -229,7 +229,7 @@ define(function(require, exports, module) {
 
         // 理论上会冲突，但实际上冲突的概率几乎为零
         if (isFunction(handler) && isFunction(handler.toString)) {
-            return handler.toString().substring(0, 50);
+            return handler.toString().substring(0, 50) + cid;
         }
 
         throw '"handler" must be a string or a function';
