@@ -9,8 +9,8 @@ define(function(require, exports, module) {
     var $ = require('$');
     var DAParser = require('./daparser');
 
-    // options 中的这些键值会直接添加到实例上，转换成 properties
-    var propertiesInOptions = ['element', 'model'];
+    // config 中的这些键值会直接添加到实例上，转换成 properties
+    var propertiesInConfig = ['element', 'model'];
 
     var EVENT_KEY_SPLITTER = /^(\S+)\s*(.*)$/;
     var DELEGATE_EVENT_NS = '.delegate-events-';
@@ -18,15 +18,7 @@ define(function(require, exports, module) {
 
     var Widget = Base.extend({
 
-        options: {
-            // 事件代理，格式为：
-            //   {
-            //     'mousedown .title': 'edit',
-            //     'click .button': 'save'
-            //     'click .open': function(e) { ... }
-            //   }
-            events: null,
-
+        attrs: {
             // 默认模板
             template: '<div></div>',
 
@@ -37,13 +29,20 @@ define(function(require, exports, module) {
             'data-api': true
         },
 
+        // 事件代理，格式为：
+        //   {
+        //     'mousedown .title': 'edit',
+        //     'click .button': 'save'
+        //     'click .open': function(e) { ... }
+        //   }
+        events: null,
+
         // 初始化方法，确定组件创建的基本流程
         initialize: function(config) {
             this.cid = uniqueCid();
 
             // 由 Base 提供
-            this.initAttrs(config);
-            this.initOptions(config);
+            Widget.superclass.initialize.call(this, config);
 
             // 由 Widget 提供
             this.parseElement();
@@ -54,32 +53,31 @@ define(function(require, exports, module) {
             this.setup();
         },
 
-        // 根据传入的 options 参数，和继承过来的父类的 options，构建 this.options
-        // options 是实例化时用户传入的配置选项，只读不写
-        initOptions: function(config) {
+        // 根据传入的 config 参数，和继承过来的父类的 attrs，构建 this.attrs
+        initAttrs: function(config) {
             var proto = this.constructor.prototype;
-            proto.options || (proto.options = {});
+            proto.attrs || (proto.attrs = {});
 
-            // 将 proto 上的特殊 properties 放到 proto.options 上，以便合并
-            setPropOptions(proto.options, this);
+            // 将 proto 上的特殊 properties 放到 proto.attrs 上，以便合并
+            setPropConfig(proto.attrs, this);
 
-            // 合并 options
-            Widget.superclass.initOptions.call(this, config);
+            // 调用 Base 的方法来合并 attrs
+            Widget.superclass.initAttrs.call(this, config);
 
-            // 将 options 上的特殊 attributes 放回 this 上
-            setPropOptions(this, this.options);
+            // 将 attrs 上的 properties 放回 this 上
+            setPropConfig(this, this.attrs, true);
         },
 
 
         // 构建 this.element
         parseElement: function() {
-            var element = this.options.element;
+            var element = this.element;
 
             if (element) {
                 this.element = $(element);
             }
             // 未传入 element 时，从 template 构建
-            else if (this.options.template) {
+            else if (this.get('template')) {
                 this.parseElementFromTemplate();
             }
 
@@ -91,13 +89,13 @@ define(function(require, exports, module) {
 
         // 从模板中构建 this.element
         parseElementFromTemplate: function() {
-            this.element = $(this.options.template);
+            this.element = $(this.get('template'));
         },
 
         // 解析 this.element 中的 data-* 配置，获得 this.dataset
         // 并自动将 data-action 配置转换成事件代理
         parseDataAttrs: function() {
-            if (this.options['data-api']) {
+            if (this.get('data-api')) {
                 this.dataset = DAParser.parse(this.element[0]);
                 var actions = this.dataset.action;
 
@@ -166,8 +164,8 @@ define(function(require, exports, module) {
             // parentNode maybe a document fragment.
             var parentNode = this.element[0].parentNode || { nodeType: 11 };
 
-            if (parentNode.nodeType === 11 && this.options.parentNode) {
-                this.element.appendTo(this.options.parentNode);
+            if (parentNode.nodeType === 11 && this.get('parentNode')) {
+                this.element.appendTo(this.get('parentNode'));
             }
             return this;
         },
@@ -259,15 +257,13 @@ define(function(require, exports, module) {
     }
 
 
-    function setPropOptions(receiver, supplier) {
-        var i = 0;
-        var len = propertiesInOptions.length;
-        var key;
+    function setPropConfig(receiver, supplier, isAttr) {
+        for (var i = 0, len = propertiesInConfig.length; i < len; i++) {
+            var key = propertiesInConfig[i];
 
-        for (; i < len; i++) {
-            key = propertiesInOptions[i];
-            if (supplier[key]) {
-                receiver[key] = supplier[key];
+            if (key in supplier) {
+                var val = supplier[key];
+                receiver[key] = isAttr ? val.value : val;
             }
         }
     }
