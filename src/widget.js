@@ -47,6 +47,7 @@ define(function(require, exports, module) {
             // 由 Widget 提供
             this.parseElement();
             this.parseDataAttrs();
+            this.initProps();
             this.delegateEvents();
 
             // 由子类提供
@@ -106,6 +107,10 @@ define(function(require, exports, module) {
             }
         },
 
+        // 负责 properties 的初始化，提供给子类覆盖
+        initProps: function() {
+        },
+
         // 注册事件代理
         delegateEvents: function(events, handler) {
             events || (events = getEvents(this));
@@ -120,7 +125,7 @@ define(function(require, exports, module) {
 
             // key 为 'event selector'
             for (var key in events) {
-                var args = parseEventKey(key, this.cid);
+                var args = parseEventKey(key, this);
                 handler = bind(events[key], this);
 
                 this.element.on(args.type, args.selector, handler);
@@ -140,7 +145,7 @@ define(function(require, exports, module) {
             }
             // 卸载特定事件：widget.undelegateEvents('click li', handler);
             else {
-                args = parseEventKey(eventKey, cid);
+                args = parseEventKey(eventKey, this);
             }
 
             // 从 cache 里找到对应的 handler 封装函数
@@ -300,12 +305,47 @@ define(function(require, exports, module) {
         return widget.events;
     }
 
-    function parseEventKey(eventKey, cid) {
+
+    function parseEventKey(eventKey, widget) {
         var match = eventKey.match(EVENT_KEY_SPLITTER);
+
+        var eventType = match[1] + DELEGATE_EVENT_NS + widget.cid;
+        var selector = match[2] || '';
+
+        if (selector.indexOf('{{') > -1) {
+            try {
+                selector = parseObjectExpression(selector, widget);
+            } catch (ex) {
+                throw 'invalid selector: ' + selector;
+            }
+        }
+
         return {
-            type: match[1] + DELEGATE_EVENT_NS + cid,
-            selector: match[2] || null
+            type: eventType,
+            selector: selector
         };
+    }
+
+
+    var OBJECT_FLAG = /\{\{([^\}]+)\}\}/g;
+
+    // 将 {{xx}},{{yy}} 转换成 .daparser-n, .daparser-m
+    function parseObjectExpression(selector, widget) {
+
+        return selector.replace(OBJECT_FLAG, function(m, name) {
+            var parts = name.split('.');
+            var point = widget, part;
+
+            while (part = parts.shift()) {
+                if (point === widget.attrs) {
+                    point = widget.get(part);
+                } else {
+                    point = point[part];
+                }
+            }
+
+            return widget.stamp(point);
+        });
     }
 
 });
