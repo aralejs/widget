@@ -168,15 +168,13 @@ define(function(require, exports, module) {
         // 渲染不仅仅包括插入到 DOM 树中，还包括样式渲染等
         // 约定：子类覆盖时，需保持 `return this`
         render: function() {
-
             // 让用户传入的 config 生效
             this.change();
 
             // 插入到文档流中
-            // parentNode maybe a document fragment.
-            var parentNode = this.element[0].parentNode || { nodeType: 11 };
-            if (parentNode.nodeType === 11 && this.get('parentNode')) {
-                this.element.appendTo(this.get('parentNode'));
+            var parentNode = this.get('parentNode');
+            if (parentNode && !isInDocument(this.element[0])) {
+                this.element.appendTo(parentNode);
             }
 
             return this;
@@ -187,15 +185,6 @@ define(function(require, exports, module) {
             return this.element.find(selector);
         },
 
-        // 给 element 添加具有唯一性的 class，并返回由该 class 构成的 selector
-        stamp: function(element) {
-            var node = $(element)[0];
-
-            if (!node || node.nodeType !== 1) {
-                throw 'This element is not a valid DOM element: ' + element;
-            }
-            return '.' + DAParser.stamp(node);
-        },
 
         destroy: function() {
             this.undelegateEvents();
@@ -357,8 +346,24 @@ define(function(require, exports, module) {
                 return point;
             }
 
-            return widget.stamp(point);
+            return stamp(point);
         });
+    }
+
+
+    // 给 element 添加具有唯一性的 class，并返回由该 class 构成的 selector
+    function stamp(element) {
+        var node = $(element)[0];
+
+        if (!node || node.nodeType !== 1) {
+            throw 'This element is not a valid DOM element: ' + element;
+        }
+        return '.' + DAParser.stamp(node);
+    }
+
+
+    function isInDocument(element) {
+        return $.contains(document.documentElement, element);
     }
 
 });
