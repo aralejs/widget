@@ -15,7 +15,7 @@ define(function(require, exports, module) {
     var Widget = Base.extend({
 
         // config 中的这些键值会直接添加到实例上，转换成 properties
-        _propertiesInConfig: ['element', 'model', 'events'],
+        propertiesInConfig: ['element', 'model', 'events'],
 
         attrs: {
             // 默认模板
@@ -52,21 +52,6 @@ define(function(require, exports, module) {
 
             // 由子类提供
             this.setup();
-        },
-
-        // 根据传入的 config 参数，和继承过来的父类的 attrs，构建 this.attrs
-        initAttrs: function(config) {
-            var proto = this.constructor.prototype;
-            proto.attrs || (proto.attrs = {});
-
-            // 将 proto 上的特殊 properties 放到 proto.attrs 上，以便合并
-            setPropConfig(proto.attrs, this);
-
-            // 调用 Base 的方法来合并 attrs
-            Widget.superclass.initAttrs.call(this, config);
-
-            // 将 attrs 上的 properties 放回 this 上
-            setPropConfig(this, this.attrs, true);
         },
 
         // 构建 this.element
@@ -259,17 +244,6 @@ define(function(require, exports, module) {
         return 'widget-' + cidCounter++;
     }
 
-
-    function setPropConfig(receiver, supplier, isAttr) {
-        for (var i = 0, len = propertiesInConfig.length; i < len; i++) {
-            var key = propertiesInConfig[i];
-
-            if (key in supplier) {
-                var val = supplier[key];
-                receiver[key] = isAttr ? val.value : val;
-            }
-        }
-    }
 
     // 解析 data-action，添加到 events 中
     function parseDataActions(actions, events) {
