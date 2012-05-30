@@ -82,9 +82,16 @@ define(function(require, exports) {
 
     function makeArray(o) {
         var arr = [];
+
         for (var i = 0, len = o.length; i < len; i++) {
-            arr[i] = o[i];
+            var node = o[i];
+
+            // 过滤掉注释等节点
+            if (node.nodeType === 1) {
+                arr.push(node);
+            }
         }
+
         return arr;
     }
 
