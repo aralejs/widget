@@ -23,6 +23,9 @@ define(function(require, exports, module) {
         // 默认模板
         template: '<div></div>',
 
+        // 默认数据模型
+        model: null,
+
         // 事件代理，格式为：
         //   {
         //     'mousedown .title': 'edit',
@@ -31,6 +34,7 @@ define(function(require, exports, module) {
         //   }
         events: null,
 
+        // 属性列表
         attrs: {
             // 组件的默认父节点
             parentNode: document.body,
