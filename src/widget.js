@@ -88,14 +88,13 @@ define(function(require, exports, module) {
         // 解析 this.element 中的 data-* 配置，获得 this.dataset
         // 并自动将 data-action 配置转换成事件代理
         _parseDataAttrs: function() {
-            if (this.get('data-api')) {
-                this.dataset = DAParser.parse(this.element[0]);
-                var actions = this.dataset.action;
+            if (!this.get('data-api')) return;
+            this.dataset || (this.dataset = DAParser.parse(this.element[0]));
 
-                if (actions) {
-                    var events = getEvents(this) || (this.events = {});
-                    parseDataActions(actions, events);
-                }
+            var actions = this.dataset.action;
+            if (actions) {
+                var events = getEvents(this) || (this.events = {});
+                parseDataActions(actions, events);
             }
         },
 
