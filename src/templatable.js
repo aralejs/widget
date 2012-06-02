@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
 
-    var Handlebars = require('handlebars');
     var $ = require('$');
-    var DAParser = require('./daparser');
+    var Handlebars = require('handlebars');
+    Handlebars.print = require('./ast-printer').print;
 
 
     // 提供 Template 模板支持，默认引擎是 Handlebars
@@ -11,20 +11,12 @@ define(function(require, exports, module) {
         // Handlebars 的 helpers
         templateHelpers: null,
 
-        // template 对应的 DOM element
-        templateElement: null,
+        // template 对应的 DOM-like object
+        templateObject: null,
 
         // 根据配置的模板和传入的数据，构建 this.element 和 templateElement
         parseElementFromTemplate: function() {
-            this.templateElement = getTemplateElement(this.template);
-
-            // 将 daparser class 添加在模板中，以便动态更新时依旧有效
-            if (this.get('data-api')) {
-                this.dataset = DAParser.parse(this.templateElement[0]);
-                this.template = this._getTemplate();
-            }
-
-            // 生成 element
+            this.templateObject = convertTemplateToObject(this.template);
             this.element = $(this.compile());
         },
 
@@ -59,32 +51,28 @@ define(function(require, exports, module) {
             return html;
         },
 
-        // 局部刷新，比如 `this.renderPartial('#content')`，只刷新内容区域
-        renderPartial: function(selector, model) {
-            var template = this._getTemplate(selector);
-            var html = this.compile(template, model);
-
-            this.$(selector).html(html);
+        // 刷新 selector 指定的局部区域
+        renderPartial: function(selector) {
+            var template = this.getTemplatePartial(selector);
+            this.$(selector).html(this.compile(template));
             return this;
         },
 
         // 得到模板片段
-        // 注意：使用 template 时，要求在去除 block expression
-        // 后，模板依旧是规范有效的 html，比如 tr 和 td 中间不能有字符串，p 不能在
-        // span 里，标签要闭合等。
-        _getTemplate: function(selector) {
-            var html;
+        getTemplatePartial: function(selector) {
+            var template;
 
             // 获取模板片段
             if (selector) {
-                html = this.templateElement.find(selector).html();
+                template = convertObjectToTemplate(
+                        this.templateObject, selector);
             }
             // 没有选择器时，表示选择整个模板
             else {
-                html = getOuterHTML(this.templateElement);
+                template = this.template;
             }
 
-            return decode(html);
+            return template;
         }
     };
 
@@ -94,31 +82,61 @@ define(function(require, exports, module) {
     // Helpers
     // -------
 
-    // 将 template 字符串转换成对应的 document fragment
-    function getTemplateElement(template) {
-        return $(encode(template));
+    // 将 template 字符串转换成对应的 DOM-like object
+    function convertTemplateToObject(template) {
+        var statements = Handlebars.parse(template).statements;
+        var html = '';
+
+        for (var i = 0, len = statements.length; i < len; i++) {
+            var stat = statements[i];
+
+            // AST.ContentNode
+            if (stat.type === 'content') {
+                html += stat.string;
+            }
+            // AST.MustacheNode or AST.BlockNode
+            else {
+                html += '{{STAT ' + i + '}}';
+            }
+        }
+
+        html = encode(html);
+
+        var templateObject = $(html);
+        templateObject.template = html;
+        templateObject.statements = statements;
+
+        return templateObject;
+    }
+
+    // 根据 selector 得到 DOM-like template object，并转换为 template 字符串
+    function convertObjectToTemplate(templateObject, selector) {
+        var element = templateObject.find(selector);
+        if (element.length === 0) {
+            throw 'Invalid template selector: ' + selector;
+        }
+
+        var html = decode(element.html());
+        var statements = templateObject.statements;
+
+        // 将 html 中的 {{STAT n}} 还原为模板字符串
+        html = html.replace(STAT_RE, function(match, $1, $2) {
+            return Handlebars.print(statements[$2]);
+        });
+
+        return html;
     }
 
 
-    var TPL_ENCODE_RE = /({{[^{}]+}})/g;
-    var TPL_DECODE_RE = /(?:<|&lt;)!--({{[^{}]+}})--(?:>|&gt;)/g;
+    var STAT_RE = /({{STAT (\d+)}})/g;
+    var STAT_DECODE_RE = /(?:<|&lt;)!--({{STAT \d+}})--(?:>|&gt;)/g;
 
     function encode(template) {
-        return template.replace(TPL_ENCODE_RE, '<!--$1-->');
+        return template.replace(STAT_RE, '<!--$1-->');
     }
 
     function decode(template) {
-        return template.replace(TPL_DECODE_RE, '$1');
-    }
-
-
-    function getOuterHTML(element) {
-        if (element[0].outerHTML !== undefined) {
-            return element[0].outerHTML;
-        }
-        else {
-            return element.wrap('<div></div>').html();
-        }
+        return template.replace(STAT_DECODE_RE, '$1');
     }
 
 });
