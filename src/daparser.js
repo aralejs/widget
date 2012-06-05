@@ -1,12 +1,19 @@
 define(function(require, exports) {
 
+    // DAParser
+    // --------
+    // data api 解析器，提供对 block 块和单个 element 的解析，并可用来自动初始化页面中
+    // 的所有 Widget 组件。
+
+
+    var $ = require('$');
     var ATTR_DA_CID = 'data-daparser-cid';
     var DAParser = exports;
 
 
     // 输入是 DOM element，假设 html 为
     //
-    //   <div data-widget="dialog">
+    //   <div data-widget="Dialog">
     //     <h3 data-role="title">...</h3>
     //     <ul data-role="content">
     //       <li data-role="item">...</li>
@@ -18,7 +25,7 @@ define(function(require, exports) {
     // 输出是
     //
     //  {
-    //     "widget": { "dialog": ".daparser-0" }
+    //     "widget": { "Dialog": ".daparser-0" }
     //     "role": {
     //        "title": ".daparser-1",
     //        "content": ".daparser-2",
@@ -31,18 +38,19 @@ define(function(require, exports) {
     //
     // 有 data-* 的节点，会自动加上 class="daparser-n"
     //
-    DAParser.parse = function(root) {
+    DAParser.parseBlock = function(root) {
+        root = $(root)[0];
         var stringMap = {};
 
         // 快速判断 dataset 是否为空，减少无 data-* 时的性能损耗
-        if (!hasDataset(root)) return stringMap;
+        if (!hasDataAttr(root)) return stringMap;
 
         var elements = makeArray(root.getElementsByTagName('*'));
         elements.unshift(root);
 
         for (var i = 0, len = elements.length; i < len; i++) {
             var element = elements[i];
-            var dataset = getDataset(element);
+            var dataset = DAParser.parseElement(element);
             var cid = element.getAttribute(ATTR_DA_CID);
 
             for (var key in dataset) {
@@ -65,7 +73,35 @@ define(function(require, exports) {
     };
 
 
+    // 得到某个 DOM 元素的 dataset
+    DAParser.parseElement = function(element) {
+        element = $(element)[0];
+
+        // ref: https://developer.mozilla.org/en/DOM/element.dataset
+        if (element.dataset) {
+            return element.dataset;
+        }
+
+        var dataset = {};
+        var attrs = element.attributes;
+
+        for (var i = 0, len = attrs.length; i < len; i++) {
+            var attr = attrs[i];
+            var name = attr.name;
+
+            if (name.indexOf('data-') === 0) {
+                name = camelCase(name.substring(5));
+                dataset[name] = attr.value;
+            }
+        }
+
+        return dataset;
+    };
+
+
+    // 给 DOM 元素添加具有唯一性质的 className
     DAParser.stamp = function(element) {
+        element = $(element)[0];
         var cid = element.getAttribute(ATTR_DA_CID);
 
         if (!cid) {
@@ -96,29 +132,7 @@ define(function(require, exports) {
     }
 
 
-    function getDataset(element) {
-        // ref: https://developer.mozilla.org/en/DOM/element.dataset
-        if (element.dataset) {
-            return element.dataset;
-        }
-
-        var dataset = {};
-        var attrs = element.attributes;
-
-        for (var i = 0, len = attrs.length; i < len; i++) {
-            var attr = attrs[i];
-            var name = attr.name;
-
-            if (name.indexOf('data-') === 0) {
-                name = camelCase(name.substring(5));
-                dataset[name] = attr.value;
-            }
-        }
-
-        return dataset;
-    }
-
-    function hasDataset(element) {
+    function hasDataAttr(element) {
         var outerHTML = element.outerHTML;
 
         // 大部分浏览器已经支持 outerHTML

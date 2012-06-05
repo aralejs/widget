@@ -57,7 +57,7 @@ define(function(require, exports, module) {
 
             // 初始化 props
             this.parseElement();
-            this._parseDataAttrs();
+            this._initDataAttrs();
             this.initProps();
 
             // 初始化 events
@@ -111,9 +111,11 @@ define(function(require, exports, module) {
 
         // 解析 this.element 中的 data-* 配置，获得 this.dataset
         // 并自动将 data-action 配置转换成事件代理
-        _parseDataAttrs: function() {
+        _initDataAttrs: function() {
             if (!this.get('data-api')) return;
-            this.dataset || (this.dataset = DAParser.parse(this.element[0]));
+
+            this.dataset = this.get('dataset') ||
+                    DAParser.parseBlock(this.element);
 
             var actions = this.dataset.action;
             if (actions) {
@@ -241,6 +243,43 @@ define(function(require, exports, module) {
             Widget.superclass.destroy.call(this);
         }
     });
+
+
+    // 自动渲染接口，子类可根据自己的初始化逻辑进行覆盖
+    Widget.autoRender = function(element, dataset) {
+        return new this({
+            element: element,
+            dataset: dataset
+        }).render();
+    };
+
+
+    // 根据 data-widget 属性，自动渲染所有 widget 组件
+    Widget.autoRenderAll = function(root) {
+        root = $(root || document.body);
+        var modules = [];
+        var elements = [];
+
+        root.find('[data-widget]').each(function(i, element) {
+            modules.push(element.getAttribute('data-widget').toLowerCase());
+            elements.push(element);
+        });
+
+        if (modules.length) {
+            require.async(modules, function() {
+                for (var i = 0; i < arguments.length; i++) {
+                    var widget = arguments[i];
+                    var element = elements[i];
+
+                    if (isFunction(widget.autoRender)) {
+                        widget.autoRender(element,
+                                DAParser.parseBlock(element));
+                    }
+                }
+            });
+        }
+    };
+
 
     module.exports = Widget;
 
