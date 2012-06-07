@@ -43,7 +43,7 @@ define(function(require, exports) {
         var stringMap = {};
 
         // 快速判断 dataset 是否为空，减少无 data-* 时的性能损耗
-        if (!hasDataAttr(root)) return stringMap;
+        if (!hasDataAttrs(root)) return stringMap;
 
         var elements = makeArray(root.getElementsByTagName('*'));
         elements.unshift(root);
@@ -133,7 +133,7 @@ define(function(require, exports) {
     }
 
 
-    function hasDataAttr(element) {
+    function hasDataAttrs(element) {
         var outerHTML = element.outerHTML;
 
         // 大部分浏览器已经支持 outerHTML

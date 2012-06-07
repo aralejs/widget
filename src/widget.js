@@ -18,8 +18,6 @@ define(function(require, exports, module) {
 
     var Widget = Base.extend({
 
-        Statics: AutoRender,
-
         // config 中的这些键值会直接添加到实例上，转换成 properties
         propsInAttrs: ['element', 'template', 'model', 'events'],
 
@@ -43,10 +41,7 @@ define(function(require, exports, module) {
         // 属性列表
         attrs: {
             // 组件的默认父节点
-            parentNode: document.body,
-
-            // 默认开启 data-api 解析
-            'data-api': true
+            parentNode: document.body
         },
 
         // 初始化方法，确定组件创建时的基本流程：
@@ -55,12 +50,12 @@ define(function(require, exports, module) {
             this.cid = uniqueCid();
 
             // 初始化 attrs
-            this.initAttrs(config);
-            this._bindOnRender2OnChange();
+            var dataAttrsConfig = this._parseDataAttrsConfig(config);
+            this.initAttrs(config, dataAttrsConfig);
 
             // 初始化 props
             this.parseElement();
-            this._initDataAttrs();
+            this._parseDataset();
             this.initProps();
 
             // 初始化 events
@@ -70,23 +65,21 @@ define(function(require, exports, module) {
             this.setup();
         },
 
-        // 将 _onRenderXx 自动绑定到 change:xx 事件上
-        _bindOnRender2OnChange: function() {
-            var widget = this;
-            var attrs = widget.attrs;
-
-            for (var attr in attrs) {
-                if (!attrs.hasOwnProperty(attr)) continue;
-                var m = ON_RENDER + ucfirst(attr);
-
-                if (widget[m]) {
-                    (function(m) {
-                        widget.on('change:' + attr, function(val, prev, key) {
-                            widget[m](val, prev, key);
-                        });
-                    })(m);
-                }
+        // 解析通过 data-attr 设置的 api
+        _parseDataAttrsConfig: function(config) {
+            var dataAttrsConfig;
+            if (config) {
+                var element = $(config.element);
             }
+
+            // 解析 data-api 时，只考虑用户传入的 element，不考虑来自继承或从模板构建的
+            if (element && element[0] &&
+                    !AutoRender.isDataApiOff(element)) {
+                dataAttrsConfig = DAParser.parseElement(element);
+                normalizeConfigValues(dataAttrsConfig);
+            }
+
+            return dataAttrsConfig;
         },
 
         // 构建 this.element
@@ -114,11 +107,10 @@ define(function(require, exports, module) {
 
         // 解析 this.element 中的 data-* 配置，获得 this.dataset
         // 并自动将 data-action 配置转换成事件代理
-        _initDataAttrs: function() {
-            if (!this.get('data-api')) return;
+        _parseDataset: function() {
+            if (AutoRender.isDataApiOff(this.element)) return;
 
-            this.dataset = this.get('dataset') ||
-                    DAParser.parseBlock(this.element);
+            this.dataset = DAParser.parseBlock(this.element);
 
             var actions = this.dataset.action;
             if (actions) {
@@ -203,9 +195,9 @@ define(function(require, exports, module) {
         // 约定：子类覆盖时，需保持 `return this`
         render: function() {
 
-            // 让渲染相关属性的初始值生效，只在第一次渲染时调用
+            // 让渲染相关属性的初始值生效，并绑定到 change 事件
             if (!this.rendered) {
-                this._renderInitialAttrs();
+                this._renderAndBindAttrs();
                 this.rendered = true;
             }
 
@@ -218,20 +210,29 @@ define(function(require, exports, module) {
             return this;
         },
 
-        _renderInitialAttrs: function() {
-            var attrs = this.attrs;
+        // 让属性的初始值生效，并绑定到 change:attr 事件上
+        _renderAndBindAttrs: function() {
+            var widget = this;
+            var attrs = widget.attrs;
 
             for (var attr in attrs) {
-                if (attrs.hasOwnProperty(attr)) {
-                    var m = ON_RENDER + ucfirst(attr);
-                    if (this[m]) {
-                        var val = this.get(attr);
+                if (!attrs.hasOwnProperty(attr)) continue;
+                var m = ON_RENDER + ucfirst(attr);
 
-                        // 默认空值不触发
-                        if (!isEmptyAttrValue(val)) {
-                            this[m](this.get(attr), undefined, attr);
-                        }
+                if (this[m]) {
+                    var val = this.get(attr);
+
+                    // 让属性的初始值生效。注：默认空值不触发
+                    if (!isEmptyAttrValue(val)) {
+                        this[m](this.get(attr), undefined, attr);
                     }
+
+                    // 将 _onRenderXx 自动绑定到 change:xx 事件上
+                    (function(m) {
+                        widget.on('change:' + attr, function(val, prev, key) {
+                            widget[m](val, prev, key);
+                        });
+                    })(m);
                 }
             }
         },
@@ -246,6 +247,10 @@ define(function(require, exports, module) {
             Widget.superclass.destroy.call(this);
         }
     });
+
+    Widget.autoRender = AutoRender.autoRender;
+    Widget.autoRenderAll = AutoRender.autoRenderAll;
+    Widget.StaticsWhiteList = ['autoRender'];
 
     module.exports = Widget;
 
@@ -292,11 +297,49 @@ define(function(require, exports, module) {
         return str.charAt(0).toUpperCase() + str.substring(1);
     }
 
-    // 对于 attrs 的 value 来说，以下值都认为是空值： null, undefined, '', [], {}
-    function isEmptyAttrValue(o) {
-        return o == null || // null, undefined
-                (isString(o) || $.isArray(o)) && o.length === 0 || // '', []
-                $.isPlainObject(o) && isEmptyObject(o); // {}
+
+    var JSON_LITERAL_PATTERN = /^\s*{.*}\s*$/;
+    var parseJSON = this.JSON ? JSON.parse : $.parseJSON;
+
+    // 解析并归一化配置中的值
+    function normalizeConfigValues(config) {
+        for (var p in config) {
+            if (config.hasOwnProperty(p)) {
+
+                var val = config[p];
+                if (!isString(val)) continue;
+
+                if (JSON_LITERAL_PATTERN.test(val)) {
+                    val = val.replace(/'/g, '"');
+                    config[p] = normalizeConfigValues(parseJSON(val));
+                }
+                else {
+                    config[p] = normalizeConfigValue(val);
+                }
+            }
+        }
+
+        return config;
+    }
+
+    // 将 'false' 转换为 false
+    // 'true' 转换为 true
+    // '3253.34' 转换为 3253.34
+    function normalizeConfigValue(val) {
+        if (val.toLowerCase() === 'false') {
+            val = false;
+        }
+        else if (val.toLowerCase() === 'true') {
+            val = true;
+        }
+        else if (/\d/.test(val) && /[^a-z]/i.test(val)) {
+            var number = parseFloat(val);
+            if (number + '' === val) {
+                val = number;
+            }
+        }
+
+        return val;
     }
 
 
@@ -323,6 +366,13 @@ define(function(require, exports, module) {
                 events[event + ' ' + selector] = method;
             }
         }
+    }
+
+    // 对于 attrs 的 value 来说，以下值都认为是空值： null, undefined, '', [], {}
+    function isEmptyAttrValue(o) {
+        return o == null || // null, undefined
+                (isString(o) || $.isArray(o)) && o.length === 0 || // '', []
+                $.isPlainObject(o) && isEmptyObject(o); // {}
     }
 
 
