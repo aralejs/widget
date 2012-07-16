@@ -1,5 +1,10 @@
 {
     "name": "widget",
     "version": "0.9.16",
+    "moduleDependencies": {
+        "$":"jquery/1.7.2/jquery",
+        "handlebars":"handlebars/1.0.0/handlebars",
+        "base": "base/0.9.16/base"
+    },
     "tests": ["daparser", "widget", "templatable"]
 }
