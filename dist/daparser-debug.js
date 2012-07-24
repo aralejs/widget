@@ -1,4 +1,4 @@
-define("#widget/0.9.16/daparser-debug", ["#jquery/1.7.2/jquery-debug"], function(require, exports) {
+define("#widget/0.9.16/daparser-debug", [], function(require, exports) {
 
     // DAParser
     // --------

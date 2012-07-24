@@ -1,4 +1,4 @@
-define("#widget/0.9.16/auto-render-debug", ["#jquery/1.7.2/jquery-debug"], function(require, exports) {
+define("#widget/0.9.16/auto-render-debug", [], function(require, exports) {
 
     var $ = require('#jquery/1.7.2/jquery-debug');
 
