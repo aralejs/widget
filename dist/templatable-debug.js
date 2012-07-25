@@ -87,7 +87,7 @@ define("#widget/0.9.16/ast-printer-debug", [], function(require, exports) {
 });
 
 
-define("#widget/0.9.16/templatable-debug", ["./ast-printer-debug"], function(require, exports, module) {
+define("#widget/0.9.16/templatable-debug", ["./ast-printer-debug", "#jquery/1.7.2/jquery-debug", "#handlebars/1.0.0/handlebars-debug"], function(require, exports, module) {
 
     var $ = require('#jquery/1.7.2/jquery-debug');
     var Handlebars = require('#handlebars/1.0.0/handlebars-debug');
