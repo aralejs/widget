@@ -1,4 +1,4 @@
-define("#widget/0.9.16/daparser-debug", ["#jquery/1.7.2/jquery-debug"], function(require, exports) {
+define("#widget/0.9.16/daparser-debug", ["$-debug"], function(require, exports) {
 
     // DAParser
     // --------
@@ -6,7 +6,7 @@ define("#widget/0.9.16/daparser-debug", ["#jquery/1.7.2/jquery-debug"], function
     // 的所有 Widget 组件。
 
 
-    var $ = require('#jquery/1.7.2/jquery-debug');
+    var $ = require('$-debug');
     var ATTR_DA_CID = 'data-daparser-cid';
     var DAParser = exports;
 
@@ -177,9 +177,9 @@ define("#widget/0.9.16/daparser-debug", ["#jquery/1.7.2/jquery-debug"], function
 });
 
 
-define("#widget/0.9.16/auto-render-debug", ["#jquery/1.7.2/jquery-debug"], function(require, exports) {
+define("#widget/0.9.16/auto-render-debug", ["$-debug"], function(require, exports) {
 
-    var $ = require('#jquery/1.7.2/jquery-debug');
+    var $ = require('$-debug');
 
 
     // 自动渲染接口，子类可根据自己的初始化逻辑进行覆盖
@@ -236,7 +236,7 @@ define("#widget/0.9.16/auto-render-debug", ["#jquery/1.7.2/jquery-debug"], funct
 });
 
 
-define("#widget/0.9.16/widget-debug", ["./daparser-debug", "./auto-render-debug", "#jquery/1.7.2/jquery-debug", "#base/0.9.16/base-debug", "#base/0.9.16/aspect-debug", "#base/0.9.16/attribute-debug", "#events/0.9.1/events-debug", "#class/0.9.2/class-debug"], function(require, exports, module) {
+define("#widget/0.9.16/widget-debug", ["./daparser-debug", "./auto-render-debug", "$-debug", "#base/0.9.16/base-debug", "#base/0.9.16/aspect-debug", "#base/0.9.16/attribute-debug", "#events/0.9.1/events-debug", "#class/0.9.2/class-debug"], function(require, exports, module) {
 
     // Widget
     // ---------
@@ -246,7 +246,7 @@ define("#widget/0.9.16/widget-debug", ["./daparser-debug", "./auto-render-debug"
 
 
     var Base = require('#base/0.9.16/base-debug');
-    var $ = require('#jquery/1.7.2/jquery-debug');
+    var $ = require('$-debug');
     var DAParser = require('./daparser-debug');
     var AutoRender = require('./auto-render-debug');
 

@@ -2,7 +2,7 @@
     "name": "widget",
     "version": "0.9.16",
     "dependencies": {
-        "$": "jquery/1.7.2/jquery",
+        "$": "$",
         "handlebars": "1.0.0",
         "base": "0.9.16"
     },
