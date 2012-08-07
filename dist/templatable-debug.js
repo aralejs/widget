@@ -129,12 +129,6 @@ define("#widget/0.9.16/templatable-debug", ["./ast-printer-debug", "$-debug", "#
                 }
             }
 
-            // 注册 translate helper
-            var lang = this.get('lang') || {};
-            Handlebars.registerHelper(
-                '_', function(key) {return lang[key] || key;}
-            );
-
             // 生成 html
             var html = Handlebars.compile(template)(model);
 
@@ -146,9 +140,6 @@ define("#widget/0.9.16/templatable-debug", ["./ast-printer-debug", "$-debug", "#
                     }
                 }
             }
-
-            // 卸载 translate helper
-            delete Handlebars.helpers['_'];
 
             return html;
         },
