@@ -1,4 +1,4 @@
-define("#widget/0.9.16/daparser-debug", ["$-debug"], function(require, exports) {
+define("#widget/0.9.17/daparser-debug", ["$-debug"], function(require, exports) {
 
     // DAParser
     // --------
@@ -177,7 +177,7 @@ define("#widget/0.9.16/daparser-debug", ["$-debug"], function(require, exports) 
 });
 
 
-define("#widget/0.9.16/auto-render-debug", ["$-debug"], function(require, exports) {
+define("#widget/0.9.17/auto-render-debug", ["$-debug"], function(require, exports) {
 
     var $ = require('$-debug');
 
@@ -236,7 +236,7 @@ define("#widget/0.9.16/auto-render-debug", ["$-debug"], function(require, export
 });
 
 
-define("#widget/0.9.16/widget-debug", ["./daparser-debug", "./auto-render-debug", "$-debug", "#base/0.9.16/base-debug", "#class/0.9.2/class-debug", "#events/0.9.1/events-debug", "#base/0.9.16/aspect-debug", "#base/0.9.16/attribute-debug"], function(require, exports, module) {
+define("#widget/0.9.17/widget-debug", ["./daparser-debug", "./auto-render-debug", "$-debug", "#base/0.9.16/base-debug", "#class/0.9.2/class-debug", "#events/0.9.1/events-debug", "#base/0.9.16/aspect-debug", "#base/0.9.16/attribute-debug"], function(require, exports, module) {
 
     // Widget
     // ---------
