@@ -59,7 +59,6 @@ define(function(require, exports, module) {
 
       // 初始化 props
       this.parseElement();
-      this._parseDataset();
       this.initProps();
 
       // 初始化 events
@@ -71,16 +70,12 @@ define(function(require, exports, module) {
 
     // 解析通过 data-attr 设置的 api
     _parseDataAttrsConfig: function(config) {
-      var dataAttrsConfig;
-      if (config) {
-        var element = $(config.element);
-      }
+      var element, dataAttrsConfig;
+      config && (element = $(config.element));
 
       // 解析 data-api 时，只考虑用户传入的 element，不考虑来自继承或从模板构建的
-      if (element && element[0] &&
-          !AutoRender.isDataApiOff(element)) {
+      if (element && element[0] && !AutoRender.isDataApiOff(element)) {
         dataAttrsConfig = DAParser.parseElement(element);
-        normalizeConfigValues(dataAttrsConfig);
       }
 
       return dataAttrsConfig;
@@ -107,20 +102,6 @@ define(function(require, exports, module) {
     // 从模板中构建 this.element
     parseElementFromTemplate: function() {
       this.element = $(this.get('template'));
-    },
-
-    // 解析 this.element 中的 data-* 配置，获得 this.dataset
-    // 并自动将 data-action 配置转换成事件代理
-    _parseDataset: function() {
-      if (AutoRender.isDataApiOff(this.element)) return;
-
-      this.dataset = DAParser.parseBlock(this.element);
-
-      var actions = this.dataset.action;
-      if (actions) {
-        var events = getEvents(this) || (this.events = {});
-        parseDataActions(actions, events);
-      }
     },
 
     // 负责 properties 的初始化，提供给子类覆盖
@@ -228,7 +209,7 @@ define(function(require, exports, module) {
 
           // 让属性的初始值生效。注：默认空值不触发
           if (!isEmptyAttrValue(val)) {
-            this[m](this.get(attr), undefined, attr);
+            this[m](val, undefined, attr);
           }
 
           // 将 _onRenderXx 自动绑定到 change:xx 事件上
@@ -296,10 +277,6 @@ define(function(require, exports, module) {
     return true;
   }
 
-  function trim(s) {
-    return s.replace(/^\s*/, '').replace(/\s*$/, '');
-  }
-
   // Zepto 上没有 contains 方法
   var contains = $.contains || function(a, b) {
     //noinspection JSBitwiseOperatorUsage
@@ -312,84 +289,6 @@ define(function(require, exports, module) {
 
   function ucfirst(str) {
     return str.charAt(0).toUpperCase() + str.substring(1);
-  }
-
-
-  var JSON_LITERAL_PATTERN = /^\s*[\[{].*[\]}]\s*$/;
-  var parseJSON = this.JSON ? JSON.parse : $.parseJSON;
-
-  // 解析并归一化配置中的值
-  function normalizeConfigValues(config) {
-    for (var p in config) {
-      if (config.hasOwnProperty(p)) {
-
-        var val = config[p];
-        if (!isString(val)) continue;
-
-        if (JSON_LITERAL_PATTERN.test(val)) {
-          val = val.replace(/'/g, '"');
-          config[p] = normalizeConfigValues(parseJSON(val));
-        }
-        else {
-          config[p] = normalizeConfigValue(val);
-        }
-      }
-    }
-
-    return config;
-  }
-
-  // 将 'false' 转换为 false
-  // 'true' 转换为 true
-  // '3253.34' 转换为 3253.34
-  function normalizeConfigValue(val) {
-    if (val.toLowerCase() === 'false') {
-      val = false;
-    }
-    else if (val.toLowerCase() === 'true') {
-      val = true;
-    }
-    else if (/\d/.test(val) && /[^a-z]/i.test(val)) {
-      var number = parseFloat(val);
-      if (number + '' === val) {
-        val = number;
-      }
-    }
-
-    return val;
-  }
-
-
-  // 解析 data-action，添加到 events 中
-  function parseDataActions(actions, events) {
-    for (var action in actions) {
-      if (!actions.hasOwnProperty(action)) continue;
-
-      // data-action 可以含有多个事件，比如：click x, mouseenter y
-      var parts = trim(action).split(/\s*,\s*/);
-      var selector = actions[action];
-
-      while (action = parts.shift()) {
-        var m = action.split(/\s+/);
-        var event = m[0];
-        var method = m[1];
-
-        // 默认是 click 事件
-        if (!method) {
-          method = event;
-          event = 'click';
-        }
-
-        events[event + ' ' + selector] = method;
-      }
-    }
-  }
-
-  // 对于 attrs 的 value 来说，以下值都认为是空值： null, undefined, '', [], {}
-  function isEmptyAttrValue(o) {
-    return o == null || // null, undefined
-        (isString(o) || $.isArray(o)) && o.length === 0 || // '', []
-        $.isPlainObject(o) && isEmptyObject(o); // {}
   }
 
 
@@ -412,7 +311,7 @@ define(function(require, exports, module) {
     var selector = match[2] || undefined;
 
     if (selector && selector.indexOf('{{') > -1) {
-      selector = parseEventExpression(selector, widget);
+      selector = parseExpressionInEventKey(selector, widget);
     }
 
     return {
@@ -421,8 +320,8 @@ define(function(require, exports, module) {
     };
   }
 
-  // 将 {{xx}}, {{yy}} 转换成 .daparser-n, .daparser-m
-  function parseEventExpression(selector, widget) {
+  // 解析 eventKey 中的 {{xx}}, {{yy}}
+  function parseExpressionInEventKey(selector, widget) {
 
     return selector.replace(EXPRESSION_FLAG, function(m, name) {
       var parts = name.split('.');
@@ -441,15 +340,17 @@ define(function(require, exports, module) {
         return point;
       }
 
-      // 看是否是 element
-      var element = $(point)[0];
-      if (element && element.nodeType === 1) {
-        return '.' + DAParser.stamp(element);
-      }
-
       // 不能识别的，返回无效标识
       return INVALID_SELECTOR;
     });
+  }
+
+
+  // 对于 attrs 的 value 来说，以下值都认为是空值： null, undefined, '', [], {}
+  function isEmptyAttrValue(o) {
+    return o == null || // null, undefined
+        (isString(o) || $.isArray(o)) && o.length === 0 || // '', []
+        $.isPlainObject(o) && isEmptyObject(o); // {}
   }
 
 });
