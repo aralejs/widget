@@ -186,9 +186,6 @@ var MyWidget = Widget.extend({
             "click .close": "close"
         };
 
-        // 给 data-role="title" 的元素声明 toggle 事件代理
-        hash["click " + this.dataset.role.title] = "toggle";
-
         return hash;
     },
     ...
@@ -202,10 +199,8 @@ var MyWidget = Widget.extend({
     events: {
         "click": "open",
         "click .close": "close",
-        "click {{dataset.role.title}}": "toggle",
         "mouseover {{trigger}}": "open",
         "mouseover {{attrs.panels}}": "hover"
-        "click {{header}},{{footer}}": "egg"
     },
     ...
 });
@@ -298,53 +293,9 @@ myWidget.render();
 ```
 
 
-## DAParser
-
-data-api 解析工具，功能如下：
-
-
-### parseBlock `DAParser.parseBlock(root)`
-
-
-解析对应 DOM 结构中的 DATA-ATTRIBUTE API。假设 `root` 元素的 html 为：
-
-```
-<div data-widget="dialog">
-    <div data-role="title">{{title}}</div>
-    <div data-role="content">{{content}}</div>
-    <span data-action="click close">X</span>
-</div>
-```
-
-通过 `parseBlock` 方法，可以得到 `dataset` 对象：
-
-```
-{
-    "widget": { "dialog": ".daparser-0" },
-    "role": {
-              "title": ".daparser-1"
-              "content": ".daparser-2"
-            },
-    "action": { "click close": ".daparser-3" }
-}
-```
-
-`daparser-n` 是自动添加到对应 DOM 元素上具有唯一性质的 className 。
-
-
-### parseElement `DAParser.parseElement(element)`
-
-得到单个 DOM 元素的 dataset 数据。
-
-
-### stamp `DAParser.stamp(element)`
-
-给 DOM 元素添加具有唯一性质的 className 。
-
-
 ## 演示页面
 
- - <http://aralejs.org/widget/examples/widget.html>
+ - <http://aralejs.org/widget/examples/index.html>
  - <http://aralejs.org/widget/examples/simple-tabview.html>
 
 
