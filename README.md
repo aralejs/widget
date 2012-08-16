@@ -152,8 +152,7 @@ initProps: function() {
 注册事件代理。在 Widget 组件的设计里，推荐使用代理的方式来注册事件。这样可以使得对应的
 DOM 内容有修改时，无需重新绑定。
 
-`widget.delegateEvents()` 会在实例初始化时自动调用，这时会从 `this.events`
-中取得声明的代理事件，比如
+`widget.delegateEvents()` 会在实例初始化时自动调用，这时会从 `this.events` 中取得声明的代理事件，比如
 
 ```js
 var MyWidget = Widget.extend({
