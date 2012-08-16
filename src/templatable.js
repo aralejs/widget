@@ -2,7 +2,6 @@ define(function(require, exports, module) {
 
   var $ = require('$');
   var Handlebars = require('handlebars');
-  Handlebars.print = require('./ast-printer').print;
 
 
   // 提供 Template 模板支持，默认引擎是 Handlebars
@@ -57,26 +56,9 @@ define(function(require, exports, module) {
 
     // 刷新 selector 指定的局部区域
     renderPartial: function(selector) {
-      var template = this._getTemplatePartial(selector);
+      var template = convertObjectToTemplate(this.templateObject, selector);
       this.$(selector).html(this.compile(template));
       return this;
-    },
-
-    // 得到模板片段
-    _getTemplatePartial: function(selector) {
-      var template;
-
-      // 获取模板片段
-      if (selector) {
-        template = convertObjectToTemplate(
-            this.templateObject, selector);
-      }
-      // 没有选择器时，表示选择整个模板
-      else {
-        template = this.template;
-      }
-
-      return template;
     }
   };
 
@@ -86,47 +68,22 @@ define(function(require, exports, module) {
 
   // 将 template 字符串转换成对应的 DOM-like object
   function convertTemplateToObject(template) {
-    var statements = Handlebars.parse(template).statements;
-    var html = '';
-
-    for (var i = 0, len = statements.length; i < len; i++) {
-      var stat = statements[i];
-
-      // AST.ContentNode
-      if (stat.type === 'content') {
-        html += stat.string;
-      }
-      // AST.MustacheNode or AST.BlockNode
-      else {
-        html += '{{STAT ' + i + '}}';
-      }
-    }
-
-    html = encode(html);
-
-    var templateObject = $(html);
-    templateObject.template = html;
-    templateObject.statements = statements;
-
-    return templateObject;
+    return $(encode(template));
   }
 
   // 根据 selector 得到 DOM-like template object，并转换为 template 字符串
   function convertObjectToTemplate(templateObject, selector) {
+    // 没有选择器时，表示选择整个模板
+    if (!selector) {
+      return this.template;
+    }
+
+    // 根据 selector，获取对应的模板片段
     var element = templateObject.find(selector);
     if (element.length === 0) {
       throw new Error('Invalid template selector: ' + selector);
     }
-
-    var html = decode(element.html());
-    var statements = templateObject.statements;
-
-    // 将 html 中的 {{STAT n}} 还原为模板字符串
-    html = html.replace(STAT_RE, function(match, $1, $2) {
-      return Handlebars.print(statements[$2]);
-    });
-
-    return html;
+    return decode(element.html());
   }
 
 

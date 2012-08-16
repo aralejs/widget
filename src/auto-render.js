@@ -23,7 +23,7 @@ define(function(require, exports) {
     });
 
     if (modules.length) {
-      require.async(modules, function() {
+      seajs.use(modules, function() {
 
         for (var i = 0; i < arguments.length; i++) {
           var SubWidget = arguments[i];
