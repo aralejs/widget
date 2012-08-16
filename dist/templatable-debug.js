@@ -1,4 +1,4 @@
-define("#widget/0.9.16/ast-printer-debug", [], function(require, exports) {
+define("#widget/0.9.17/ast-printer-debug", [], function(require, exports) {
 
     // Handlebars AST Printer
     // -----------------------
@@ -87,7 +87,7 @@ define("#widget/0.9.16/ast-printer-debug", [], function(require, exports) {
 });
 
 
-define("#widget/0.9.16/templatable-debug", ["./ast-printer-debug", "$-debug", "#handlebars/1.0.0/handlebars-debug"], function(require, exports, module) {
+define("#widget/0.9.17/templatable-debug", ["./ast-printer-debug", "$-debug", "#handlebars/1.0.0/handlebars-debug"], function(require, exports, module) {
 
     var $ = require('$-debug');
     var Handlebars = require('#handlebars/1.0.0/handlebars-debug');
@@ -129,12 +129,6 @@ define("#widget/0.9.16/templatable-debug", ["./ast-printer-debug", "$-debug", "#
                 }
             }
 
-            // 注册 translate helper
-            var lang = this.get('lang') || {};
-            Handlebars.registerHelper(
-                '_', function(key) {return lang[key] || key;}
-            );
-
             // 生成 html
             var html = Handlebars.compile(template)(model);
 
@@ -146,9 +140,6 @@ define("#widget/0.9.16/templatable-debug", ["./ast-printer-debug", "$-debug", "#
                     }
                 }
             }
-
-            // 卸载 translate helper
-            delete Handlebars.helpers['_'];
 
             return html;
         },
