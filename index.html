@@ -175,9 +175,6 @@ DOM 内容有修改时，无需重新绑定。</p>
             <span class="s2">&quot;click .close&quot;</span><span class="o">:</span> <span class="s2">&quot;close&quot;</span>
         <span class="p">};</span>
 
-        <span class="c1">// 给 data-role=&quot;title&quot; 的元素声明 toggle 事件代理</span>
-        <span class="nx">hash</span><span class="p">[</span><span class="s2">&quot;click &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">role</span><span class="p">.</span><span class="nx">title</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;toggle&quot;</span><span class="p">;</span>
-
         <span class="k">return</span> <span class="nx">hash</span><span class="p">;</span>
     <span class="p">},</span>
     <span class="p">...</span>
@@ -188,10 +185,8 @@ DOM 内容有修改时，无需重新绑定。</p>
     <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;click&quot;</span><span class="o">:</span> <span class="s2">&quot;open&quot;</span><span class="p">,</span>
         <span class="s2">&quot;click .close&quot;</span><span class="o">:</span> <span class="s2">&quot;close&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;click {{dataset.role.title}}&quot;</span><span class="o">:</span> <span class="s2">&quot;toggle&quot;</span><span class="p">,</span>
         <span class="s2">&quot;mouseover {{trigger}}&quot;</span><span class="o">:</span> <span class="s2">&quot;open&quot;</span><span class="p">,</span>
         <span class="s2">&quot;mouseover {{attrs.panels}}&quot;</span><span class="o">:</span> <span class="s2">&quot;hover&quot;</span>
-        <span class="s2">&quot;click {{header}},{{footer}}&quot;</span><span class="o">:</span> <span class="s2">&quot;egg&quot;</span>
     <span class="p">},</span>
     <span class="p">...</span>
 <span class="p">});</span>
@@ -258,39 +253,10 @@ DOM 内容有修改时，无需重新绑定。</p>
 <span class="nx">myWidget</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
 </pre></div>
 
-<h2>DAParser</h2>
-<p>data-api 解析工具，功能如下：</p>
-
-<h3>parseBlock <code>DAParser.parseBlock(root)</code></h3>
-<p>解析对应 DOM 结构中的 DATA-ATTRIBUTE API。假设 <code>root</code> 元素的 html 为：</p>
-
-<pre><code>&lt;div data-widget=&quot;dialog&quot;&gt;
-    &lt;div data-role=&quot;title&quot;&gt;{{title}}&lt;/div&gt;
-    &lt;div data-role=&quot;content&quot;&gt;{{content}}&lt;/div&gt;
-    &lt;span data-action=&quot;click close&quot;&gt;X&lt;/span&gt;
-&lt;/div&gt;</code></pre>
-<p>通过 <code>parseBlock</code> 方法，可以得到 <code>dataset</code> 对象：</p>
-
-<pre><code>{
-    &quot;widget&quot;: { &quot;dialog&quot;: &quot;.daparser-0&quot; },
-    &quot;role&quot;: {
-              &quot;title&quot;: &quot;.daparser-1&quot;
-              &quot;content&quot;: &quot;.daparser-2&quot;
-            },
-    &quot;action&quot;: { &quot;click close&quot;: &quot;.daparser-3&quot; }
-}</code></pre>
-<p><code>daparser-n</code> 是自动添加到对应 DOM 元素上具有唯一性质的 className 。</p>
-
-<h3>parseElement <code>DAParser.parseElement(element)</code></h3>
-<p>得到单个 DOM 元素的 dataset 数据。</p>
-
-<h3>stamp <code>DAParser.stamp(element)</code></h3>
-<p>给 DOM 元素添加具有唯一性质的 className 。</p>
-
 <h2>演示页面</h2>
 
 <ul>
-<li><a href="http://aralejs.org/widget/examples/widget.html">http://aralejs.org/widget/examples/widget.html</a></li>
+<li><a href="http://aralejs.org/widget/examples/index.html">http://aralejs.org/widget/examples/index.html</a></li>
 <li><a href="http://aralejs.org/widget/examples/simple-tabview.html">http://aralejs.org/widget/examples/simple-tabview.html</a></li>
 </ul>
 
