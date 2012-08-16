@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 
 ```
 
-详细源码可访问：[simple-tabview.html](http://aralejs.org/lib/widget/examples/simple-tabview.html)
+详细源码可访问：[simple-tabview.html](http://aralejs.org/widget/examples/simple-tabview.html)
 
 
 ### initialize `new Widget([config])`
