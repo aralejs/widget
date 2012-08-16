@@ -10,23 +10,24 @@ define(function(require, DAParser) {
   // 得到某个 DOM 元素的 dataset
   DAParser.parseElement = function(element, raw) {
     element = $(element)[0];
+    var dataset = {};
 
     // ref: https://developer.mozilla.org/en/DOM/element.dataset
     if (element.dataset) {
-      // 转换成普通对象返回
-      return $.extend({}, element.dataset);
+      // 转换成普通对象
+      dataset = $.extend({}, element.dataset);
     }
+    else {
+      var attrs = element.attributes;
 
-    var dataset = {};
-    var attrs = element.attributes;
+      for (var i = 0, len = attrs.length; i < len; i++) {
+        var attr = attrs[i];
+        var name = attr.name;
 
-    for (var i = 0, len = attrs.length; i < len; i++) {
-      var attr = attrs[i];
-      var name = attr.name;
-
-      if (name.indexOf('data-') === 0) {
-        name = camelCase(name.substring(5));
-        dataset[name] = attr.value;
+        if (name.indexOf('data-') === 0) {
+          name = camelCase(name.substring(5));
+          dataset[name] = attr.value;
+        }
       }
     }
 

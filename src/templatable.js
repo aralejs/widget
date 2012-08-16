@@ -87,8 +87,8 @@ define(function(require, exports, module) {
   }
 
 
-  var STAT_RE = /({{STAT (\d+)}})/g;
-  var STAT_DECODE_RE = /(?:<|&lt;)!--({{STAT \d+}})--(?:>|&gt;)/g;
+  var STAT_RE = /({[^}]+}})/g;
+  var STAT_DECODE_RE = /(?:<|&lt;)!--({{[^}]+}})--(?:>|&gt;)/g;
 
   function encode(template) {
     return template.replace(STAT_RE, '<!--$1-->');
@@ -99,3 +99,17 @@ define(function(require, exports, module) {
   }
 
 });
+
+// 调用 renderPartial 时，Templatable 对模板有一个约束：
+// ** template 自身必须是有效的 html 代码片段**，比如
+//   1. 代码闭合
+//   2. 嵌套符合规范
+//
+// 总之，要保证在 template 里，将 `{{...}}` 转换成注释后，直接 innerHTML 插入到
+// DOM 中，浏览器不会自动增加一些东西。比如：
+//
+// tbody 里没有 tr：
+//  `<table><tbody>{{#each items}}<td>{{this}}</td>{{/each}}</tbody></table>`
+//
+// 标签不闭合：
+//  `<div><span>{{name}}</div>`
