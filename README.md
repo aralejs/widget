@@ -9,12 +9,12 @@ Widget 是 UI 组件的基础类，约定了组件的基本生命周期，实现
 
 ## 模块依赖
 
- - [seajs](seajs/README.md)
- - [base](base/README.md)
- - [jquery](jquery/README.md) / [zepto](zepto/README.md)
- - [handlebars](handlebars/README.md)
+ - seajs
+ - $
+ - handlebars
+ - [base](http://aralejs.org/base/)
 
-**注**：handlebars 依赖仅在混入 `Templatable` 后才产生。
+**注**：Handlebars 依赖仅在混入 `Templatable` 后才产生。
 
 
 ## 使用说明
@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 
 ```
 
-详细源码可访问：[simple-tabview.html](http://aralejs.org/widget/examples/simple-tabview.html)
+详细示例请访问：[simple-tabview.html](http://aralejs.org/widget/examples/simple-tabview.html)
 
 
 ### initialize `new Widget([config])`
@@ -338,17 +338,17 @@ data-api 解析工具，功能如下：
 
 ## 演示页面
 
- - <http://aralejs.org/lib/widget/examples/widget.html>
- - <http://aralejs.org/lib/widget/examples/simple-tabview.html>
+ - <http://aralejs.org/widget/examples/widget.html>
+ - <http://aralejs.org/widget/examples/simple-tabview.html>
 
 
 ## 测试用例
 
- - <http://aralejs.org/lib/widget/tests/runner.html>
+ - <http://aralejs.org/widget/tests/runner.html>
 
 
 ## 交流讨论
 
 欢迎创建
-[GitHub Issue](https://github.com/alipay/arale/issues/new)
+[GitHub Issue](https://github.com/aralejs/widget/issues/new)
 来提交反馈。
