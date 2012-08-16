@@ -1,10 +1,10 @@
 {
     "name": "widget",
-    "version": "0.9.17",
+    "version": "1.0.0",
     "dependencies": {
         "$": "$",
         "handlebars": "1.0.0",
-        "base": "0.9.16"
+        "base": "1.0.0"
     },
     "output": {
         "widget.js": ".",

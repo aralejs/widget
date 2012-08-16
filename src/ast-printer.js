@@ -1,87 +1,86 @@
-define(function(require, exports) {
+define(function(require, Printer) {
 
-    // Handlebars AST Printer
-    // -----------------------
-    // 基于 handlebars/compiler/printer.js 修改，用于将 AST 转换回 template 字符串
+  // Handlebars AST Printer
+  // -----------------------
+  // 基于 handlebars/compiler/printer.js 修改，用于将 AST 转换回 template 字符串
 
-    var Printer = exports;
-    Printer.print = print;
+  Printer.print = print;
 
-    function print(node, internal) {
-        return Printer[node.type](node, internal);
+  function print(node, internal) {
+    return Printer[node.type](node, internal);
+  }
+
+  Printer.program = function(node) {
+    var out = '';
+    var statements = node.statements;
+
+    for (var i = 0, len = statements.length; i < len; i++) {
+      out = out + print(statements[i]);
     }
 
-    Printer.program = function(node) {
-        var out = '';
-        var statements = node.statements;
+    return out;
+  };
 
-        for (var i = 0, len = statements.length; i < len; i++) {
-            out = out + print(statements[i]);
-        }
+  Printer.block = function(node) {
+    var out = '';
+    var mustache = node.mustache;
 
-        return out;
-    };
+    out += print(mustache, true);
+    out += print(node.program);
+    out += '{{/' + print(mustache.id) + '}}';
 
-    Printer.block = function(node) {
-        var out = '';
-        var mustache = node.mustache;
+    return out;
+  };
 
-        out += print(mustache, true);
-        out += print(node.program);
-        out += '{{/' + print(mustache.id) + '}}';
+  Printer.mustache = function(node, isBlockOpen) {
+    var id = print(node.id);
 
-        return out;
-    };
+    var params = node.params, paramStrings = [];
+    for (var i = 0, len = params.length; i < len; i++) {
+      paramStrings[i] = print(params[i]);
+    }
+    params = paramStrings.join(' ');
+    if (params) params = ' ' + params;
 
-    Printer.mustache = function(node, isBlockOpen) {
-        var id = print(node.id);
+    var hash = node.hash ? ' ' + print(node.hash) : '';
+    var openTag = isBlockOpen ? '#' : '';
 
-        var params = node.params, paramStrings = [];
-        for (var i = 0, len = params.length; i < len; i++) {
-            paramStrings[i] = print(params[i]);
-        }
-        params = paramStrings.join(' ');
-        if (params) params = ' ' + params;
+    return '{{' + openTag + id + params + hash + '}}';
+  };
 
-        var hash = node.hash ? ' ' + print(node.hash) : '';
-        var openTag = isBlockOpen ? '#' : '';
+  Printer.hash = function(node) {
+    var out = [];
 
-        return '{{' + openTag + id + params + hash + '}}';
-    };
+    for (var i = 0, pairs = node.pairs, len = pairs.length; i < len; i++) {
+      var pair = pairs[i];
+      out[i] = pair[0] + '=' + print(pair[1]);
+    }
 
-    Printer.hash = function(node) {
-        var out = [];
+    return out.join(' ');
+  };
 
-        for (var i = 0, pairs = node.pairs, len = pairs.length; i < len; i++) {
-            var pair = pairs[i];
-            out[i] = pair[0] + '=' + print(pair[1]);
-        }
+  Printer.STRING = function(node) {
+    return '"' + node.string + '"';
+  };
 
-        return out.join(' ');
-    };
+  Printer.INTEGER = function(node) {
+    return node.integer;
+  };
 
-    Printer.STRING = function(node) {
-        return '"' + node.string + '"';
-    };
+  Printer.BOOLEAN = function(node) {
+    return node.bool;
+  };
 
-    Printer.INTEGER = function(node) {
-        return node.integer;
-    };
+  Printer.ID = function(node) {
+    return node.original; // 用 original 能保持 {{this}}
+  };
 
-    Printer.BOOLEAN = function(node) {
-        return node.bool;
-    };
+  Printer.content = function(node) {
+    return node.string;
+  };
 
-    Printer.ID = function(node) {
-        return node.original; // 用 original 能保持 {{this}}
-    };
-
-    Printer.content = function(node) {
-        return node.string;
-    };
-
-    Printer.comment = function(node) {
-        return '{{!' + node.comment + '}}';
-    };
+  Printer.comment = function(node) {
+    return '{{!' + node.comment + '}}';
+  };
 
 });
