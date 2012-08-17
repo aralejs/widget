@@ -94,7 +94,11 @@ define(function(require) {
 
       // 可通过选项关闭 data-api
       document.body.setAttribute('data-api', 'off')
-      expect(DAParser.parseElement(widget.element)).toEqual({})
+
+      var dataset = DAParser.parseElement(widget.element)
+      delete dataset['widgetCid']
+
+      expect(dataset).toEqual({})
     })
 
     test('delegateEvents / undelegateEvents', function() {
@@ -558,7 +562,7 @@ define(function(require) {
       var w = new Widget({ parentNode: $('#test1') })
       w.render()
 
-      expect($('#test1').html()).toBe('<div></div>')
+      expect($('#test1 div').html()).toBe('')
     })
 
   })
