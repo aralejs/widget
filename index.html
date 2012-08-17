@@ -229,6 +229,9 @@ DOM 内容有修改时，无需重新绑定。</p>
 <h3>autoRenderAll <code>Widget.autoRenderAll([root], [callback])</code></h3>
 <p>根据 data-widget 属性，自动渲染找到的所有 Widget 类组件。</p>
 
+<h3>query <code>Widget.query(selector)</code></h3>
+<p>查询与 selector 匹配的第一个 DOM 节点，得到与该 DOM 节点相关联的 Widget 实例。</p>
+
 <h2>Templatable</h2>
 <p>可混入的功能类，提供 Handlebars 模板支持。</p>
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">Templatable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;widget-templatable&#39;</span><span class="p">);</span>
