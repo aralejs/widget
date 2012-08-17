@@ -10,7 +10,12 @@ define(function(require, exports) {
 
 
   // 根据 data-widget 属性，自动渲染所有开启了 data-api 的 widget 组件
-  exports.autoRenderAll = function(root) {
+  exports.autoRenderAll = function(root, callback) {
+    if (typeof root === 'function') {
+      callback = root
+      root = null
+    }
+
     root = $(root || document.body)
     var modules = []
     var elements = []
@@ -36,6 +41,8 @@ define(function(require, exports) {
             })
           }
         }
+
+        callback && callback()
       })
     }
   }

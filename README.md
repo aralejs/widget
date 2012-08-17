@@ -260,7 +260,7 @@ var TabView = Widget.extend({
 具体使用请参考 [events 使用文档](http://aralejs.org/events/)。
 
 
-### autoRenderAll `Widget.autoRenderAll(root)`
+### autoRenderAll `Widget.autoRenderAll([root], [callback])`
 
 根据 data-widget 属性，自动渲染找到的所有 Widget 类组件。
 
