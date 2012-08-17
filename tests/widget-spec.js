@@ -468,17 +468,6 @@ define(function(require) {
       expect(counter).toBe(1);
     });
 
-    xtest('auto render', function() {
-      var t = $('<div id="auto-render-test" data-widget="overlay"></div>')
-          .appendTo(document.body);
-
-      Widget.autoRenderAll();
-
-      waitsFor(function() {
-        return t.css('position') === 'absolute';
-      }, 'overlay initializing is failed', 10000);
-    });
-
     test('statics white list', function() {
 
       var A = Widget.extend();
@@ -562,6 +551,14 @@ define(function(require) {
 
       expect(c.get('a')).toBe('2');
       expect(c.get('b')).toBe('b');
+    });
+
+    test('#3: parentNode is a jQuery object', function() {
+
+      var w = new Widget({ parentNode: $('#test1') });
+      w.render();
+
+      expect($('#test1').html()).toBe('<div></div>');
     });
 
   });
