@@ -191,14 +191,14 @@ var MyWidget = Widget.extend({
 });
 ```
 
-`events` 中，还支持 `{{name}}` 模板表达式，比如上面的代码，可以简化为：
+`events` 中，还支持 `{{name}}` 表达式，比如上面的代码，可以简化为：
 
 ```js
 var MyWidget = Widget.extend({
     events: {
         "click": "open",
         "click .close": "close",
-        "mouseover {{trigger}}": "open",
+        "mouseover {{attrs.trigger}}": "open",
         "mouseover {{attrs.panels}}": "hover"
     },
     ...
@@ -290,6 +290,13 @@ var myWidget = new MyWidget({
 
 myWidget.render();
 ```
+
+
+### renderPartial `widget.renderPartial(selector)`
+
+局部渲染。根据传入的 `selector` 参数，刷新匹配的区域。
+
+默认无需覆盖。需要覆盖时，请使用 `return this` 来保持该方法的链式约定。
 
 
 ## 演示页面

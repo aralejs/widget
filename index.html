@@ -6,6 +6,8 @@
 <title>Widget</title>
 <link rel="stylesheet" href="http://aralejs.org/assets/base.css">
 <link rel="stylesheet" href="http://aralejs.org/assets/style.css">
+
+
 <!--[if lt IE 9]>
 <script src="http://aralejs.org/assets/html5shiv.js"></script>
 <![endif]-->
@@ -145,8 +147,7 @@
 <h3>delegateEvents <code>widget.delegateEvents(eventType, handler)</code></h3>
 <p>注册事件代理。在 Widget 组件的设计里，推荐使用代理的方式来注册事件。这样可以使得对应的
 DOM 内容有修改时，无需重新绑定。</p>
-<p><code>widget.delegateEvents()</code> 会在实例初始化时自动调用，这时会从 <code>this.events</code>
-中取得声明的代理事件，比如</p>
+<p><code>widget.delegateEvents()</code> 会在实例初始化时自动调用，这时会从 <code>this.events</code> 中取得声明的代理事件，比如</p>
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">MyWidget</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
     <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;dblclick&quot;</span><span class="o">:</span> <span class="s2">&quot;open&quot;</span><span class="p">,</span>
@@ -178,12 +179,12 @@ DOM 内容有修改时，无需重新绑定。</p>
     <span class="p">...</span>
 <span class="p">});</span>
 </pre></div>
-<p><code>events</code> 中，还支持 <code>{{name}}</code> 模板表达式，比如上面的代码，可以简化为：</p>
+<p><code>events</code> 中，还支持 <code>{{name}}</code> 表达式，比如上面的代码，可以简化为：</p>
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">MyWidget</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
     <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;click&quot;</span><span class="o">:</span> <span class="s2">&quot;open&quot;</span><span class="p">,</span>
         <span class="s2">&quot;click .close&quot;</span><span class="o">:</span> <span class="s2">&quot;close&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;mouseover {{trigger}}&quot;</span><span class="o">:</span> <span class="s2">&quot;open&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mouseover {{attrs.trigger}}&quot;</span><span class="o">:</span> <span class="s2">&quot;open&quot;</span><span class="p">,</span>
         <span class="s2">&quot;mouseover {{attrs.panels}}&quot;</span><span class="o">:</span> <span class="s2">&quot;hover&quot;</span>
     <span class="p">},</span>
     <span class="p">...</span>
@@ -250,6 +251,10 @@ DOM 内容有修改时，无需重新绑定。</p>
 
 <span class="nx">myWidget</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
 </pre></div>
+
+<h3>renderPartial <code>widget.renderPartial(selector)</code></h3>
+<p>局部渲染。根据传入的 <code>selector</code> 参数，刷新匹配的区域。</p>
+<p>默认无需覆盖。需要覆盖时，请使用 <code>return this</code> 来保持该方法的链式约定。</p>
 
 <h2>演示页面</h2>
 
