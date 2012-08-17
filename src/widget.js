@@ -13,6 +13,10 @@ define(function(require, exports, module) {
 
   var DELEGATE_EVENT_NS = '.delegate-events-'
   var ON_RENDER = '_onRender'
+  var DATA_WIDGET_CID = 'data-widget-cid'
+
+  // 所有初始化过的 Widget 实例
+  var cachedInstances = {}
 
 
   var Widget = Base.extend({
@@ -66,6 +70,9 @@ define(function(require, exports, module) {
 
       // 子类自定义的初始化
       this.setup()
+
+      // 保存实例信息
+      this._stamp()
     },
 
     // 解析通过 data-attr 设置的 api
@@ -234,6 +241,14 @@ define(function(require, exports, module) {
       this.element.css(val)
     },
 
+    // 让 element 与 Widget 实例建立关联
+    _stamp: function() {
+      var cid = this.cid
+
+      this.element.attr(DATA_WIDGET_CID, cid)
+      cachedInstances[cid] = this
+    },
+
     // 在 this.element 内寻找匹配节点
     $: function(selector) {
       return this.element.find(selector)
@@ -241,9 +256,21 @@ define(function(require, exports, module) {
 
     destroy: function() {
       this.undelegateEvents()
+      delete cachedInstances[this.cid]
       Widget.superclass.destroy.call(this)
     }
   })
+
+
+  // 查询与 selector 匹配的第一个 DOM 节点，得到与该 DOM 节点相关联的 Widget 实例
+  Widget.query = function(selector) {
+    var element = $(selector).eq(0)
+    var cid
+
+    element && (cid = element.attr(DATA_WIDGET_CID))
+    return cachedInstances[cid]
+  }
+
 
   Widget.autoRender = AutoRender.autoRender
   Widget.autoRenderAll = AutoRender.autoRenderAll

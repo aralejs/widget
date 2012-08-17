@@ -1,11 +1,12 @@
 define(function(require, exports) {
 
   var $ = require('$')
+  var DATA_WIDGET_AUTO_RENDERED = 'data-widget-auto-rendered'
 
 
   // 自动渲染接口，子类可根据自己的初始化逻辑进行覆盖
   exports.autoRender = function(config) {
-    new this(config).render()
+    return new this(config).render()
   }
 
 
@@ -32,16 +33,22 @@ define(function(require, exports) {
 
         for (var i = 0; i < arguments.length; i++) {
           var SubWidget = arguments[i]
-          var element = elements[i]
+          var element = $(elements[i])
 
-          if (SubWidget.autoRender) {
-            SubWidget.autoRender({
-              element: element,
-              renderType: 'auto'
-            })
-          }
+          // 已经渲染过
+          if (element.attr(DATA_WIDGET_AUTO_RENDERED)) continue
+
+          // 调用自动渲染接口
+          SubWidget.autoRender && SubWidget.autoRender({
+            element: element,
+            renderType: 'auto'
+          })
+
+          // 标记已经渲染过
+          element.attr(DATA_WIDGET_AUTO_RENDERED, 'true')
         }
 
+        // 在所有自动渲染完成后，执行回调
         callback && callback()
       })
     }
