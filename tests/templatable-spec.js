@@ -117,7 +117,7 @@ define(function(require) {
       expect(a.element.html()).toBe('xx');
     });
 
-    test('#10: img src in template string', function() {
+    test('#10: src expression in template string', function() {
 
       var t = new TemplatableWidget({
         template: '<div id="t10"><h3>{{title}}</h3><div class="content">{{content}}<img src="{{src}}"></div></div>',
@@ -136,6 +136,42 @@ define(function(require) {
 
       expect(t.$('div.content').html().indexOf('content 2') === 0).toBe(true);
       expect(t.$('div.content').html().indexOf('img') > 0).toBe(true);
+
+    });
+
+    test('#7: render twice', function() {
+
+      var n = 0;
+
+      var WidgetA = TemplatableWidget.extend({
+        attrs: {
+          content: '1'
+        },
+
+        _onRenderContent: function(val) {
+          n++;
+          this.model.content = val;
+          this.renderPartial('div.content');
+        },
+
+        template: '<div id="t7"><h3>{{title}}</h3><div class="content">{{content}}</div></div>',
+
+        model: {
+          title: 'This is a title',
+          content: 'This is content'
+        }
+      });
+
+      var t = new WidgetA({ content: '2' });
+
+      t.render();
+      expect(n).toBe(1);
+
+      t.set('content', '2');
+      expect(n).toBe(1);
+
+      t.set('content', '3');
+      expect(n).toBe(2);
 
     });
 
