@@ -135,7 +135,7 @@ define(function(require) {
       t.renderPartial('div.content')
 
       expect(t.$('div.content').html().indexOf('content 2') === 0).toBe(true)
-      expect(t.$('div.content').html().indexOf('img') > 0).toBe(true)
+      expect(t.$('div.content').html().toLowerCase().indexOf('img') > 0).toBe(true)
 
     })
 
