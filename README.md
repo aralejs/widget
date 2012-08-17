@@ -265,6 +265,11 @@ var TabView = Widget.extend({
 根据 data-widget 属性，自动渲染找到的所有 Widget 类组件。
 
 
+### query `Widget.query(selector)`
+
+查询与 selector 匹配的第一个 DOM 节点，得到与该 DOM 节点相关联的 Widget 实例。
+
+
 ## Templatable
 
 可混入的功能类，提供 Handlebars 模板支持。
