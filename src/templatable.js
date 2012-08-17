@@ -73,16 +73,11 @@ define(function(require, exports, module) {
 
   // 根据 selector 得到 DOM-like template object，并转换为 template 字符串
   function convertObjectToTemplate(templateObject, selector) {
-    // 没有选择器时，表示选择整个模板
-    if (!selector) {
-      return this.template;
-    }
-
-    // 根据 selector，获取对应的模板片段
     var element = templateObject.find(selector);
     if (element.length === 0) {
       throw new Error('Invalid template selector: ' + selector);
     }
+
     return decode(element.html());
   }
 
