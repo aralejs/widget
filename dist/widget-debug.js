@@ -96,16 +96,22 @@ define("#widget/1.0.0/daparser-debug", ["$-debug"], function(require, DAParser) 
 define("#widget/1.0.0/auto-render-debug", ["$-debug"], function(require, exports) {
 
   var $ = require('$-debug')
+  var DATA_WIDGET_AUTO_RENDERED = 'data-widget-auto-rendered'
 
 
   // 自动渲染接口，子类可根据自己的初始化逻辑进行覆盖
   exports.autoRender = function(config) {
-    new this(config).render()
+    return new this(config).render()
   }
 
 
   // 根据 data-widget 属性，自动渲染所有开启了 data-api 的 widget 组件
-  exports.autoRenderAll = function(root) {
+  exports.autoRenderAll = function(root, callback) {
+    if (typeof root === 'function') {
+      callback = root
+      root = null
+    }
+
     root = $(root || document.body)
     var modules = []
     var elements = []
@@ -122,15 +128,23 @@ define("#widget/1.0.0/auto-render-debug", ["$-debug"], function(require, exports
 
         for (var i = 0; i < arguments.length; i++) {
           var SubWidget = arguments[i]
-          var element = elements[i]
+          var element = $(elements[i])
 
-          if (SubWidget.autoRender) {
-            SubWidget.autoRender({
-              element: element,
-              renderType: 'auto'
-            })
-          }
+          // 已经渲染过
+          if (element.attr(DATA_WIDGET_AUTO_RENDERED)) continue
+
+          // 调用自动渲染接口
+          SubWidget.autoRender && SubWidget.autoRender({
+            element: element,
+            renderType: 'auto'
+          })
+
+          // 标记已经渲染过
+          element.attr(DATA_WIDGET_AUTO_RENDERED, 'true')
         }
+
+        // 在所有自动渲染完成后，执行回调
+        callback && callback()
       })
     }
   }
@@ -167,6 +181,10 @@ define("#widget/1.0.0/widget-debug", ["./daparser-debug", "./auto-render-debug",
 
   var DELEGATE_EVENT_NS = '.delegate-events-'
   var ON_RENDER = '_onRender'
+  var DATA_WIDGET_CID = 'data-widget-cid'
+
+  // 所有初始化过的 Widget 实例
+  var cachedInstances = {}
 
 
   var Widget = Base.extend({
@@ -220,6 +238,9 @@ define("#widget/1.0.0/widget-debug", ["./daparser-debug", "./auto-render-debug",
 
       // 子类自定义的初始化
       this.setup()
+
+      // 保存实例信息
+      this._stamp()
     },
 
     // 解析通过 data-attr 设置的 api
@@ -388,6 +409,14 @@ define("#widget/1.0.0/widget-debug", ["./daparser-debug", "./auto-render-debug",
       this.element.css(val)
     },
 
+    // 让 element 与 Widget 实例建立关联
+    _stamp: function() {
+      var cid = this.cid
+
+      this.element.attr(DATA_WIDGET_CID, cid)
+      cachedInstances[cid] = this
+    },
+
     // 在 this.element 内寻找匹配节点
     $: function(selector) {
       return this.element.find(selector)
@@ -395,9 +424,21 @@ define("#widget/1.0.0/widget-debug", ["./daparser-debug", "./auto-render-debug",
 
     destroy: function() {
       this.undelegateEvents()
+      delete cachedInstances[this.cid]
       Widget.superclass.destroy.call(this)
     }
   })
+
+
+  // 查询与 selector 匹配的第一个 DOM 节点，得到与该 DOM 节点相关联的 Widget 实例
+  Widget.query = function(selector) {
+    var element = $(selector).eq(0)
+    var cid
+
+    element && (cid = element.attr(DATA_WIDGET_CID))
+    return cachedInstances[cid]
+  }
+
 
   Widget.autoRender = AutoRender.autoRender
   Widget.autoRenderAll = AutoRender.autoRenderAll
