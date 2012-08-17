@@ -14,10 +14,5 @@
     "daparser",
     "widget",
     "templatable"
-  ],
-  "devDependencies": {
-    "class": "../../class/src/class.js",
-    "events": "../../events/src/events.js",
-    "base": "../../base/src/base.js"
-  }
+  ]
 }
