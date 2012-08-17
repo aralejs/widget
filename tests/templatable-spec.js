@@ -117,6 +117,28 @@ define(function(require) {
       expect(a.element.html()).toBe('xx');
     });
 
+    test('#10: img src in template string', function() {
+
+      var t = new TemplatableWidget({
+        template: '<div id="t10"><h3>{{title}}</h3><div class="content">{{content}}<img src="{{src}}"></div></div>',
+        model: {
+          title: 'This is a title',
+          content: 'This is content',
+          src: "https://i.alipayobjects.com/e/201207/36PCiRAolN.jpg"
+        }
+      });
+
+      t.render();
+
+      // 这个测试要看下 Network 面板，看是否有无效的图片请求
+      t.model.content = 'content 2';
+      t.renderPartial('div.content');
+
+      expect(t.$('div.content').html().indexOf('content 2') === 0).toBe(true);
+      expect(t.$('div.content').html().indexOf('img') > 0).toBe(true);
+
+    });
+
   });
 
 });

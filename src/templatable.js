@@ -81,16 +81,19 @@ define(function(require, exports, module) {
     return decode(element.html());
   }
 
-
-  var STAT_RE = /({[^}]+}})/g;
-  var STAT_DECODE_RE = /(?:<|&lt;)!--({{[^}]+}})--(?:>|&gt;)/g;
-
   function encode(template) {
-    return template.replace(STAT_RE, '<!--$1-->');
+    return template
+        // 替换 {{xxx}} 为 <!-- {{xxx}} -->
+        .replace(/({[^}]+}})/g, '<!--$1-->')
+        // 替换 src="{{xxx}}" 为 data-TEMPLATABLE-src="{{xxx}}"
+        .replace(/\s(src|href)\s*=\s*(['"])(.*?\{.+?)\2/g,
+        ' data-TEMPLATABLE-$1=$2$3$2');
   }
 
   function decode(template) {
-    return template.replace(STAT_DECODE_RE, '$1');
+    return template
+        .replace(/(?:<|&lt;)!--({{[^}]+}})--(?:>|&gt;)/g, '$1')
+        .replace(/data-TEMPLATABLE-/g, '');
   }
 
 });

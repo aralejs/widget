@@ -73,29 +73,27 @@ define("#widget/1.0.0/templatable-debug", ["$-debug", "#handlebars/1.0.0/handleb
 
   // 根据 selector 得到 DOM-like template object，并转换为 template 字符串
   function convertObjectToTemplate(templateObject, selector) {
-    // 没有选择器时，表示选择整个模板
-    if (!selector) {
-      return this.template;
-    }
-
-    // 根据 selector，获取对应的模板片段
     var element = templateObject.find(selector);
     if (element.length === 0) {
       throw new Error('Invalid template selector: ' + selector);
     }
+
     return decode(element.html());
   }
 
-
-  var STAT_RE = /({[^}]+}})/g;
-  var STAT_DECODE_RE = /(?:<|&lt;)!--({{[^}]+}})--(?:>|&gt;)/g;
-
   function encode(template) {
-    return template.replace(STAT_RE, '<!--$1-->');
+    return template
+        // 替换 {{xxx}} 为 <!-- {{xxx}} -->
+        .replace(/({[^}]+}})/g, '<!--$1-->')
+        // 替换 src="{{xxx}}" 为 data-TEMPLATABLE-src="{{xxx}}"
+        .replace(/\s(src|href)\s*=\s*(['"])(.*?\{.+?)\2/g,
+        ' data-TEMPLATABLE-$1=$2$3$2');
   }
 
   function decode(template) {
-    return template.replace(STAT_DECODE_RE, '$1');
+    return template
+        .replace(/(?:<|&lt;)!--({{[^}]+}})--(?:>|&gt;)/g, '$1')
+        .replace(/data-TEMPLATABLE-/g, '');
   }
 
 });
