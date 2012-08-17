@@ -45,7 +45,23 @@
 </nav>
 
 <div class="markdown-body">
-    <style>
+    <h2>加载器配置</h2>
+<p>首先，页面中要加载 <code>sea.js</code>，并配置好别名：</p>
+<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">config</span><span class="p">({</span>
+    <span class="s1">&#39;widget&#39;</span><span class="o">:</span> <span class="s1">&#39;../src/widget&#39;</span>
+<span class="p">});</span>
+</pre></div>
+
+<script type="text/javascript">
+seajs.config({
+    'widget': '../src/widget'
+});
+</script>
+<p>注意：实际使用时，别名值需要修改为实际路径，比如 <code>{ &#39;widget&#39;: &#39;1.0.0&#39; }</code></p>
+
+<hr/>
+
+<style>
     #simple-tabs {
         width: 400px;
     }
@@ -75,9 +91,18 @@
         height: 200px;
         padding: 20px;
     }
+
+    #egg {
+        padding: 5px 20px;
+        margin: 10px 0;
+    }
 </style>
 
-<div id="demo">
+<h2>示例：简单的 TabView</h2>
+<p>下面演示如何基于 Widget 来快速开发一个简单的 TabView 界面组件。</p>
+
+<h3>HTML</h3>
+<p><div id="demo">
     <ul class="nav">
         <li>开放</li>
         <li>简单</li>
@@ -89,8 +114,24 @@
         <div>一目了然，容易学习。</div>
     </div>
 </div>
-<p><button id="egg">手贱</button></p>
-<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;../src/widget&#39;</span><span class="p">,</span> <span class="s1">&#39;jquery&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Widget</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+<button id="egg">手贱</button></p>
+<div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;demo&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;nav&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;li&gt;</span>开放<span class="nt">&lt;/li&gt;</span>
+        <span class="nt">&lt;li&gt;</span>简单<span class="nt">&lt;/li&gt;</span>
+        <span class="nt">&lt;li&gt;</span>易用<span class="nt">&lt;/li&gt;</span>
+    <span class="nt">&lt;/ul&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;content&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div&gt;</span>开源开放，海纳百川。<span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div&gt;</span>如无必要，勿增实体。<span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div&gt;</span>一目了然，容易学习。<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">&quot;egg&quot;</span><span class="nt">&gt;</span>手贱<span class="nt">&lt;/button&gt;</span>
+</pre></div>
+
+<h3>JavaScript</h3>
+<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;widget&#39;</span><span class="p">,</span> <span class="s1">&#39;jquery&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Widget</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="c1">// 基于 Widget 定义 SimpleTabView 组件</span>
     <span class="kd">var</span> <span class="nx">SimpleTabView</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
@@ -118,7 +159,7 @@
         <span class="p">},</span>
 
         <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s1">&#39;click .nav li&#39;</span><span class="o">:</span> <span class="s1">&#39;switchTo&#39;</span>
+            <span class="s1">&#39;click .nav li&#39;</span><span class="o">:</span> <span class="s1">&#39;_switchToEventHandler&#39;</span>
         <span class="p">},</span>
 
         <span class="nx">_onRenderActiveIndex</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">prev</span><span class="p">)</span> <span class="p">{</span>
@@ -132,13 +173,13 @@
             <span class="nx">panels</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="nx">val</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
         <span class="p">},</span>
 
-        <span class="nx">switchTo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// 触发点击事件时，index 是 ev 对象</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">index</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;triggers&#39;</span><span class="p">).</span><span class="nx">index</span><span class="p">(</span><span class="nx">index</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span>
-            <span class="p">}</span>
+        <span class="nx">_switchToEventHandler</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ev</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;triggers&#39;</span><span class="p">).</span><span class="nx">index</span><span class="p">(</span><span class="nx">ev</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">switchTo</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
+        <span class="p">},</span>
 
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;activeIndex&#39;</span><span class="p">,</span> <span class="nx">index</span><span class="p">);</span>
+        <span class="nx">switchTo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;activeIndex&#39;</span><span class="p">,</span> <span class="nx">index</span><span class="p">);</span>
         <span class="p">},</span>
 
         <span class="nx">setup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -172,6 +213,7 @@
     <span class="p">}).</span><span class="nx">render</span><span class="p">();</span>
 
 
+    <span class="c1">// 彩蛋：增加一点小趣味</span>
     <span class="kd">var</span> <span class="nx">counter</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
     <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#egg&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -193,7 +235,7 @@
 </pre></div>
 
 <script type="text/javascript">
-seajs.use(['../src/widget', 'jquery'], function(Widget, $) {
+seajs.use(['widget', 'jquery'], function(Widget, $) {
 
     // 基于 Widget 定义 SimpleTabView 组件
     var SimpleTabView = Widget.extend({
@@ -221,7 +263,7 @@ seajs.use(['../src/widget', 'jquery'], function(Widget, $) {
         },
 
         events: {
-            'click .nav li': 'switchTo'
+            'click .nav li': '_switchToEventHandler'
         },
 
         _onRenderActiveIndex: function(val, prev) {
@@ -235,13 +277,13 @@ seajs.use(['../src/widget', 'jquery'], function(Widget, $) {
             panels.eq(val).show();
         },
 
-        switchTo: function(index) {
-            // 触发点击事件时，index 是 ev 对象
-            if (typeof index === 'object') {
-                index = this.get('triggers').index(index.target);
-            }
+        _switchToEventHandler: function(ev) {
+            var index = this.get('triggers').index(ev.target);
+            this.switchTo(index);
+        },
 
-            return this.set('activeIndex', index);
+        switchTo: function(index) {
+            this.set('activeIndex', index);
         },
 
         setup: function() {
@@ -275,6 +317,7 @@ seajs.use(['../src/widget', 'jquery'], function(Widget, $) {
     }).render();
 
 
+    // 彩蛋：增加一点小趣味
     var counter = 1;
 
     $('#egg').click(function() {

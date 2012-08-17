@@ -1,3 +1,18 @@
+
+## 加载器配置
+
+首先，页面中要加载 `sea.js`，并配置好别名：
+
+````javascript
+seajs.config({
+    'widget': '../src/widget'
+});
+````
+
+注意：实际使用时，别名值需要修改为实际路径，比如 `{ 'widget': '1.0.0' }`
+
+---
+
 <style>
     #simple-tabs {
         width: 400px;
@@ -28,7 +43,20 @@
         height: 200px;
         padding: 20px;
     }
+
+    #egg {
+        padding: 5px 20px;
+        margin: 10px 0;
+    }
 </style>
+
+
+## 示例：简单的 TabView
+
+
+下面演示如何基于 Widget 来快速开发一个简单的 TabView 界面组件。
+
+### HTML
 
 <div id="demo">
     <ul class="nav">
@@ -42,12 +70,28 @@
         <div>一目了然，容易学习。</div>
     </div>
 </div>
-
 <button id="egg">手贱</button>
 
+````html
+<div id="demo">
+    <ul class="nav">
+        <li>开放</li>
+        <li>简单</li>
+        <li>易用</li>
+    </ul>
+    <div class="content">
+        <div>开源开放，海纳百川。</div>
+        <div>如无必要，勿增实体。</div>
+        <div>一目了然，容易学习。</div>
+    </div>
+</div>
+<button id="egg">手贱</button>
+````
 
-```javascript
-seajs.use(['../src/widget', 'jquery'], function(Widget, $) {
+### JavaScript
+
+````javascript
+seajs.use(['widget', 'jquery'], function(Widget, $) {
 
     // 基于 Widget 定义 SimpleTabView 组件
     var SimpleTabView = Widget.extend({
@@ -75,7 +119,7 @@ seajs.use(['../src/widget', 'jquery'], function(Widget, $) {
         },
 
         events: {
-            'click .nav li': 'switchTo'
+            'click .nav li': '_switchToEventHandler'
         },
 
         _onRenderActiveIndex: function(val, prev) {
@@ -89,13 +133,13 @@ seajs.use(['../src/widget', 'jquery'], function(Widget, $) {
             panels.eq(val).show();
         },
 
-        switchTo: function(index) {
-            // 触发点击事件时，index 是 ev 对象
-            if (typeof index === 'object') {
-                index = this.get('triggers').index(index.target);
-            }
+        _switchToEventHandler: function(ev) {
+            var index = this.get('triggers').index(ev.target);
+            this.switchTo(index);
+        },
 
-            return this.set('activeIndex', index);
+        switchTo: function(index) {
+            this.set('activeIndex', index);
         },
 
         setup: function() {
@@ -129,6 +173,7 @@ seajs.use(['../src/widget', 'jquery'], function(Widget, $) {
     }).render();
 
 
+    // 彩蛋：增加一点小趣味
     var counter = 1;
 
     $('#egg').click(function() {
@@ -147,4 +192,4 @@ seajs.use(['../src/widget', 'jquery'], function(Widget, $) {
     });
 
 });
-```
+````
