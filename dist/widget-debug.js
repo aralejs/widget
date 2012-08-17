@@ -4,49 +4,49 @@ define("#widget/1.0.0/daparser-debug", ["$-debug"], function(require, DAParser) 
   // --------
   // data api 解析器，提供对单个 element 的解析，可用来初始化页面中的所有 Widget 组件。
 
-  var $ = require('$-debug');
+  var $ = require('$-debug')
 
 
   // 得到某个 DOM 元素的 dataset
   DAParser.parseElement = function(element, raw) {
-    element = $(element)[0];
-    var dataset = {};
+    element = $(element)[0]
+    var dataset = {}
 
     // ref: https://developer.mozilla.org/en/DOM/element.dataset
     if (element.dataset) {
       // 转换成普通对象
-      dataset = $.extend({}, element.dataset);
+      dataset = $.extend({}, element.dataset)
     }
     else {
-      var attrs = element.attributes;
+      var attrs = element.attributes
 
       for (var i = 0, len = attrs.length; i < len; i++) {
-        var attr = attrs[i];
-        var name = attr.name;
+        var attr = attrs[i]
+        var name = attr.name
 
         if (name.indexOf('data-') === 0) {
-          name = camelCase(name.substring(5));
-          dataset[name] = attr.value;
+          name = camelCase(name.substring(5))
+          dataset[name] = attr.value
         }
       }
     }
 
-    return raw === true ? dataset : normalizeValues(dataset);
-  };
+    return raw === true ? dataset : normalizeValues(dataset)
+  }
 
 
   // Helpers
   // ------
 
-  var RE_DASH_WORD = /-([a-z])/g;
-  var JSON_LITERAL_PATTERN = /^\s*[\[{].*[\]}]\s*$/;
-  var parseJSON = this.JSON ? JSON.parse : $.parseJSON;
+  var RE_DASH_WORD = /-([a-z])/g
+  var JSON_LITERAL_PATTERN = /^\s*[\[{].*[\]}]\s*$/
+  var parseJSON = this.JSON ? JSON.parse : $.parseJSON
 
   // 仅处理字母开头的，其他情况转换为小写："data-x-y-123-_A" --> xY-123-_a
   function camelCase(str) {
     return str.toLowerCase().replace(RE_DASH_WORD, function(all, letter) {
-      return (letter + '').toUpperCase();
-    });
+      return (letter + '').toUpperCase()
+    })
   }
 
   // 解析并归一化配置中的值
@@ -54,20 +54,20 @@ define("#widget/1.0.0/daparser-debug", ["$-debug"], function(require, DAParser) 
     for (var key in data) {
       if (data.hasOwnProperty(key)) {
 
-        var val = data[key];
-        if (typeof val !== 'string') continue;
+        var val = data[key]
+        if (typeof val !== 'string') continue
 
         if (JSON_LITERAL_PATTERN.test(val)) {
-          val = val.replace(/'/g, '"');
-          data[key] = normalizeValues(parseJSON(val));
+          val = val.replace(/'/g, '"')
+          data[key] = normalizeValues(parseJSON(val))
         }
         else {
-          data[key] = normalizeValue(val);
+          data[key] = normalizeValue(val)
         }
       }
     }
 
-    return data;
+    return data
   }
 
   // 将 'false' 转换为 false
@@ -75,19 +75,19 @@ define("#widget/1.0.0/daparser-debug", ["$-debug"], function(require, DAParser) 
   // '3253.34' 转换为 3253.34
   function normalizeValue(val) {
     if (val.toLowerCase() === 'false') {
-      val = false;
+      val = false
     }
     else if (val.toLowerCase() === 'true') {
-      val = true;
+      val = true
     }
     else if (/\d/.test(val) && /[^a-z]/i.test(val)) {
-      var number = parseFloat(val);
+      var number = parseFloat(val)
       if (number + '' === val) {
-        val = number;
+        val = number
       }
     }
 
-    return val;
+    return val
   }
 
 });
@@ -95,59 +95,59 @@ define("#widget/1.0.0/daparser-debug", ["$-debug"], function(require, DAParser) 
 
 define("#widget/1.0.0/auto-render-debug", ["$-debug"], function(require, exports) {
 
-  var $ = require('$-debug');
+  var $ = require('$-debug')
 
 
   // 自动渲染接口，子类可根据自己的初始化逻辑进行覆盖
   exports.autoRender = function(config) {
-    new this(config).render();
-  };
+    new this(config).render()
+  }
 
 
   // 根据 data-widget 属性，自动渲染所有开启了 data-api 的 widget 组件
   exports.autoRenderAll = function(root) {
-    root = $(root || document.body);
-    var modules = [];
-    var elements = [];
+    root = $(root || document.body)
+    var modules = []
+    var elements = []
 
     root.find('[data-widget]').each(function(i, element) {
       if (!exports.isDataApiOff(element)) {
-        modules.push(element.getAttribute('data-widget').toLowerCase());
-        elements.push(element);
+        modules.push(element.getAttribute('data-widget').toLowerCase())
+        elements.push(element)
       }
-    });
+    })
 
     if (modules.length) {
       seajs.use(modules, function() {
 
         for (var i = 0; i < arguments.length; i++) {
-          var SubWidget = arguments[i];
-          var element = elements[i];
+          var SubWidget = arguments[i]
+          var element = elements[i]
 
           if (SubWidget.autoRender) {
             SubWidget.autoRender({
               element: element,
               renderType: 'auto'
-            });
+            })
           }
         }
-      });
+      })
     }
-  };
+  }
 
 
-  var isDefaultOff = $(document.body).attr('data-api') === 'off';
+  var isDefaultOff = $(document.body).attr('data-api') === 'off'
 
   // 是否没开启 data-api
   exports.isDataApiOff = function(element) {
-    var elementDataApi = $(element).attr('data-api');
+    var elementDataApi = $(element).attr('data-api')
 
     // data-api 默认开启，关闭只有两种方式：
     //  1. element 上有 data-api="off"，表示关闭单个
     //  2. document.body 上有 data-api="off"，表示关闭所有
     return  elementDataApi === 'off' ||
-        (elementDataApi !== 'on' && isDefaultOff);
-  };
+        (elementDataApi !== 'on' && isDefaultOff)
+  }
 
 });
 
@@ -160,13 +160,13 @@ define("#widget/1.0.0/widget-debug", ["./daparser-debug", "./auto-render-debug",
   // Widget 组件具有四个要素：描述状态的 attributes 和 properties，描述行为的 events
   // 和 methods。Widget 基类约定了这四要素创建时的基本流程和最佳实践。
 
-  var Base = require('#base/1.0.0/base-debug');
-  var $ = require('$-debug');
-  var DAParser = require('./daparser-debug');
-  var AutoRender = require('./auto-render-debug');
+  var Base = require('#base/1.0.0/base-debug')
+  var $ = require('$-debug')
+  var DAParser = require('./daparser-debug')
+  var AutoRender = require('./auto-render-debug')
 
-  var DELEGATE_EVENT_NS = '.delegate-events-';
-  var ON_RENDER = '_onRender';
+  var DELEGATE_EVENT_NS = '.delegate-events-'
+  var ON_RENDER = '_onRender'
 
 
   var Widget = Base.extend({
@@ -205,57 +205,57 @@ define("#widget/1.0.0/widget-debug", ["./daparser-debug", "./auto-render-debug",
     // 初始化方法，确定组件创建时的基本流程：
     // 初始化 attrs --》 初始化 props --》 初始化 events --》 子类的初始化
     initialize: function(config) {
-      this.cid = uniqueCid();
+      this.cid = uniqueCid()
 
       // 初始化 attrs
-      var dataAttrsConfig = this._parseDataAttrsConfig(config);
-      this.initAttrs(config, dataAttrsConfig);
+      var dataAttrsConfig = this._parseDataAttrsConfig(config)
+      this.initAttrs(config, dataAttrsConfig)
 
       // 初始化 props
-      this.parseElement();
-      this.initProps();
+      this.parseElement()
+      this.initProps()
 
       // 初始化 events
-      this.delegateEvents();
+      this.delegateEvents()
 
       // 子类自定义的初始化
-      this.setup();
+      this.setup()
     },
 
     // 解析通过 data-attr 设置的 api
     _parseDataAttrsConfig: function(config) {
-      var element, dataAttrsConfig;
-      config && (element = $(config.element));
+      var element, dataAttrsConfig
+      config && (element = $(config.element))
 
       // 解析 data-api 时，只考虑用户传入的 element，不考虑来自继承或从模板构建的
       if (element && element[0] && !AutoRender.isDataApiOff(element)) {
-        dataAttrsConfig = DAParser.parseElement(element);
+        dataAttrsConfig = DAParser.parseElement(element)
       }
 
-      return dataAttrsConfig;
+      return dataAttrsConfig
     },
 
     // 构建 this.element
     parseElement: function() {
-      var element = this.element;
+      var element = this.element
 
       if (element) {
-        this.element = $(element);
+        this.element = $(element)
       }
       // 未传入 element 时，从 template 构建
       else if (this.get('template')) {
-        this.parseElementFromTemplate();
+        this.parseElementFromTemplate()
       }
 
       // 如果对应的 DOM 元素不存在，则报错
       if (!this.element || !this.element[0]) {
-        throw new Error('element is invalid');
+        throw new Error('element is invalid')
       }
     },
 
     // 从模板中构建 this.element
     parseElementFromTemplate: function() {
-      this.element = $(this.get('template'));
+      this.element = $(this.get('template'))
     },
 
     // 负责 properties 的初始化，提供给子类覆盖
@@ -264,65 +264,65 @@ define("#widget/1.0.0/widget-debug", ["./daparser-debug", "./auto-render-debug",
 
     // 注册事件代理
     delegateEvents: function(events, handler) {
-      events || (events = getEvents(this));
-      if (!events) return;
+      events || (events = getEvents(this))
+      if (!events) return
 
       // 允许使用：widget.delegateEvents('click p', function(ev) { ... })
       if (isString(events) && isFunction(handler)) {
-        var o = {};
-        o[events] = handler;
-        events = o;
+        var o = {}
+        o[events] = handler
+        events = o
       }
 
       // key 为 'event selector'
       for (var key in events) {
-        if (!events.hasOwnProperty(key)) continue;
+        if (!events.hasOwnProperty(key)) continue
 
-        var args = parseEventKey(key, this);
-        var eventType = args.type;
-        var selector = args.selector;
+        var args = parseEventKey(key, this)
+        var eventType = args.type
+        var selector = args.selector
 
-        (function(handler, widget) {
+        ;(function(handler, widget) {
 
           var callback = function(ev) {
             if (isFunction(handler)) {
-              handler.call(widget, ev);
+              handler.call(widget, ev)
             } else {
-              widget[handler](ev);
+              widget[handler](ev)
             }
-          };
+          }
 
           // delegate
           if (selector) {
-            widget.element.on(eventType, selector, callback);
+            widget.element.on(eventType, selector, callback)
           }
           // normal bind
           // 分开写是为了兼容 zepto，zepto 的判断不如 jquery 强劲有力
           else {
-            widget.element.on(eventType, callback);
+            widget.element.on(eventType, callback)
           }
 
-        })(events[key], this);
+        })(events[key], this)
       }
 
-      return this;
+      return this
     },
 
     // 卸载事件代理
     undelegateEvents: function(eventKey) {
-      var args = {};
+      var args = {}
 
       // 卸载所有
       if (arguments.length === 0) {
-        args.type = DELEGATE_EVENT_NS + this.cid;
+        args.type = DELEGATE_EVENT_NS + this.cid
       }
-      // 卸载特定类型：widget.undelegateEvents('click li');
+      // 卸载特定类型：widget.undelegateEvents('click li')
       else {
-        args = parseEventKey(eventKey, this);
+        args = parseEventKey(eventKey, this)
       }
 
-      this.element.off(args.type, args.selector);
-      return this;
+      this.element.off(args.type, args.selector)
+      return this
     },
 
     // 提供给子类覆盖的初始化方法
@@ -336,167 +336,167 @@ define("#widget/1.0.0/widget-debug", ["./daparser-debug", "./auto-render-debug",
 
       // 让渲染相关属性的初始值生效，并绑定到 change 事件
       if (!this.rendered) {
-        this._renderAndBindAttrs();
-        this.rendered = true;
+        this._renderAndBindAttrs()
+        this.rendered = true
       }
 
       // 插入到文档流中
-      var parentNode = this.get('parentNode');
+      var parentNode = this.get('parentNode')
       if (parentNode && !isInDocument(this.element[0])) {
-        this.element.appendTo(parentNode);
+        this.element.appendTo(parentNode)
       }
 
-      return this;
+      return this
     },
 
     // 让属性的初始值生效，并绑定到 change:attr 事件上
     _renderAndBindAttrs: function() {
-      var widget = this;
-      var attrs = widget.attrs;
+      var widget = this
+      var attrs = widget.attrs
 
       for (var attr in attrs) {
-        if (!attrs.hasOwnProperty(attr)) continue;
-        var m = ON_RENDER + ucfirst(attr);
+        if (!attrs.hasOwnProperty(attr)) continue
+        var m = ON_RENDER + ucfirst(attr)
 
         if (this[m]) {
-          var val = this.get(attr);
+          var val = this.get(attr)
 
           // 让属性的初始值生效。注：默认空值不触发
           if (!isEmptyAttrValue(val)) {
-            this[m](val, undefined, attr);
+            this[m](val, undefined, attr)
           }
 
           // 将 _onRenderXx 自动绑定到 change:xx 事件上
           (function(m) {
             widget.on('change:' + attr, function(val, prev, key) {
-              widget[m](val, prev, key);
-            });
-          })(m);
+              widget[m](val, prev, key)
+            })
+          })(m)
         }
       }
     },
 
     _onRenderId: function(val) {
-      this.element.attr('id', val);
+      this.element.attr('id', val)
     },
 
     _onRenderClassName: function(val) {
-      this.element.addClass(val);
+      this.element.addClass(val)
     },
 
     _onRenderStyle: function(val) {
-      this.element.css(val);
+      this.element.css(val)
     },
 
     // 在 this.element 内寻找匹配节点
     $: function(selector) {
-      return this.element.find(selector);
+      return this.element.find(selector)
     },
 
     destroy: function() {
-      this.undelegateEvents();
-      Widget.superclass.destroy.call(this);
+      this.undelegateEvents()
+      Widget.superclass.destroy.call(this)
     }
-  });
+  })
 
-  Widget.autoRender = AutoRender.autoRender;
-  Widget.autoRenderAll = AutoRender.autoRenderAll;
-  Widget.StaticsWhiteList = ['autoRender'];
+  Widget.autoRender = AutoRender.autoRender
+  Widget.autoRenderAll = AutoRender.autoRenderAll
+  Widget.StaticsWhiteList = ['autoRender']
 
-  module.exports = Widget;
+  module.exports = Widget
 
 
   // Helpers
   // ------
 
-  var toString = Object.prototype.toString;
-  var cidCounter = 0;
+  var toString = Object.prototype.toString
+  var cidCounter = 0
 
   function uniqueCid() {
-    return 'widget-' + cidCounter++;
+    return 'widget-' + cidCounter++
   }
 
   function isString(val) {
-    return toString.call(val) === '[object String]';
+    return toString.call(val) === '[object String]'
   }
 
   function isFunction(val) {
-    return toString.call(val) === '[object Function]';
+    return toString.call(val) === '[object Function]'
   }
 
   function isEmptyObject(o) {
     for (var p in o) {
-      if (o.hasOwnProperty(p)) return false;
+      if (o.hasOwnProperty(p)) return false
     }
-    return true;
+    return true
   }
 
   // Zepto 上没有 contains 方法
   var contains = $.contains || function(a, b) {
     //noinspection JSBitwiseOperatorUsage
-    return !!(a.compareDocumentPosition(b) & 16);
-  };
+    return !!(a.compareDocumentPosition(b) & 16)
+  }
 
   function isInDocument(element) {
-    return contains(document.documentElement, element);
+    return contains(document.documentElement, element)
   }
 
   function ucfirst(str) {
-    return str.charAt(0).toUpperCase() + str.substring(1);
+    return str.charAt(0).toUpperCase() + str.substring(1)
   }
 
 
-  var EVENT_KEY_SPLITTER = /^(\S+)\s*(.*)$/;
-  var EXPRESSION_FLAG = /{{([^}]+)}}/g;
-  var INVALID_SELECTOR = 'INVALID_SELECTOR';
+  var EVENT_KEY_SPLITTER = /^(\S+)\s*(.*)$/
+  var EXPRESSION_FLAG = /{{([^}]+)}}/g
+  var INVALID_SELECTOR = 'INVALID_SELECTOR'
 
   function getEvents(widget) {
     if (isFunction(widget.events)) {
-      widget.events = widget.events();
+      widget.events = widget.events()
     }
-    return widget.events;
+    return widget.events
   }
 
   function parseEventKey(eventKey, widget) {
-    var match = eventKey.match(EVENT_KEY_SPLITTER);
-    var eventType = match[1] + DELEGATE_EVENT_NS + widget.cid;
+    var match = eventKey.match(EVENT_KEY_SPLITTER)
+    var eventType = match[1] + DELEGATE_EVENT_NS + widget.cid
 
     // 当没有 selector 时，需要设置为 undefined，以使得 zepto 能正确转换为 bind
-    var selector = match[2] || undefined;
+    var selector = match[2] || undefined
 
     if (selector && selector.indexOf('{{') > -1) {
-      selector = parseExpressionInEventKey(selector, widget);
+      selector = parseExpressionInEventKey(selector, widget)
     }
 
     return {
       type: eventType,
       selector: selector
-    };
+    }
   }
 
   // 解析 eventKey 中的 {{xx}}, {{yy}}
   function parseExpressionInEventKey(selector, widget) {
 
     return selector.replace(EXPRESSION_FLAG, function(m, name) {
-      var parts = name.split('.');
-      var point = widget, part;
+      var parts = name.split('.')
+      var point = widget, part
 
       while (part = parts.shift()) {
         if (point === widget.attrs) {
-          point = widget.get(part);
+          point = widget.get(part)
         } else {
-          point = point[part];
+          point = point[part]
         }
       }
 
       // 已经是 className，比如来自 dataset 的
       if (isString(point)) {
-        return point;
+        return point
       }
 
       // 不能识别的，返回无效标识
-      return INVALID_SELECTOR;
-    });
+      return INVALID_SELECTOR
+    })
   }
 
 

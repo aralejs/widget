@@ -1,17 +1,17 @@
 define(function(require) {
 
-  var Widget = require('../src/widget');
-  var Templatable = require('../src/templatable');
+  var Widget = require('../src/widget')
+  var Templatable = require('../src/templatable')
 
-  var Handlebars = require('handlebars');
-  var $ = require('$');
+  var Handlebars = require('handlebars')
+  var $ = require('$')
 
 
   describe('Templatable', function() {
 
     var TemplatableWidget = Widget.extend({
       Implements: Templatable
-    });
+    })
 
     test('normal usage', function() {
 
@@ -21,21 +21,21 @@ define(function(require) {
           title: 'Big Bang',
           content: 'It is very cool.'
         }
-      });
+      })
 
-      expect(widget.$('h3').text()).toBe('Big Bang');
-      expect(widget.$('p').text()).toBe('It is very cool.');
-    });
+      expect(widget.$('h3').text()).toBe('Big Bang')
+      expect(widget.$('p').text()).toBe('It is very cool.')
+    })
 
     test('Handlebars helpers', function() {
 
       var TestWidget = TemplatableWidget.extend({
         templateHelpers: {
           'link': function(obj) {
-            return new Handlebars.SafeString('<a href="' + obj.href + '">' + obj.text + '</a>');
+            return new Handlebars.SafeString('<a href="' + obj.href + '">' + obj.text + '</a>')
           }
         }
-      });
+      })
 
       var widget = new TestWidget({
         template: '<p>{{link item}}</p>',
@@ -45,10 +45,10 @@ define(function(require) {
             text: 'google'
           }
         }
-      });
+      })
 
       expect(widget.element.html().toLowerCase()).toBe('<a href="http://google.com/">google</a>')
-    });
+    })
 
     test('renderPartial', function() {
 
@@ -58,18 +58,18 @@ define(function(require) {
           title: 'This is a title',
           content: 'This is content'
         }
-      });
+      })
 
-      t.render();
-      expect($('#t')[0]).toBe(t.element[0]);
+      t.render()
+      expect($('#t')[0]).toBe(t.element[0])
 
-      t.model = { title: 'xxx' };
-      t.renderPartial('h3');
-      expect(t.$('h3').html()).toBe('xxx');
+      t.model = { title: 'xxx' }
+      t.renderPartial('h3')
+      expect(t.$('h3').html()).toBe('xxx')
 
       // destroy
-      t.element.remove();
-    });
+      t.element.remove()
+    })
 
     test('template expression in invalid place', function() {
 
@@ -79,28 +79,28 @@ define(function(require) {
           xx: 'xx',
           items: [1, 2, 3, 4, 5, 6, 7, 8, 9]
         }
-      });
+      })
 
-      t.render();
-      expect($('#t tbody td').length).toBe(10);
-      expect($('#t tbody td').eq(1).hasClass('item-1')).toBe(true);
-      expect($('#t tbody td').eq(0).html()).toBe('&lt;!--xx--&gt;');
+      t.render()
+      expect($('#t tbody td').length).toBe(10)
+      expect($('#t tbody td').eq(1).hasClass('item-1')).toBe(true)
+      expect($('#t tbody td').eq(0).html()).toBe('&lt;!--xx--&gt;')
 
-      t.model = { xx: 'xx', items: [1, 2, 3, 4, 5] };
-      t.renderPartial('tbody tr');
+      t.model = { xx: 'xx', items: [1, 2, 3, 4, 5] }
+      t.renderPartial('tbody tr')
 
-      expect($('#t tbody td').length).toBe(6);
-      expect($('#t tbody td').eq(1).hasClass('item-1')).toBe(true);
-      expect($('#t tbody td').eq(0).html()).toBe('&lt;!--xx--&gt;');
+      expect($('#t tbody td').length).toBe(6)
+      expect($('#t tbody td').eq(1).hasClass('item-1')).toBe(true)
+      expect($('#t tbody td').eq(0).html()).toBe('&lt;!--xx--&gt;')
 
       // destroy
-      t.element.remove();
-    });
+      t.element.remove()
+    })
 
     test('model.toJSON()', function() {
 
       var A = TemplatableWidget.extend({
-      });
+      })
 
       var a = new A({
         template: '<div>{{content}}</div>',
@@ -111,11 +111,11 @@ define(function(require) {
             }
           }
         }
-      });
+      })
 
-      a.render();
-      expect(a.element.html()).toBe('xx');
-    });
+      a.render()
+      expect(a.element.html()).toBe('xx')
+    })
 
     test('#10: src expression in template string', function() {
 
@@ -126,22 +126,22 @@ define(function(require) {
           content: 'This is content',
           src: "https://i.alipayobjects.com/e/201207/36PCiRAolN.jpg"
         }
-      });
+      })
 
-      t.render();
+      t.render()
 
       // 这个测试要看下 Network 面板，看是否有无效的图片请求
-      t.model.content = 'content 2';
-      t.renderPartial('div.content');
+      t.model.content = 'content 2'
+      t.renderPartial('div.content')
 
-      expect(t.$('div.content').html().indexOf('content 2') === 0).toBe(true);
-      expect(t.$('div.content').html().indexOf('img') > 0).toBe(true);
+      expect(t.$('div.content').html().indexOf('content 2') === 0).toBe(true)
+      expect(t.$('div.content').html().indexOf('img') > 0).toBe(true)
 
-    });
+    })
 
     test('#7: render twice', function() {
 
-      var n = 0;
+      var n = 0
 
       var WidgetA = TemplatableWidget.extend({
         attrs: {
@@ -149,9 +149,9 @@ define(function(require) {
         },
 
         _onRenderContent: function(val) {
-          n++;
-          this.model.content = val;
-          this.renderPartial('div.content');
+          n++
+          this.model.content = val
+          this.renderPartial('div.content')
         },
 
         template: '<div id="t7"><h3>{{title}}</h3><div class="content">{{content}}</div></div>',
@@ -160,21 +160,21 @@ define(function(require) {
           title: 'This is a title',
           content: 'This is content'
         }
-      });
+      })
 
-      var t = new WidgetA({ content: '2' });
+      var t = new WidgetA({ content: '2' })
 
-      t.render();
-      expect(n).toBe(1);
+      t.render()
+      expect(n).toBe(1)
 
-      t.set('content', '2');
-      expect(n).toBe(1);
+      t.set('content', '2')
+      expect(n).toBe(1)
 
-      t.set('content', '3');
-      expect(n).toBe(2);
+      t.set('content', '3')
+      expect(n).toBe(2)
 
-    });
+    })
 
-  });
+  })
 
 });
