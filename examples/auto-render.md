@@ -1,17 +1,9 @@
 
-## 加载器配置
-
-首先，页面中要加载 `sea.js`，并配置好别名：
-
-````javascript
+<script>
 seajs.config({
     'widget': '../src/widget'
-});
-````
-
-注意：实际使用时，别名值需要修改为实际路径，比如 `{ 'widget': '1.0.0' }`
-
----
+})
+</script>
 
 <style>
 .box {
@@ -35,15 +27,6 @@ seajs.config({
 
 ### HTML
 
-
-<div id="example1" data-widget="widget" data-class-name="box">
-I am a box.
-</div>
-
-<div data-widget="widget" class="box example">
-I am a box too.
-</div>
-
 ````html
 <div id="example1" data-widget="widget" data-class-name="box">
 I am a box.
@@ -56,7 +39,7 @@ I am a box too.
 
 ### JavaScript
 
-````javascript
+````js
 //一般放置在页尾：
 seajs.use(['widget', 'jquery'], function(Widget, $) {
 

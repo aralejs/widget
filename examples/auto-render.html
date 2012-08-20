@@ -6,8 +6,8 @@
 <title>Widget</title>
 <link rel="stylesheet" href="http://aralejs.org/assets/base.css">
 <link rel="stylesheet" href="http://aralejs.org/assets/style.css">
-
 <script src="http://seajs.org/dist/sea.js"></script>
+
 <script src="http://aralejs.org/tools/seajs-helper.js"></script>
 
 <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
 
         <nav role="navigation" id="nav">
             <a class="icon-home" title="Home" href="/" id="logo">Home</a>
-            <a class="icon-github" href="https://github.com/aralejs/widget">Code</a>
+            <a id="code-link" class="icon-github" href="https://github.com/aralejs/widget">Code</a>
         </nav>
     </div>
 </header>
@@ -47,21 +47,11 @@
 </nav>
 
 <div class="markdown-body">
-    <h2>加载器配置</h2>
-<p>首先，页面中要加载 <code>sea.js</code>，并配置好别名：</p>
-<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">config</span><span class="p">({</span>
-    <span class="s1">&#39;widget&#39;</span><span class="o">:</span> <span class="s1">&#39;../src/widget&#39;</span>
-<span class="p">});</span>
-</pre></div>
-
-<script type="text/javascript">
+    <script>
 seajs.config({
     'widget': '../src/widget'
-});
+})
 </script>
-<p>注意：实际使用时，别名值需要修改为实际路径，比如 <code>{ &#39;widget&#39;: &#39;1.0.0&#39; }</code></p>
-
-<hr/>
 
 <style>
 .box {
@@ -88,6 +78,7 @@ I am a box.
 <div data-widget="widget" class="box example">
 I am a box too.
 </div>
+
 <div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;example1&quot;</span> <span class="na">data-widget=</span><span class="s">&quot;widget&quot;</span> <span class="na">data-class-name=</span><span class="s">&quot;box&quot;</span><span class="nt">&gt;</span>
 I am a box.
 <span class="nt">&lt;/div&gt;</span>
@@ -98,6 +89,29 @@ I am a box too.
 </pre></div>
 
 <h3>JavaScript</h3>
+
+<script>
+//一般放置在页尾：
+seajs.use(['widget', 'jquery'], function(Widget, $) {
+
+    // 使用 autoRenderAll 自动渲染所有页面组件
+    Widget.autoRenderAll(function() {
+
+        // 使用 query 方法获取到与指定 DOM 节点相关联的 Widget 实例
+        var example1 = Widget.query('#example1')
+
+        // 对实例进行一些操作
+        example1.element.html('I am rendered automatically.')
+
+        // 操作第二个实例
+        var example2 = Widget.query('div.example')
+
+        // 操作下
+        example2.element.html('I am rendered automatically too.')
+    })
+
+});
+</script>
 <div class="highlight"><pre><span class="c1">//一般放置在页尾：</span>
 <span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;widget&#39;</span><span class="p">,</span> <span class="s1">&#39;jquery&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Widget</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
 
@@ -120,29 +134,6 @@ I am a box too.
 <span class="p">});</span>
 </pre></div>
 
-<script type="text/javascript">
-//一般放置在页尾：
-seajs.use(['widget', 'jquery'], function(Widget, $) {
-
-    // 使用 autoRenderAll 自动渲染所有页面组件
-    Widget.autoRenderAll(function() {
-
-        // 使用 query 方法获取到与指定 DOM 节点相关联的 Widget 实例
-        var example1 = Widget.query('#example1')
-
-        // 对实例进行一些操作
-        example1.element.html('I am rendered automatically.')
-
-        // 操作第二个实例
-        var example2 = Widget.query('div.example')
-
-        // 操作下
-        example2.element.html('I am rendered automatically too.')
-    })
-
-});
-</script>
-
 </div>
 
     </div>
@@ -150,5 +141,8 @@ seajs.use(['widget', 'jquery'], function(Widget, $) {
 <hr class="end">
 <link rel="stylesheet" href="http://aralejs.org/assets/pygments.css">
 <link rel="stylesheet" href="http://aralejs.org/assets/fontawesome/css/font-awesome.css">
+<script>
+    seajs.use('http://aralejs.org/tools/nico-helper.js');
+</script>
 </body>
 </html>

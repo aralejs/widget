@@ -1,18 +1,10 @@
 
-## 加载器配置
-
-首先，页面中要加载 `sea.js`，并配置好别名：
-
-````javascript
+<script>
 seajs.config({
     'widget': '../src/widget',
     'templatable': '../src/templatable'
-});
-````
-
-注意：实际使用时，别名值需要修改为实际路径，比如 `{ 'templatable': 'widget/1.0.0/templatable' }`
-
----
+})
+</script>
 
 <style>
     .widget {
@@ -54,11 +46,6 @@ seajs.config({
 
 ### HTML
 
-<div id="example1" class="example widget">
-    <h3>我是标题，请点击我一下。</h3>
-    <p>我是段落，请将鼠标悬浮在我上面，我会变色的。</p>
-</div>
-
 ````html
 <div id="example1" class="example widget">
     <h3>我是标题，请点击我一下。</h3>
@@ -68,7 +55,7 @@ seajs.config({
 
 ### JavaScript
 
-````javascript
+````js
 seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
 
     var WidgetA = Widget.extend({
@@ -97,9 +84,6 @@ seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templat
 
 ### HTML
 
-<div id="example2" class="example">
-</div>
-
 ````html
 <div id="example2" class="example">
 </div>
@@ -107,7 +91,7 @@ seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templat
 
 ### JavaScript
 
-````javascript
+````js
 seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
 
     var WidgetB = Widget.extend({
@@ -175,7 +159,7 @@ seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templat
 
 ### JavaScript
 
-````javascript
+````js
 seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
 
     var WidgetC = Widget.extend({

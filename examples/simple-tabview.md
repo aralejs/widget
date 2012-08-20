@@ -1,17 +1,9 @@
 
-## 加载器配置
-
-首先，页面中要加载 `sea.js`，并配置好别名：
-
-````javascript
+<script>
 seajs.config({
     'widget': '../src/widget'
-});
-````
-
-注意：实际使用时，别名值需要修改为实际路径，比如 `{ 'widget': '1.0.0' }`
-
----
+})
+</script>
 
 <style>
     #simple-tabs {
@@ -58,20 +50,6 @@ seajs.config({
 
 ### HTML
 
-<div id="demo">
-    <ul class="nav">
-        <li>开放</li>
-        <li>简单</li>
-        <li>易用</li>
-    </ul>
-    <div class="content">
-        <div>开源开放，海纳百川。</div>
-        <div>如无必要，勿增实体。</div>
-        <div>一目了然，容易学习。</div>
-    </div>
-</div>
-<button id="egg">手贱</button>
-
 ````html
 <div id="demo">
     <ul class="nav">
@@ -90,7 +68,7 @@ seajs.config({
 
 ### JavaScript
 
-````javascript
+````js
 seajs.use(['widget', 'jquery'], function(Widget, $) {
 
     // 基于 Widget 定义 SimpleTabView 组件
