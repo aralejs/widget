@@ -1,35 +1,40 @@
-<!DOCTYPE HTML>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Widget</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-        <link rel="stylesheet" href="http://aralejs.github.com/assets/base.css" />
-        <link rel="stylesheet" href="http://aralejs.github.com/assets/style.css" />
-        <link rel="stylesheet" href="http://aralejs.github.com/assets/pygments.css" />
-        <script src="https://a.alipayobjects.com/static/arale/seajs/1.2.0/sea.js"></script>
-        
-<script src="http://aralejs.github.com/tools/seajs-help.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+<title>Widget</title>
+<link rel="stylesheet" href="http://aralejs.org/assets/base.css">
+<link rel="stylesheet" href="http://aralejs.org/assets/style.css">
+<script src="http://seajs.org/dist/sea.js"></script>
 
-        <!--[if lt IE 9]>
-        <script type="text/javascript" src="http://aralejs.github.com/assets/html5shiv.js"></script>
-        <![endif]-->
-    </head>
-    <body>
-        <header id="header">
-            <h1 id="brand"><a href="http://aralejs.org/">Arale</a></h1>
-            <nav id="nav" role="navigation">
-                <a href="../">Widget</a>
-                <a href="../examples/">Examples</a>
-                
-                
-                <a id="nav-test" href="../tests/runner.html">Tests</a>
-                
-            </nav>
-        </header>
+<script src="http://aralejs.org/tools/seajs-helper.js"></script>
 
-        <div id="main">
-            <div class="container">
+<!--[if lt IE 9]>
+<script src="http://aralejs.org/assets/html5shiv.js"></script>
+<![endif]-->
+</head>
+<body>
+<header id="header">
+    <div class="container fn-clear">
+
+    <a href="../" >Widget</a>
+    <a href="../examples/" class="current">Examples</a>
+    
+    
+    <a id="nav-test" href="../tests/runner.html">Tests</a>
+    
+
+
+        <nav role="navigation" id="nav">
+            <a class="icon-home" title="Home" href="/" id="logo">Home</a>
+            <a id="code-link" class="icon-github" href="https://github.com/aralejs/widget">Code</a>
+        </nav>
+    </div>
+</header>
+
+<div id="main">
+    <div class="container">
 
 <nav id="side-nav">
     
@@ -39,7 +44,8 @@
     
 </nav>
 
-<style>
+<div class="markdown-body">
+    <style>
     .widget {
         zoom: 1;
         display: inline;
@@ -104,34 +110,6 @@
 <span class="p">});</span>
 </pre></div>
 
-<script type="text/javascript">
-seajs.use(['../src/widget', '../src/templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
-
-    // for debug
-    this.$ = $;
-
-    // example1: 简单的事件代理
-    // -------------------------------
-    var WidgetA = Widget.extend({
-
-        events: {
-            'click h3': 'heading',
-            'mouseover p': 'paragraph'
-        },
-
-        heading: function() {
-            this.$('h3').html('标题被点击了。');
-        },
-
-        paragraph: function() {
-            this.$('p').css('background-color', 'red');
-        }
-    });
-
-    var a = new WidgetA({ element: '#a' });
-});
-</script>
-
 <div id="example2" class="example">
 
 </div>
@@ -180,53 +158,6 @@ seajs.use(['../src/widget', '../src/templatable', 'handlebars', '$'], function(W
     <span class="p">}).</span><span class="nx">render</span><span class="p">();</span>
 <span class="p">});</span>
 </pre></div>
-
-<script type="text/javascript">
-seajs.use(['../src/widget', '../src/templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
-
-    // for debug
-    this.$ = $;
-
-    // example2: template widget
-    // ---------------------------------
-    var WidgetB = Widget.extend({
-
-        Implements: Templatable,
-
-        attrs: {
-            template: '<div id="b" class="widget"><h3>{{title}}</h3><p>{{content}}</p></div>'
-        },
-
-        model: {
-            title: '我是默认标题',
-            content: '我是默认内容'
-        },
-
-        events: {
-            'click': 'animate'
-        },
-
-        animate: function() {
-            this.$('p').slideToggle('slow');
-        },
-
-        setup: function() {
-            this.$('p').css({
-                'height': 100,
-                'padding': 20,
-                'backgroundColor': '#eee'
-            });
-        }
-    });
-
-    var b = new WidgetB({
-        model: {
-            content: '我是传入的内容，点击我试试'
-        },
-        parentNode: '#example2'
-    }).render();
-});
-</script>
 
 <div id="example3" class="example">
     <script id="template-c" type="text/x-handlebars-template">
@@ -302,73 +233,6 @@ seajs.use(['../src/widget', '../src/templatable', 'handlebars', '$'], function(W
 <span class="p">});</span>
 </pre></div>
 
-<script type="text/javascript">
-seajs.use(['../src/widget', '../src/templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
-
-    // for debug
-    this.$ = $;
-
-    // example3: Handlebars.registerHelper
-    // ---------------------------------------
-    var WidgetC = Widget.extend({
-
-        Implements: Templatable,
-
-        events: {
-            'click li .remove': 'remove'
-        },
-
-        templateHelpers: {
-            'list': function(items) {
-                var out = '';
-
-                for (var i = 0, len = items.length; i < len; i++) {
-                    var item = items[i];
-                    out += '<li><a href="' + item.href + '">' +
-                            item.text +
-                            '</a><a href="#" class="remove">X</a></li>';
-                }
-
-                return new Handlebars.SafeString(out);
-            }
-        },
-
-        remove: function(event) {
-            event.preventDefault();
-            $(event.target).parent().remove();
-        },
-
-        setup: function() {
-            if (this.get('style')) {
-                this.element.attr('style', this.get('style'));
-            }
-
-            if (this.get('className')) {
-                this.element.addClass(this.get('className'));
-            }
-        }
-
-    });
-
-    var c = new WidgetC({
-        className: 'widget',
-        titleClassName: 'title',
-        style: 'width: 300px',
-        model: {
-            title: "精品文章列表",
-            items: [
-                { "href": "http://google.com/", "text": "爱的力量" },
-                { "href": "http://google.com/", "text": "天下武功，唯快不破" },
-                { "href": "http://google.com/", "text": "开放的意义" },
-                { "href": "http://google.com/", "text": "Arale 棒棒的" }
-            ]
-        },
-        template: $('#template-c').html(),
-        parentNode: '#example3'
-    }).render();
-});
-</script>
-
 <div id="example4" class="example">
     <script id="template-d" type="text/x-handlebars-template">
         <div id="d" class="widget">
@@ -423,53 +287,15 @@ seajs.use(['../src/widget', '../src/templatable', 'handlebars', '$'], function(W
 <span class="p">});</span>
 </pre></div>
 
-<script type="text/javascript">
-seajs.use(['../src/widget', '../src/templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
+</div>
 
-    // for debug
-    this.$ = $;
-
-    // example4: parse data-api
-    // ---------------------------------------
-    var WidgetD = Widget.extend({
-
-        Implements: Templatable,
-
-        toggle: function() {
-            this.$('ol').slideToggle('slow');
-        },
-
-        focus: function() {
-            this.$('ol').css('backgroundColor', '#eee');
-        },
-
-        blur: function() {
-            this.$('ol').css('backgroundColor', '');
-        }
-    });
-
-    var d = new WidgetD({
-        template: $('#template-d').html(),
-
-        model: {
-            title: "设计原则（点击我）",
-            list: [
-                {"text": "开放：开源开放，海纳百川。（悬浮上来）"},
-                {"text": "简单：如无必要，勿增实体。"},
-                {"text": "易用：一目了然，容易学习。"}
-            ]
-        },
-
-        parentNode: '#example4'
-
-    }).render();
-});
+    </div>
+</div>
+<hr class="end">
+<link rel="stylesheet" href="http://aralejs.org/assets/pygments.css">
+<link rel="stylesheet" href="http://aralejs.org/assets/fontawesome/css/font-awesome.css">
+<script>
+    seajs.use('http://aralejs.org/tools/nico-helper.js');
 </script>
-
-
-            </div>
-        </div>
-        <hr class="end" />
-        <a id="github" href="https://github.com/aralejs/widget" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0; z-index:999" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
-    </body>
+</body>
 </html>
