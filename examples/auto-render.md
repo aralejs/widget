@@ -1,10 +1,4 @@
 
-<script>
-seajs.config({
-    'widget': '../src/widget'
-})
-</script>
-
 <style>
 .box {
         zoom: 1;

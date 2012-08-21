@@ -1,11 +1,4 @@
 
-<script>
-seajs.config({
-    'widget': '../src/widget',
-    'templatable': '../src/templatable'
-})
-</script>
-
 <style>
     .widget {
         zoom: 1;
