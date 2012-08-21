@@ -38,6 +38,8 @@
 
 <nav id="side-nav">
     
+    <a href="../examples/auto-render.html">auto-render</a>
+    
     <a href="../examples/index.html">index</a>
     
     <a href="../examples/simple-tabview.html">simple-tabview</a>
@@ -45,7 +47,14 @@
 </nav>
 
 <div class="markdown-body">
-    <style>
+    <script>
+seajs.config({
+    'widget': '../src/widget',
+    'templatable': '../src/templatable'
+})
+</script>
+
+<style>
     .widget {
         zoom: 1;
         display: inline;
@@ -79,17 +88,47 @@
     }
 </style>
 
-<div id="a" class="widget">
+<h2>示例一：Events Delegation</h2>
+
+<h3>HTML</h3>
+
+<div id="example1" class="example widget">
     <h3>我是标题，请点击我一下。</h3>
     <p>我是段落，请将鼠标悬浮在我上面，我会变色的。</p>
 </div>
-<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;../src/widget&#39;</span><span class="p">,</span> <span class="s1">&#39;../src/templatable&#39;</span><span class="p">,</span> <span class="s1">&#39;handlebars&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Widget</span><span class="p">,</span> <span class="nx">Templatable</span><span class="p">,</span> <span class="nx">Handlebars</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="c1">// for debug</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">$</span> <span class="o">=</span> <span class="nx">$</span><span class="p">;</span>
+<div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;example1&quot;</span> <span class="na">class=</span><span class="s">&quot;example widget&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h3&gt;</span>我是标题，请点击我一下。<span class="nt">&lt;/h3&gt;</span>
+    <span class="nt">&lt;p&gt;</span>我是段落，请将鼠标悬浮在我上面，我会变色的。<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
 
-    <span class="c1">// example1: 简单的事件代理</span>
-    <span class="c1">// -------------------------------</span>
+<h3>JavaScript</h3>
+
+<script>
+seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
+
+    var WidgetA = Widget.extend({
+
+        events: {
+            'click h3': 'heading',
+            'mouseover p': 'paragraph'
+        },
+
+        heading: function() {
+            this.$('h3').html('标题被点击了。');
+        },
+
+        paragraph: function() {
+            this.$('p').css('background-color', 'red');
+        }
+    });
+
+    var a = new WidgetA({ element: '#example1' });
+});
+</script>
+<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;widget&#39;</span><span class="p">,</span> <span class="s1">&#39;templatable&#39;</span><span class="p">,</span> <span class="s1">&#39;handlebars&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Widget</span><span class="p">,</span> <span class="nx">Templatable</span><span class="p">,</span> <span class="nx">Handlebars</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+
     <span class="kd">var</span> <span class="nx">WidgetA</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
 
         <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
@@ -106,27 +145,69 @@
         <span class="p">}</span>
     <span class="p">});</span>
 
-    <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WidgetA</span><span class="p">({</span> <span class="nx">element</span><span class="o">:</span> <span class="s1">&#39;#a&#39;</span> <span class="p">});</span>
+    <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WidgetA</span><span class="p">({</span> <span class="nx">element</span><span class="o">:</span> <span class="s1">&#39;#example1&#39;</span> <span class="p">});</span>
 <span class="p">});</span>
 </pre></div>
 
+<h2>示例二：Templatable Widget</h2>
+
+<h3>HTML</h3>
+
 <div id="example2" class="example">
-
 </div>
-<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;../src/widget&#39;</span><span class="p">,</span> <span class="s1">&#39;../src/templatable&#39;</span><span class="p">,</span> <span class="s1">&#39;handlebars&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Widget</span><span class="p">,</span> <span class="nx">Templatable</span><span class="p">,</span> <span class="nx">Handlebars</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="c1">// for debug</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">$</span> <span class="o">=</span> <span class="nx">$</span><span class="p">;</span>
+<div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;example2&quot;</span> <span class="na">class=</span><span class="s">&quot;example&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
 
-    <span class="c1">// example2: template widget</span>
-    <span class="c1">// ---------------------------------</span>
+<h3>JavaScript</h3>
+
+<script>
+seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
+
+    var WidgetB = Widget.extend({
+
+        Implements: Templatable,
+
+        template: '<div id="b" class="widget"><h3>{{title}}</h3><p>{{content}}</p></div>',
+
+        model: {
+            title: '我是默认标题',
+            content: '我是默认内容'
+        },
+
+        events: {
+            'click': 'animate'
+        },
+
+        animate: function() {
+            this.$('p').slideToggle('slow');
+        },
+
+        setup: function() {
+            this.$('p').css({
+                'height': 100,
+                'padding': 20,
+                'backgroundColor': '#eee'
+            });
+        }
+    });
+
+    var b = new WidgetB({
+        model: {
+            content: '我是传入的内容，点击我试试'
+        },
+        parentNode: '#example2'
+    }).render();
+});
+</script>
+<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;widget&#39;</span><span class="p">,</span> <span class="s1">&#39;templatable&#39;</span><span class="p">,</span> <span class="s1">&#39;handlebars&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Widget</span><span class="p">,</span> <span class="nx">Templatable</span><span class="p">,</span> <span class="nx">Handlebars</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+
     <span class="kd">var</span> <span class="nx">WidgetB</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
 
         <span class="nx">Implements</span><span class="o">:</span> <span class="nx">Templatable</span><span class="p">,</span>
 
-        <span class="nx">attrs</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;div id=&quot;b&quot; class=&quot;widget&quot;&gt;&lt;h3&gt;{{title}}&lt;/h3&gt;&lt;p&gt;{{content}}&lt;/p&gt;&lt;/div&gt;&#39;</span>
-        <span class="p">},</span>
+        <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;div id=&quot;b&quot; class=&quot;widget&quot;&gt;&lt;h3&gt;{{title}}&lt;/h3&gt;&lt;p&gt;{{content}}&lt;/p&gt;&lt;/div&gt;&#39;</span><span class="p">,</span>
 
         <span class="nx">model</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;我是默认标题&#39;</span><span class="p">,</span>
@@ -159,6 +240,10 @@
 <span class="p">});</span>
 </pre></div>
 
+<h2>示例三：Template Helpers</h2>
+
+<h3>HTML</h3>
+
 <div id="example3" class="example">
     <script id="template-c" type="text/x-handlebars-template">
         <div>
@@ -167,19 +252,98 @@
         </div>
     </script>
 </div>
-<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;../src/widget&#39;</span><span class="p">,</span> <span class="s1">&#39;../src/templatable&#39;</span><span class="p">,</span> <span class="s1">&#39;handlebars&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Widget</span><span class="p">,</span> <span class="nx">Templatable</span><span class="p">,</span> <span class="nx">Handlebars</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="c1">// for debug</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">$</span> <span class="o">=</span> <span class="nx">$</span><span class="p">;</span>
+<pre><code>&lt;div id=&quot;example3&quot; class=&quot;example&quot;&gt;
+    &lt;script id=&quot;template-c&quot; type=&quot;text/x-handlebars-template&quot;&gt;
+        &lt;div&gt;
+            &lt;h3&gt;{{title}}&lt;/h3&gt;
+            &lt;ul&gt;{{list items}}&lt;/ul&gt;
+        &lt;/div&gt;
+    &lt;/script&gt;
+&lt;/div&gt;</code></pre>
 
-    <span class="c1">// example3: Handlebars.registerHelper</span>
-    <span class="c1">// ---------------------------------------</span>
+<h3>JavaScript</h3>
+
+<script>
+seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
+
+    var WidgetC = Widget.extend({
+
+        Implements: Templatable,
+
+        events: {
+            'click li .remove': 'remove',
+            'click h3': 'toggle',
+            'mouseenter ul': 'focus',
+            'mouseleave ul': 'blur'
+        },
+
+        templateHelpers: {
+            'list': function(items) {
+                var out = '';
+
+                for (var i = 0, len = items.length; i < len; i++) {
+                    var item = items[i];
+                    out += '<li>' + item.text +
+                           '<a href="#" class="remove">X</a></li>';
+                }
+
+                return new Handlebars.SafeString(out);
+            }
+        },
+
+        remove: function(event) {
+            event.preventDefault();
+            $(event.target).parent().remove();
+        },
+
+        toggle: function() {
+            this.$('ul').slideToggle('slow');
+        },
+
+        focus: function() {
+            this.$('ul').css('backgroundColor', '#eee');
+        },
+
+        blur: function() {
+            this.$('ul').css('backgroundColor', '');
+        },
+
+        setup: function() {
+            this.element.attr('style', this.get('style'));
+            this.element.addClass(this.get('className'));
+        }
+
+    });
+
+    var c = new WidgetC({
+        className: 'widget',
+        titleClassName: 'title',
+        style: 'width: 350px',
+        model: {
+            title: "设计原则（点击我）",
+            items: [
+                { "text": "开放：开源开放，海纳百川。（悬浮上来）" },
+                { "text": "简单：如无必要，勿增实体。" },
+                { "text": "易用：一目了然，容易学习。" }
+            ]
+        },
+        template: $('#template-c').html(),
+        parentNode: '#example3'
+    }).render();
+});
+</script>
+<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;widget&#39;</span><span class="p">,</span> <span class="s1">&#39;templatable&#39;</span><span class="p">,</span> <span class="s1">&#39;handlebars&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Widget</span><span class="p">,</span> <span class="nx">Templatable</span><span class="p">,</span> <span class="nx">Handlebars</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+
     <span class="kd">var</span> <span class="nx">WidgetC</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
 
         <span class="nx">Implements</span><span class="o">:</span> <span class="nx">Templatable</span><span class="p">,</span>
 
         <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s1">&#39;click li .remove&#39;</span><span class="o">:</span> <span class="s1">&#39;remove&#39;</span>
+            <span class="s1">&#39;click li .remove&#39;</span><span class="o">:</span> <span class="s1">&#39;remove&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;click h3&#39;</span><span class="o">:</span> <span class="s1">&#39;toggle&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;mouseenter ul&#39;</span><span class="o">:</span> <span class="s1">&#39;focus&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;mouseleave ul&#39;</span><span class="o">:</span> <span class="s1">&#39;blur&#39;</span>
         <span class="p">},</span>
 
         <span class="nx">templateHelpers</span><span class="o">:</span> <span class="p">{</span>
@@ -188,9 +352,8 @@
 
                 <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                     <span class="kd">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                    <span class="nx">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;li&gt;&lt;a href=&quot;&#39;</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">href</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
-                            <span class="nx">item</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span>
-                            <span class="s1">&#39;&lt;/a&gt;&lt;a href=&quot;#&quot; class=&quot;remove&quot;&gt;X&lt;/a&gt;&lt;/li&gt;&#39;</span><span class="p">;</span>
+                    <span class="nx">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;li&gt;&#39;</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span>
+                           <span class="s1">&#39;&lt;a href=&quot;#&quot; class=&quot;remove&quot;&gt;X&lt;/a&gt;&lt;/li&gt;&#39;</span><span class="p">;</span>
                 <span class="p">}</span>
 
                 <span class="k">return</span> <span class="k">new</span> <span class="nx">Handlebars</span><span class="p">.</span><span class="nx">SafeString</span><span class="p">(</span><span class="nx">out</span><span class="p">);</span>
@@ -202,14 +365,21 @@
             <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">remove</span><span class="p">();</span>
         <span class="p">},</span>
 
-        <span class="nx">setup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">));</span>
-            <span class="p">}</span>
+        <span class="nx">toggle</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;ul&#39;</span><span class="p">).</span><span class="nx">slideToggle</span><span class="p">(</span><span class="s1">&#39;slow&#39;</span><span class="p">);</span>
+        <span class="p">},</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;className&#39;</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;className&#39;</span><span class="p">));</span>
-            <span class="p">}</span>
+        <span class="nx">focus</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;ul&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;backgroundColor&#39;</span><span class="p">,</span> <span class="s1">&#39;#eee&#39;</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="nx">blur</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;ul&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;backgroundColor&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="nx">setup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;className&#39;</span><span class="p">));</span>
         <span class="p">}</span>
 
     <span class="p">});</span>
@@ -217,72 +387,17 @@
     <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WidgetC</span><span class="p">({</span>
         <span class="nx">className</span><span class="o">:</span> <span class="s1">&#39;widget&#39;</span><span class="p">,</span>
         <span class="nx">titleClassName</span><span class="o">:</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span>
-        <span class="nx">style</span><span class="o">:</span> <span class="s1">&#39;width: 300px&#39;</span><span class="p">,</span>
+        <span class="nx">style</span><span class="o">:</span> <span class="s1">&#39;width: 350px&#39;</span><span class="p">,</span>
         <span class="nx">model</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;精品文章列表&quot;</span><span class="p">,</span>
+            <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;设计原则（点击我）&quot;</span><span class="p">,</span>
             <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
-                <span class="p">{</span> <span class="s2">&quot;href&quot;</span><span class="o">:</span> <span class="s2">&quot;http://google.com/&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;爱的力量&quot;</span> <span class="p">},</span>
-                <span class="p">{</span> <span class="s2">&quot;href&quot;</span><span class="o">:</span> <span class="s2">&quot;http://google.com/&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;天下武功，唯快不破&quot;</span> <span class="p">},</span>
-                <span class="p">{</span> <span class="s2">&quot;href&quot;</span><span class="o">:</span> <span class="s2">&quot;http://google.com/&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;开放的意义&quot;</span> <span class="p">},</span>
-                <span class="p">{</span> <span class="s2">&quot;href&quot;</span><span class="o">:</span> <span class="s2">&quot;http://google.com/&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;Arale 棒棒的&quot;</span> <span class="p">}</span>
+                <span class="p">{</span> <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;开放：开源开放，海纳百川。（悬浮上来）&quot;</span> <span class="p">},</span>
+                <span class="p">{</span> <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;简单：如无必要，勿增实体。&quot;</span> <span class="p">},</span>
+                <span class="p">{</span> <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;易用：一目了然，容易学习。&quot;</span> <span class="p">}</span>
             <span class="p">]</span>
         <span class="p">},</span>
         <span class="nx">template</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#template-c&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(),</span>
         <span class="nx">parentNode</span><span class="o">:</span> <span class="s1">&#39;#example3&#39;</span>
-    <span class="p">}).</span><span class="nx">render</span><span class="p">();</span>
-<span class="p">});</span>
-</pre></div>
-
-<div id="example4" class="example">
-    <script id="template-d" type="text/x-handlebars-template">
-        <div id="d" class="widget">
-            <h3 data-action="click toggle">{{title}}</h3>
-            <ol data-action="mouseenter focus, mouseleave blur">
-                {{#list}}
-                <li>{{text}}</li>
-                {{/list}}
-            </ol>
-        </div>
-    </script>
-</div>
-<div class="highlight"><pre><span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;../src/widget&#39;</span><span class="p">,</span> <span class="s1">&#39;../src/templatable&#39;</span><span class="p">,</span> <span class="s1">&#39;handlebars&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Widget</span><span class="p">,</span> <span class="nx">Templatable</span><span class="p">,</span> <span class="nx">Handlebars</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
-
-    <span class="c1">// for debug</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">$</span> <span class="o">=</span> <span class="nx">$</span><span class="p">;</span>
-
-    <span class="c1">// example4: parse data-api</span>
-    <span class="c1">// ---------------------------------------</span>
-    <span class="kd">var</span> <span class="nx">WidgetD</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-
-        <span class="nx">Implements</span><span class="o">:</span> <span class="nx">Templatable</span><span class="p">,</span>
-
-        <span class="nx">toggle</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;ol&#39;</span><span class="p">).</span><span class="nx">slideToggle</span><span class="p">(</span><span class="s1">&#39;slow&#39;</span><span class="p">);</span>
-        <span class="p">},</span>
-
-        <span class="nx">focus</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;ol&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;backgroundColor&#39;</span><span class="p">,</span> <span class="s1">&#39;#eee&#39;</span><span class="p">);</span>
-        <span class="p">},</span>
-
-        <span class="nx">blur</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;ol&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;backgroundColor&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">});</span>
-
-    <span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WidgetD</span><span class="p">({</span>
-        <span class="nx">template</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#template-d&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(),</span>
-
-        <span class="nx">model</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;设计原则（点击我）&quot;</span><span class="p">,</span>
-            <span class="nx">list</span><span class="o">:</span> <span class="p">[</span>
-                <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;开放：开源开放，海纳百川。（悬浮上来）&quot;</span><span class="p">},</span>
-                <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;简单：如无必要，勿增实体。&quot;</span><span class="p">},</span>
-                <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;易用：一目了然，容易学习。&quot;</span><span class="p">}</span>
-            <span class="p">]</span>
-        <span class="p">},</span>
-
-        <span class="nx">parentNode</span><span class="o">:</span> <span class="s1">&#39;#example4&#39;</span>
-
     <span class="p">}).</span><span class="nx">render</span><span class="p">();</span>
 <span class="p">});</span>
 </pre></div>

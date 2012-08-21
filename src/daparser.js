@@ -1,177 +1,93 @@
-define(function(require, exports) {
+define(function(require, DAParser) {
 
-    // DAParser
-    // --------
-    // data api 解析器，提供对 block 块和单个 element 的解析，并可用来自动初始化页面中
-    // 的所有 Widget 组件。
+  // DAParser
+  // --------
+  // data api 解析器，提供对单个 element 的解析，可用来初始化页面中的所有 Widget 组件。
 
-
-    var $ = require('$');
-    var ATTR_DA_CID = 'data-daparser-cid';
-    var DAParser = exports;
+  var $ = require('$')
 
 
-    // 输入是 DOM element，假设 html 为
-    //
-    //   <div data-widget="Dialog">
-    //     <h3 data-role="title">...</h3>
-    //     <ul data-role="content">
-    //       <li data-role="item">...</li>
-    //       <li data-role="item">...</li>
-    //     </ul>
-    //     <span data-action="click close">X</span>
-    //   </div>
-    //
-    // 输出是
-    //
-    //  {
-    //     "widget": { "Dialog": ".daparser-0" }
-    //     "role": {
-    //        "title": ".daparser-1",
-    //        "content": ".daparser-2",
-    //        "role": ".daparser-3,.daparser-4",
-    //     },
-    //     "action": {
-    //        "click close": ".daparser-5"
-    //     }
-    //  }
-    //
-    // 有 data-* 的节点，会自动加上 class="daparser-n"
-    //
-    DAParser.parseBlock = function(root) {
-        root = $(root)[0];
-        var stringMap = {};
+  // 得到某个 DOM 元素的 dataset
+  DAParser.parseElement = function(element, raw) {
+    element = $(element)[0]
+    var dataset = {}
 
-        // 快速判断 dataset 是否为空，减少无 data-* 时的性能损耗
-        if (!hasDataAttrs(root)) return stringMap;
+    // ref: https://developer.mozilla.org/en/DOM/element.dataset
+    if (element.dataset) {
+      // 转换成普通对象
+      dataset = $.extend({}, element.dataset)
+    }
+    else {
+      var attrs = element.attributes
 
-        var elements = makeArray(root.getElementsByTagName('*'));
-        elements.unshift(root);
+      for (var i = 0, len = attrs.length; i < len; i++) {
+        var attr = attrs[i]
+        var name = attr.name
 
-        for (var i = 0, len = elements.length; i < len; i++) {
-            var element = elements[i];
-            var dataset = DAParser.parseElement(element);
-            var cid = element.getAttribute(ATTR_DA_CID);
-
-            for (var key in dataset) {
-
-                // 给 dataset 不为空的元素设置 uid
-                if (!cid) {
-                    cid = DAParser.stamp(element);
-                }
-
-                var val = dataset[key];
-                var o = stringMap[key] || (stringMap[key] = {});
-
-                // 用 selector 的形式存储
-                o[val] || (o[val] = '');
-                o[val] += (o[val] ? ',' : '') + '.' + cid;
-            }
+        if (name.indexOf('data-') === 0) {
+          name = camelCase(name.substring(5))
+          dataset[name] = attr.value
         }
-
-        return stringMap;
-    };
-
-
-    // 得到某个 DOM 元素的 dataset
-    DAParser.parseElement = function(element) {
-        element = $(element)[0];
-
-        // ref: https://developer.mozilla.org/en/DOM/element.dataset
-        if (element.dataset) {
-            // 转换成普通对象返回
-            return $.extend({}, element.dataset);
-        }
-
-        var dataset = {};
-        var attrs = element.attributes;
-
-        for (var i = 0, len = attrs.length; i < len; i++) {
-            var attr = attrs[i];
-            var name = attr.name;
-
-            if (name.indexOf('data-') === 0) {
-                name = camelCase(name.substring(5));
-                dataset[name] = attr.value;
-            }
-        }
-
-        return dataset;
-    };
-
-
-    // 给 DOM 元素添加具有唯一性质的 className
-    DAParser.stamp = function(element) {
-        element = $(element)[0];
-        var cid = element.getAttribute(ATTR_DA_CID);
-
-        if (!cid) {
-            cid = uniqueId();
-            element.setAttribute(ATTR_DA_CID, cid);
-            element.className += ' ' + cid;
-        }
-        return cid;
-    };
-
-
-    // Helpers
-    // ------
-
-    function makeArray(o) {
-        var arr = [];
-
-        for (var i = 0, len = o.length; i < len; i++) {
-            var node = o[i];
-
-            // 过滤掉注释等节点
-            if (node.nodeType === 1) {
-                arr.push(node);
-            }
-        }
-
-        return arr;
+      }
     }
 
+    return raw === true ? dataset : normalizeValues(dataset)
+  }
 
-    function hasDataAttrs(element) {
-        var outerHTML = element.outerHTML;
 
-        // 大部分浏览器已经支持 outerHTML
-        if (outerHTML) {
-            return outerHTML.indexOf(' data-') !== -1;
+  // Helpers
+  // ------
+
+  var RE_DASH_WORD = /-([a-z])/g
+  var JSON_LITERAL_PATTERN = /^\s*[\[{].*[\]}]\s*$/
+  var parseJSON = this.JSON ? JSON.parse : $.parseJSON
+
+  // 仅处理字母开头的，其他情况转换为小写："data-x-y-123-_A" --> xY-123-_a
+  function camelCase(str) {
+    return str.toLowerCase().replace(RE_DASH_WORD, function(all, letter) {
+      return (letter + '').toUpperCase()
+    })
+  }
+
+  // 解析并归一化配置中的值
+  function normalizeValues(data) {
+    for (var key in data) {
+      if (data.hasOwnProperty(key)) {
+
+        var val = data[key]
+        if (typeof val !== 'string') continue
+
+        if (JSON_LITERAL_PATTERN.test(val)) {
+          val = val.replace(/'/g, '"')
+          data[key] = normalizeValues(parseJSON(val))
         }
-
-        // 看子元素里是否有 data-*
-        var innerHTML = element.innerHTML;
-        if (innerHTML && innerHTML.indexOf(' data-') !== -1) {
-            return true;
+        else {
+          data[key] = normalizeValue(val)
         }
-
-        // 判断自己是否有 data-*
-        var dataset = DAParser.parseElement(element);
-        //noinspection JSUnusedLocalSymbols
-        for (var p in dataset) {
-            return true;
-        }
-
-        return false;
+      }
     }
 
+    return data
+  }
 
-    // 仅处理字母开头的，其他情况仅作小写转换："data-x-y-123-_A" --> xY-123-_a
-    var RE_DASH_WORD = /-([a-z])/g;
-
-    function camelCase(str) {
-        return str.toLowerCase().replace(RE_DASH_WORD, function(all, letter) {
-            return (letter + '').toUpperCase();
-        });
+  // 将 'false' 转换为 false
+  // 'true' 转换为 true
+  // '3253.34' 转换为 3253.34
+  function normalizeValue(val) {
+    if (val.toLowerCase() === 'false') {
+      val = false
+    }
+    else if (val.toLowerCase() === 'true') {
+      val = true
+    }
+    else if (/\d/.test(val) && /[^a-z]/i.test(val)) {
+      var number = parseFloat(val)
+      if (number + '' === val) {
+        val = number
+      }
     }
 
-
-    var idCounter = 0;
-
-    function uniqueId() {
-        return 'daparser-' + idCounter++;
-    }
+    return val
+  }
 
 });

@@ -1,14 +1,18 @@
 {
-    "name": "widget",
-    "version": "0.9.17",
-    "dependencies": {
-        "$": "$",
-        "handlebars": "1.0.0",
-        "base": "0.9.16"
-    },
-    "output": {
-        "widget.js": ".",
-        "templatable.js": "."
-    },
-    "tests": ["daparser", "widget", "templatable"]
+  "name": "widget",
+  "version": "1.1.0-dev",
+  "dependencies": {
+    "$": "$",
+    "handlebars": "1.0.0",
+    "base": "1.0.0"
+  },
+  "output": {
+    "widget.js": ".",
+    "templatable.js": "."
+  },
+  "tests": [
+    "daparser",
+    "widget",
+    "templatable"
+  ]
 }
