@@ -1,4 +1,4 @@
-define("#widget/1.0.0/templatable-debug", ["$-debug", "#handlebars/1.0.0/handlebars-debug"], function(require, exports, module) {
+define("#widget/1.0.1/templatable-debug", ["$-debug", "#handlebars/1.0.0/handlebars-debug"], function(require, exports, module) {
 
   var $ = require('$-debug')
   var Handlebars = require('#handlebars/1.0.0/handlebars-debug')
@@ -87,13 +87,13 @@ define("#widget/1.0.0/templatable-debug", ["$-debug", "#handlebars/1.0.0/handleb
         .replace(/({[^}]+}})/g, '<!--$1-->')
         // 替换 src="{{xxx}}" 为 data-TEMPLATABLE-src="{{xxx}}"
         .replace(/\s(src|href)\s*=\s*(['"])(.*?\{.+?)\2/g,
-        ' data-TEMPLATABLE-$1=$2$3$2')
+        ' data-templatable-$1=$2$3$2')
   }
 
   function decode(template) {
     return template
         .replace(/(?:<|&lt;)!--({{[^}]+}})--(?:>|&gt;)/g, '$1')
-        .replace(/data-TEMPLATABLE-/g, '')
+        .replace(/data-templatable-/ig, '')
   }
 
 });
