@@ -1,4 +1,4 @@
-define("#widget/1.0.1/templatable-debug", ["$-debug", "#handlebars/1.0.0/handlebars-debug"], function(require, exports, module) {
+define("#widget/1.0.2/templatable-debug", ["$-debug", "#handlebars/1.0.0/handlebars-debug"], function(require, exports, module) {
 
   var $ = require('$-debug')
   var Handlebars = require('#handlebars/1.0.0/handlebars-debug')
