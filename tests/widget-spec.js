@@ -565,6 +565,36 @@ define(function(require) {
       expect($('#test1 div').html()).toBe('')
     })
 
+    test('override object in prototype', function() {
+
+      var B = Widget.extend({
+        o: { p1: '1' }
+      })
+
+      var C = B.extend({
+        o: { p2: '2' }
+      })
+
+      var c = new C()
+      expect(c.o.p1).toBe(undefined)
+      expect(c.o.p2).toBe('2')
+    })
+
+    test('mix events object in prototype', function() {
+
+      var B = Widget.extend({
+        events: { p1: '1' }
+      })
+
+      var C = B.extend({
+        events: { p2: '2' }
+      })
+
+      var c = new C()
+      expect(c.events.p1).toBe('1')
+      expect(c.events.p2).toBe('2')
+    })
+
   })
 
 
