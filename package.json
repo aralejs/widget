@@ -1,6 +1,7 @@
 {
   "name": "widget",
   "version": "1.0.2",
+  "tag": "infrastructure",
   "dependencies": {
     "$": "$",
     "handlebars": "1.0.0",
