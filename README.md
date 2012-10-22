@@ -6,14 +6,6 @@ Widget 是 UI 组件的基础类，约定了组件的基本生命周期，实现
 
 ---
 
-
-## 模块依赖
-
- - seajs
- - $
- - handlebars
- - [base](http://aralejs.org/base/)
-
 **注**：Handlebars 依赖仅在混入 `Templatable` 后才产生。
 
 
@@ -303,20 +295,3 @@ myWidget.render();
 
 默认无需覆盖。需要覆盖时，请使用 `return this` 来保持该方法的链式约定。
 
-
-## 演示页面
-
- - <http://aralejs.org/widget/examples/index.html>
- - <http://aralejs.org/widget/examples/simple-tabview.html>
-
-
-## 测试用例
-
- - <http://aralejs.org/widget/tests/runner.html>
-
-
-## 交流讨论
-
-欢迎创建
-[GitHub Issue](https://github.com/aralejs/widget/issues/new)
-来提交反馈。

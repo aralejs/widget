@@ -1,56 +1,44 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
-<title>Widget</title>
-<link rel="stylesheet" href="http://aralejs.org/assets/base.css">
-<link rel="stylesheet" href="http://aralejs.org/assets/style.css">
-<link rel="stylesheet" href="http://aralejs.org/assets/pygments.css">
-<script src="http://seajs.org/dist/sea.js"></script>
-<script src="http://aralejs.org/tools/seajs-helper.js"></script>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <title>Widget - 基本的事件操作</title><link rel="stylesheet" href="http://alipay.github.com/liquidluck-theme-arale/assets/app.min.css">
+    <link rel="shortcut icon" href="http://alipay.github.com/liquidluck-theme-arale/assets/favicon.ico" type="image/x-icon" />
+    <script src="http://seajs.org/dist/sea.js"></script>
+    <script src="http://alipay.github.com/liquidluck-theme-arale/tools/arale-helper.js"></script>
+    <!--[if lt IE 9]>
+      <script src="http://alipay.github.com/liquidluck-theme-arale/assets/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <header id="header">
+      <div class="container">
+        <a title="Home" class="icon-home" href="/" id="logo">Arale</a>
+        <div class="wrapper fn-clear">
+          
+          <nav class="global-nav" role="navigation">
+            <ul class="fn-clear">
+              <li class="developer-guides"><a href="/developer-guides/">开发指南</a></li>
+              <li class="user-guides"><a href="/components/">组件文档</a> • <a style="padding-left:0;" href="/mapping.html">Map</a></li>
+            </ul>
+          </nav>
+          <nav class="top-nav" role="navigation">
+            <ul class="fn-clear">
+              <li class="first"><a target="_blank" href="http://seajs.org">SeaJS</a></li>
+              <li class="last"><a target="_blank" href="https://github.com/seajs/spm/wiki">SPM</a></li>
+            </ul>
+          </nav>
+          
+        </div>
+      </div>
+    </header>
 
-
-<!--[if lt IE 9]>
-<script src="http://aralejs.org/assets/html5shiv.js"></script>
-<![endif]-->
-</head>
-<body>
-<header id="header">
-    <div class="container fn-clear">
-
-    <a href="../" >Widget</a>
-    <a href="../examples/" class="current">演示</a>
-    
-    
-    <a id="nav-test" href="../tests/runner.html">用例</a>
-    
-
-
-        <nav role="navigation" id="nav">
-            <a title="Home" class="icon-home" href="/" id="logo">首页</a>
-            <a id="code-link" class="icon-github" href="https://github.com/aralejs/widget">源码</a>
-        </nav>
-    </div>
-</header>
-
-<div id="main">
-    <div class="container">
-<div class="document-body">
-  
-  <nav id="side-nav">
-    
-    <a href="../examples/auto-render.html">auto-render</a>
-    
-    <a href="../examples/index.html">index</a>
-    
-    <a href="../examples/simple-tabview.html">simple-tabview</a>
-    
-  </nav>
-  
-
-  <div class="markdown-body">
-    <style>
+    <div id="main">
+      <div class="container fn-clear">
+<div class="markdown-body">
+  <h1 class="entry-title"><a id="back-to-module" href="../">Widget</a> - 基本的事件操作</h1>
+  <style>
     .widget {
         zoom: 1;
         display: inline;
@@ -84,22 +72,22 @@
     }
 </style>
 
-<h2>示例一：Events Delegation</h2>
+<h2 id="toc_0">示例一：Events Delegation</h2>
 
-<h3>HTML</h3>
+<h3 id="toc_1">HTML</h3>
 
-<div id="example1" class="example widget">
+<div class="insert-code"><div id="example1" class="example widget">
     <h3>我是标题，请点击我一下。</h3>
     <p>我是段落，请将鼠标悬浮在我上面，我会变色的。</p>
 </div>
-
+</div>
 <div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;example1&quot;</span> <span class="na">class=</span><span class="s">&quot;example widget&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;h3&gt;</span>我是标题，请点击我一下。<span class="nt">&lt;/h3&gt;</span>
     <span class="nt">&lt;p&gt;</span>我是段落，请将鼠标悬浮在我上面，我会变色的。<span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 </pre></div>
 
-<h3>JavaScript</h3>
+<h3 id="toc_2">JavaScript</h3>
 
 <script>
 seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
@@ -145,18 +133,18 @@ seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templat
 <span class="p">});</span>
 </pre></div>
 
-<h2>示例二：Templatable Widget</h2>
+<h2 id="toc_3">示例二：Templatable Widget</h2>
 
-<h3>HTML</h3>
+<h3 id="toc_4">HTML</h3>
 
-<div id="example2" class="example">
+<div class="insert-code"><div id="example2" class="example">
 </div>
-
+</div>
 <div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;example2&quot;</span> <span class="na">class=</span><span class="s">&quot;example&quot;</span><span class="nt">&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 </pre></div>
 
-<h3>JavaScript</h3>
+<h3 id="toc_5">JavaScript</h3>
 
 <script>
 seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
@@ -236,9 +224,9 @@ seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templat
 <span class="p">});</span>
 </pre></div>
 
-<h2>示例三：Template Helpers</h2>
+<h2 id="toc_6">示例三：Template Helpers</h2>
 
-<h3>HTML</h3>
+<h3 id="toc_7">HTML</h3>
 
 <div id="example3" class="example">
     <script id="template-c" type="text/x-handlebars-template">
@@ -258,7 +246,7 @@ seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templat
     &lt;/script&gt;
 &lt;/div&gt;</code></pre>
 
-<h3>JavaScript</h3>
+<h3 id="toc_8">JavaScript</h3>
 
 <script>
 seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templatable, Handlebars, $) {
@@ -398,12 +386,18 @@ seajs.use(['widget', 'templatable', 'handlebars', '$'], function(Widget, Templat
 <span class="p">});</span>
 </pre></div>
 
-  </div>
 </div>
-
+<div class="sidebar sidebar-components"></div>
+      </div>
     </div>
-</div>
-<hr class="end">
-<script src="http://aralejs.org/tools/nico-helper.js"></script>
-</body>
+
+    <footer id="footer">
+      <div class="container">
+        <div class="copyright">
+          <p>&copy; 2012 aralejs.org</p>
+          <p>除非另有声明，本站所有代码遵循 MIT 协议</p>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>

@@ -1,64 +1,63 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
-<title>Widget</title>
-<link rel="stylesheet" href="http://aralejs.org/assets/base.css">
-<link rel="stylesheet" href="http://aralejs.org/assets/style.css">
-<link rel="stylesheet" href="http://aralejs.org/assets/pygments.css">
-<script src="http://seajs.org/dist/sea.js"></script>
-<script src="http://aralejs.org/tools/seajs-helper.js"></script>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <title>Widget</title><link rel="stylesheet" href="http://alipay.github.com/liquidluck-theme-arale/assets/app.min.css">
+    <link rel="shortcut icon" href="http://alipay.github.com/liquidluck-theme-arale/assets/favicon.ico" type="image/x-icon" />
+    <script src="http://seajs.org/dist/sea.js"></script>
+    <script src="http://alipay.github.com/liquidluck-theme-arale/tools/arale-helper.js"></script>
+    <!--[if lt IE 9]>
+      <script src="http://alipay.github.com/liquidluck-theme-arale/assets/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <header id="header">
+      <div class="container">
+        <a title="Home" class="icon-home" href="/" id="logo">Arale</a>
+        <div class="wrapper fn-clear">
+          
+          <nav class="global-nav" role="navigation">
+            <ul class="fn-clear">
+              <li class="developer-guides"><a href="/developer-guides/">开发指南</a></li>
+              <li class="user-guides"><a href="/components/">组件文档</a> • <a style="padding-left:0;" href="/mapping.html">Map</a></li>
+            </ul>
+          </nav>
+          <nav class="top-nav" role="navigation">
+            <ul class="fn-clear">
+              <li class="first"><a target="_blank" href="http://seajs.org">SeaJS</a></li>
+              <li class="last"><a target="_blank" href="https://github.com/seajs/spm/wiki">SPM</a></li>
+            </ul>
+          </nav>
+          
+        </div>
+      </div>
+    </header>
 
-
-<!--[if lt IE 9]>
-<script src="http://aralejs.org/assets/html5shiv.js"></script>
-<![endif]-->
-</head>
-<body>
-<header id="header">
-    <div class="container fn-clear">
-
-    <a href="./"  class="current">Widget</a>
-    <a href="./examples/" >演示</a>
-    
-    
-    <a id="nav-test" href="./tests/runner.html">用例</a>
-    
-
-
-        <nav role="navigation" id="nav">
-            <a title="Home" class="icon-home" href="/" id="logo">首页</a>
-            <a id="code-link" class="icon-github" href="https://github.com/aralejs/widget">源码</a>
-        </nav>
-    </div>
-</header>
-
-<div id="main">
-    <div class="container">
-<div class="document-body">
+    <div id="main">
+      <div class="container fn-clear">
+<div class="markdown-body">
+  <h1 class="entry-title">Widget</h1>
+  <div class="other-info">
+    <a href="history.html">历史</a>
+    <a target="_blank" href="https://github.com/aralejs/widget/">源码</a>
+  </div>
+  <p class="entry-description">Widget 是 UI 组件的基础类，约定了组件的基本生命周期，实现了一些通用功能。基于 Widget 可以构建出任何你想要的 Web 界面组件。</p>
+  <p class="entry-cdn" data-name="widget"></p>
   
+  <hr />
 
-  <div class="markdown-body">
-    <h1>Widget</h1>
-<p>Widget 是 UI 组件的基础类，约定了组件的基本生命周期，实现了一些通用功能。基于 Widget
-可以构建出任何你想要的 Web 界面组件。</p>
-
-<hr/>
-
-<h2>模块依赖</h2>
-
+  
+<h2>演示</h2>
 <ul>
-<li>seajs</li>
-<li>$</li>
-<li>handlebars</li>
-<li><a href="http://aralejs.org/base/">base</a></li>
-</ul>
-<p><strong>注</strong>：Handlebars 依赖仅在混入 <code>Templatable</code> 后才产生。</p>
+  <li><a href="./examples/">基本的事件操作</a></li>
+  <li><a href="./examples/auto-render.html">自动渲染</a></li>
+  <li><a href="./examples/simple-tabview.html">简单的 TabView</a></li>
+</ul><p><strong>注</strong>：Handlebars 依赖仅在混入 <code>Templatable</code> 后才产生。</p>
 
-<h2>使用说明</h2>
+<h2 id="toc_0">使用说明</h2>
 
-<h3>extend <code>Widget.extend(properties)</code></h3>
+<h3 id="toc_1">extend <code>Widget.extend(properties)</code></h3>
 <p>使用 <code>extend</code> 方法，可以基于 <code>Widget</code> 来创建子类。</p>
 <div class="highlight"><pre><span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">require</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">module</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">Widget</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;widget&#39;</span><span class="p">);</span>
@@ -80,7 +79,7 @@
 </pre></div>
 <p>详细示例请访问：<a href="http://aralejs.org/widget/examples/simple-tabview.html">simple-tabview.html</a></p>
 
-<h3>initialize <code>new Widget([config])</code></h3>
+<h3 id="toc_2">initialize <code>new Widget([config])</code></h3>
 <p>Widget 实例化时，会调用此方法。</p>
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Widget</span><span class="p">({</span>
    <span class="nx">element</span><span class="o">:</span> <span class="s1">&#39;#demo&#39;</span><span class="p">,</span>
@@ -110,7 +109,7 @@
 </pre></div>
 <p>下面逐一讲述。</p>
 
-<h3>initAttrs <code>widget.initAttrs(config, [dataAttrsConfig])</code></h3>
+<h3 id="toc_3">initAttrs <code>widget.initAttrs(config, [dataAttrsConfig])</code></h3>
 <p>属性的初始化方法。通过该方法，会将用户传入的配置与所继承的默认属性进行合并，并进行初始化操作。</p>
 <p>子类如果想在 <code>initAttrs</code> 执行之前或之后进行一些额外处理，可以覆盖该方法：</p>
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">MyWidget</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
@@ -126,30 +125,30 @@
 </pre></div>
 <p><strong>注意</strong>：一般情况下不需要覆盖 <code>initAttrs</code>。</p>
 
-<h3>parseElement <code>widget.parseElement()</code></h3>
+<h3 id="toc_4">parseElement <code>widget.parseElement()</code></h3>
 <p>该方法只干一件事：根据配置信息，构建好 <code>this.element</code>。</p>
 <p>默认情况下，如果 <code>config</code> 参数中传入了 <code>element</code> 属性（取值可为 DOM element / selector），
 会直接根据该属性来获取 <code>this.element</code> 对象。</p>
 <p><code>this.element</code> 是一个 jQuery / Zepto 对象。</p>
 
-<h3>parseElementFromTemplate <code>widget.parseElementFromTemplate()</code></h3>
+<h3 id="toc_5">parseElementFromTemplate <code>widget.parseElementFromTemplate()</code></h3>
 <p>如果 <code>config</code> 参数中未传入 <code>element</code> 属性，则会根据 <code>template</code> 属性来构建
 <code>this.element</code>。 默认的 <code>template</code> 是 <code>&lt;div&gt;&lt;/div&gt;</code>。</p>
 <p>子类可覆盖该方法，以支持 Handlebars、Mustache 等模板引擎。</p>
 
-<h3>element <code>widget.element</code></h3>
+<h3 id="toc_6">element <code>widget.element</code></h3>
 <p>widget 实例对应的 DOM 根节点，是一个 jQuery / Zepto 对象。</p>
 
-<h3>initProps <code>widget.initProps()</code></h3>
+<h3 id="toc_7">initProps <code>widget.initProps()</code></h3>
 <p>properties 的初始化方法，提供给子类覆盖，比如：</p>
 <div class="highlight"><pre><span class="nx">initProps</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">targetElement</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">));</span>
 <span class="p">}</span>
 </pre></div>
 
-<h3>delegateEvents <code>widget.delegateEvents([events])</code></h3>
+<h3 id="toc_8">delegateEvents <code>widget.delegateEvents([events])</code></h3>
 
-<h3>delegateEvents <code>widget.delegateEvents(eventType, handler)</code></h3>
+<h3 id="toc_9">delegateEvents <code>widget.delegateEvents(eventType, handler)</code></h3>
 <p>注册事件代理。在 Widget 组件的设计里，推荐使用代理的方式来注册事件。这样可以使得对应的
 DOM 内容有修改时，无需重新绑定。</p>
 <p><code>widget.delegateEvents()</code> 会在实例初始化时自动调用，这时会从 <code>this.events</code> 中取得声明的代理事件，比如</p>
@@ -203,10 +202,10 @@ DOM 内容有修改时，无需重新绑定。</p>
 <span class="p">});</span>
 </pre></div>
 
-<h3>undelegateEvents <code>widget.undelegateEvents([eventType])</code></h3>
+<h3 id="toc_10">undelegateEvents <code>widget.undelegateEvents([eventType])</code></h3>
 <p>卸载事件代理。不带参数时，表示卸载所有事件。</p>
 
-<h3>setup <code>widget.setup()</code></h3>
+<h3 id="toc_11">setup <code>widget.setup()</code></h3>
 <p>提供给子类覆盖的初始化方法。可以在此处理更多初始化信息，比如</p>
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TabView</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
     <span class="p">...</span>
@@ -217,27 +216,27 @@ DOM 内容有修改时，无需重新绑定。</p>
 <span class="p">});</span>
 </pre></div>
 
-<h3>render <code>widget.render()</code></h3>
+<h3 id="toc_12">render <code>widget.render()</code></h3>
 <p>提供给子类覆盖的初始化方法。render 方法只干一件事件：将 <code>this.element</code> 渲染到页面上。</p>
 <p>默认无需覆盖。需要覆盖时，请使用 <code>return this</code> 来保持该方法的链式约定。</p>
 
-<h3>$ <code>widget.$(selector)</code></h3>
+<h3 id="toc_13">$ <code>widget.$(selector)</code></h3>
 <p>在 <code>this.element</code> 内查找匹配节点。</p>
 
-<h3>destroy <code>widget.destroy()</code></h3>
+<h3 id="toc_14">destroy <code>widget.destroy()</code></h3>
 <p>销毁实例。</p>
 
-<h3>on <code>widget.on(event, callback, [context])</code></h3>
+<h3 id="toc_15">on <code>widget.on(event, callback, [context])</code></h3>
 <p>这是从 Events 中自动混入进来的方法。还包括 <code>off</code> 和 <code>trigger</code>。</p>
 <p>具体使用请参考 <a href="http://aralejs.org/events/">events 使用文档</a>。</p>
 
-<h3>autoRenderAll <code>Widget.autoRenderAll([root], [callback])</code></h3>
+<h3 id="toc_16">autoRenderAll <code>Widget.autoRenderAll([root], [callback])</code></h3>
 <p>根据 data-widget 属性，自动渲染找到的所有 Widget 类组件。</p>
 
-<h3>query <code>Widget.query(selector)</code></h3>
+<h3 id="toc_17">query <code>Widget.query(selector)</code></h3>
 <p>查询与 selector 匹配的第一个 DOM 节点，得到与该 DOM 节点相关联的 Widget 实例。</p>
 
-<h2>Templatable</h2>
+<h2 id="toc_18">Templatable</h2>
 <p>可混入的功能类，提供 Handlebars 模板支持。</p>
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">Templatable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;widget-templatable&#39;</span><span class="p">);</span>
 
@@ -260,34 +259,29 @@ DOM 内容有修改时，无需重新绑定。</p>
 <span class="nx">myWidget</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
 </pre></div>
 
-<h3>renderPartial <code>widget.renderPartial(selector)</code></h3>
+<h3 id="toc_19">renderPartial <code>widget.renderPartial(selector)</code></h3>
 <p>局部渲染。根据传入的 <code>selector</code> 参数，刷新匹配的区域。</p>
 <p>默认无需覆盖。需要覆盖时，请使用 <code>return this</code> 来保持该方法的链式约定。</p>
 
-<h2>演示页面</h2>
 
-<ul>
-<li><a href="http://aralejs.org/widget/examples/index.html">http://aralejs.org/widget/examples/index.html</a></li>
-<li><a href="http://aralejs.org/widget/examples/simple-tabview.html">http://aralejs.org/widget/examples/simple-tabview.html</a></li>
-</ul>
+  <h2>用例</h2>
+  <p><a href="./tests/runner.html">测试用例</a></p>
 
-<h2>测试用例</h2>
-
-<ul>
-<li><a href="http://aralejs.org/widget/tests/runner.html">http://aralejs.org/widget/tests/runner.html</a></li>
-</ul>
-
-<h2>交流讨论</h2>
-<p>欢迎创建
-<a href="https://github.com/aralejs/widget/issues/new">GitHub Issue</a>
-来提交反馈。</p>
-
-  </div>
+  <h2>讨论</h2>
+  <p>有任何疑问，欢迎发送邮件到 <a href="https://groups.google.com/forum/?fromgroups#!forum/aralejs">aralejs@googlegroups.com</a></p>
+  <p>发现 bug？请提交 <a href="https://github.com/aralejs/widget/issues/new">Issue</a></p>
 </div>
-
+<div class="sidebar sidebar-components"></div>
+      </div>
     </div>
-</div>
-<hr class="end">
-<script src="http://aralejs.org/tools/nico-helper.js"></script>
-</body>
+
+    <footer id="footer">
+      <div class="container">
+        <div class="copyright">
+          <p>&copy; 2012 aralejs.org</p>
+          <p>除非另有声明，本站所有代码遵循 MIT 协议</p>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>

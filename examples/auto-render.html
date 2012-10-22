@@ -1,56 +1,44 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
-<title>Widget</title>
-<link rel="stylesheet" href="http://aralejs.org/assets/base.css">
-<link rel="stylesheet" href="http://aralejs.org/assets/style.css">
-<link rel="stylesheet" href="http://aralejs.org/assets/pygments.css">
-<script src="http://seajs.org/dist/sea.js"></script>
-<script src="http://aralejs.org/tools/seajs-helper.js"></script>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <title>Widget - 自动渲染</title><link rel="stylesheet" href="http://alipay.github.com/liquidluck-theme-arale/assets/app.min.css">
+    <link rel="shortcut icon" href="http://alipay.github.com/liquidluck-theme-arale/assets/favicon.ico" type="image/x-icon" />
+    <script src="http://seajs.org/dist/sea.js"></script>
+    <script src="http://alipay.github.com/liquidluck-theme-arale/tools/arale-helper.js"></script>
+    <!--[if lt IE 9]>
+      <script src="http://alipay.github.com/liquidluck-theme-arale/assets/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <header id="header">
+      <div class="container">
+        <a title="Home" class="icon-home" href="/" id="logo">Arale</a>
+        <div class="wrapper fn-clear">
+          
+          <nav class="global-nav" role="navigation">
+            <ul class="fn-clear">
+              <li class="developer-guides"><a href="/developer-guides/">开发指南</a></li>
+              <li class="user-guides"><a href="/components/">组件文档</a> • <a style="padding-left:0;" href="/mapping.html">Map</a></li>
+            </ul>
+          </nav>
+          <nav class="top-nav" role="navigation">
+            <ul class="fn-clear">
+              <li class="first"><a target="_blank" href="http://seajs.org">SeaJS</a></li>
+              <li class="last"><a target="_blank" href="https://github.com/seajs/spm/wiki">SPM</a></li>
+            </ul>
+          </nav>
+          
+        </div>
+      </div>
+    </header>
 
-
-<!--[if lt IE 9]>
-<script src="http://aralejs.org/assets/html5shiv.js"></script>
-<![endif]-->
-</head>
-<body>
-<header id="header">
-    <div class="container fn-clear">
-
-    <a href="../" >Widget</a>
-    <a href="../examples/" class="current">演示</a>
-    
-    
-    <a id="nav-test" href="../tests/runner.html">用例</a>
-    
-
-
-        <nav role="navigation" id="nav">
-            <a title="Home" class="icon-home" href="/" id="logo">首页</a>
-            <a id="code-link" class="icon-github" href="https://github.com/aralejs/widget">源码</a>
-        </nav>
-    </div>
-</header>
-
-<div id="main">
-    <div class="container">
-<div class="document-body">
-  
-  <nav id="side-nav">
-    
-    <a href="../examples/auto-render.html">auto-render</a>
-    
-    <a href="../examples/index.html">index</a>
-    
-    <a href="../examples/simple-tabview.html">simple-tabview</a>
-    
-  </nav>
-  
-
-  <div class="markdown-body">
-    <style>
+    <div id="main">
+      <div class="container fn-clear">
+<div class="markdown-body">
+  <h1 class="entry-title"><a id="back-to-module" href="../">Widget</a> - 自动渲染</h1>
+  <style>
 .box {
         zoom: 1;
         display: inline;
@@ -62,20 +50,20 @@
     }
 </style>
 
-<h2>示例：自动渲染</h2>
+<h2 id="toc_0">示例：自动渲染</h2>
 <p>通过在 HTML 代码结构中添加 <code>data-widget</code> 属性，然后在页尾执行 <code>Widget.autoRenderAll</code>
 方法，可以实现页面组件的自动渲染。</p>
 
-<h3>HTML</h3>
+<h3 id="toc_1">HTML</h3>
 
-<div id="example1" data-widget="widget" data-class-name="box">
+<div class="insert-code"><div id="example1" data-widget="widget" data-class-name="box">
 I am a box.
 </div>
 
 <div data-widget="widget" class="box example">
 I am a box too.
 </div>
-
+</div>
 <div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;example1&quot;</span> <span class="na">data-widget=</span><span class="s">&quot;widget&quot;</span> <span class="na">data-class-name=</span><span class="s">&quot;box&quot;</span><span class="nt">&gt;</span>
 I am a box.
 <span class="nt">&lt;/div&gt;</span>
@@ -85,7 +73,7 @@ I am a box too.
 <span class="nt">&lt;/div&gt;</span>
 </pre></div>
 
-<h3>JavaScript</h3>
+<h3 id="toc_2">JavaScript</h3>
 
 <script>
 //一般放置在页尾：
@@ -131,12 +119,18 @@ seajs.use(['widget', 'jquery'], function(Widget, $) {
 <span class="p">});</span>
 </pre></div>
 
-  </div>
 </div>
-
+<div class="sidebar sidebar-components"></div>
+      </div>
     </div>
-</div>
-<hr class="end">
-<script src="http://aralejs.org/tools/nico-helper.js"></script>
-</body>
+
+    <footer id="footer">
+      <div class="container">
+        <div class="copyright">
+          <p>&copy; 2012 aralejs.org</p>
+          <p>除非另有声明，本站所有代码遵循 MIT 协议</p>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>
