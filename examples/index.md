@@ -5,7 +5,7 @@
 ---
 
 <style>
-    .widget {
+    .markdown-body .widget {
         zoom: 1;
         display: inline;
         display: inline-block;
