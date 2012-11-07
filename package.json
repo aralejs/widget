@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "$": "$",
-    "handlebars": "1.0.0",
-    "base": "1.0.1"
+    "handlebars": "handlebars/1.0.0/handlebars",
+    "base": "arale/base/1.0.1/base"
   },
   "output": {
     "widget.js": ".",

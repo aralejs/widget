@@ -559,10 +559,13 @@ define(function(require) {
 
     test('#3: parentNode is a jQuery object', function() {
 
+      $('<div id="test1"></div>').appendTo('body');
+
       var w = new Widget({ parentNode: $('#test1') })
       w.render()
 
       expect($('#test1 div').html()).toBe('')
+      $('#test1').remove();
     })
 
     test('override object in prototype', function() {
