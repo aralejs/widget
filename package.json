@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "$": "$",
-    "handlebars": "handlebars/1.0.0/handlebars",
+    "handlebars": "gallery/handlebars/1.0.0/handlebars",
     "base": "arale/base/1.0.1/base"
   },
   "output": {
