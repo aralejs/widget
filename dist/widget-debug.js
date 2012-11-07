@@ -1,4 +1,4 @@
-define("#widget/1.0.2/daparser-debug", ["$-debug"], function(require, DAParser) {
+define("arale/widget/1.0.2/daparser-debug", ["$-debug"], function(require, DAParser) {
 
   // DAParser
   // --------
@@ -92,7 +92,7 @@ define("#widget/1.0.2/daparser-debug", ["$-debug"], function(require, DAParser) 
 
 });
 
-define("#widget/1.0.2/auto-render-debug", ["$-debug"], function(require, exports) {
+define("arale/widget/1.0.2/auto-render-debug", ["$-debug"], function(require, exports) {
 
   var $ = require('$-debug')
   var DATA_WIDGET_AUTO_RENDERED = 'data-widget-auto-rendered'
@@ -164,7 +164,7 @@ define("#widget/1.0.2/auto-render-debug", ["$-debug"], function(require, exports
 
 });
 
-define("#widget/1.0.2/widget-debug", ["./daparser-debug", "./auto-render-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug", "$-debug"], function(require, exports, module) {
+define("arale/widget/1.0.2/widget-debug", ["./daparser-debug", "./auto-render-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug", "$-debug"], function(require, exports, module) {
 
   // Widget
   // ---------
