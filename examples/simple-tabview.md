@@ -1,3 +1,8 @@
+# 简单的 TabView
+
+- order: 3
+
+---
 
 <style>
     #simple-tabs {

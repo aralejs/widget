@@ -1,4 +1,4 @@
-define("#widget/1.0.2/daparser-debug", ["$-debug"], function(require, DAParser) {
+define("arale/widget/1.0.2/daparser-debug", ["$-debug"], function(require, DAParser) {
 
   // DAParser
   // --------
@@ -92,8 +92,7 @@ define("#widget/1.0.2/daparser-debug", ["$-debug"], function(require, DAParser) 
 
 });
 
-
-define("#widget/1.0.2/auto-render-debug", ["$-debug"], function(require, exports) {
+define("arale/widget/1.0.2/auto-render-debug", ["$-debug"], function(require, exports) {
 
   var $ = require('$-debug')
   var DATA_WIDGET_AUTO_RENDERED = 'data-widget-auto-rendered'
@@ -165,8 +164,7 @@ define("#widget/1.0.2/auto-render-debug", ["$-debug"], function(require, exports
 
 });
 
-
-define("#widget/1.0.2/widget-debug", ["./daparser-debug", "./auto-render-debug", "#base/1.0.1/base-debug", "#class/1.0.0/class-debug", "#events/1.0.0/events-debug", "$-debug"], function(require, exports, module) {
+define("arale/widget/1.0.2/widget-debug", ["./daparser-debug", "./auto-render-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug", "$-debug"], function(require, exports, module) {
 
   // Widget
   // ---------
@@ -174,7 +172,7 @@ define("#widget/1.0.2/widget-debug", ["./daparser-debug", "./auto-render-debug",
   // Widget 组件具有四个要素：描述状态的 attributes 和 properties，描述行为的 events
   // 和 methods。Widget 基类约定了这四要素创建时的基本流程和最佳实践。
 
-  var Base = require('#base/1.0.1/base-debug')
+  var Base = require('arale/base/1.0.1/base-debug')
   var $ = require('$-debug')
   var DAParser = require('./daparser-debug')
   var AutoRender = require('./auto-render-debug')
