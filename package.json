@@ -7,7 +7,7 @@
   "homepage": "http://aralejs.org/widget",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aralejs/widget"
+    "url": "https://github.com/aralejs/widget.git"
   },
   "bugs": {
     "url": "https://github.com/aralejs/widget/issues"
