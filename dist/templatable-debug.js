@@ -1,7 +1,7 @@
-define("#widget/1.0.2/templatable-debug", ["$-debug", "#handlebars/1.0.0/handlebars-debug"], function(require, exports, module) {
+define("arale/widget/1.0.2/templatable-debug", ["$-debug", "gallery/handlebars/1.0.0/handlebars-debug"], function(require, exports, module) {
 
   var $ = require('$-debug')
-  var Handlebars = require('#handlebars/1.0.0/handlebars-debug')
+  var Handlebars = require('gallery/handlebars/1.0.0/handlebars-debug')
 
 
   // 提供 Template 模板支持，默认引擎是 Handlebars
