@@ -1,10 +1,14 @@
-
 # Widget 
+
+---------
+
+[![Build Status](https://secure.travis-ci.org/aralejs/events.png)](https://travis-ci.org/aralejs/events)
+
 
 Widget 是 UI 组件的基础类，约定了组件的基本生命周期，实现了一些通用功能。基于 Widget
 可以构建出任何你想要的 Web 界面组件。
 
----
+----------
 
 **注**：Handlebars 依赖仅在混入 `Templatable` 后才产生。
 
