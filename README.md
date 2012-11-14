@@ -2,7 +2,7 @@
 
 ---------
 
-[![Build Status](https://secure.travis-ci.org/aralejs/events.png)](https://travis-ci.org/aralejs/events)
+[![Build Status](https://secure.travis-ci.org/aralejs/widget.png)](https://travis-ci.org/aralejs/widget)
 
 
 Widget 是 UI 组件的基础类，约定了组件的基本生命周期，实现了一些通用功能。基于 Widget
