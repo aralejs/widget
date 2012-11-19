@@ -3,11 +3,12 @@ define(function(require) {
   var Widget = require('../src/widget')
   var DAParser = require('../src/daparser')
   var $ = require('$')
+  var expect = chai.expect;
 
 
   describe('Widget', function() {
 
-    test('initAttrs', function() {
+    it('initAttrs', function() {
       var div = $('<div id="a"></div>').appendTo(document.body)
 
       var WidgetA = Widget.extend({
@@ -32,62 +33,62 @@ define(function(require) {
       })
 
       // 传入的
-      expect(a.get('bar')).toBe('bar')
+      expect(a.get('bar')).to.equal('bar')
 
       // 继承的
-      expect(a.get('foo')).toBe('foo')
+      expect(a.get('foo')).to.equal('foo')
 
       // 覆盖的
-      expect(a.get('template')).toBe('<a></a>')
+      expect(a.get('template')).to.equal('<a></a>')
 
       // 混入的
-      expect(a.model.title).toBe('title a')
-      expect(a.model.content).toBe('default content')
+      expect(a.model.title).to.equal('title a')
+      expect(a.model.content).to.equal('default content')
 
       // attr 式属性
-      expect(a.element[0].id).toBe('a')
+      expect(a.element[0].id).to.equal('a')
 
       div.remove()
     })
 
-    test('parseElement', function() {
+    it('parseElement', function() {
       var div = $('<div id="a"></div>').appendTo(document.body)
 
       // 如果 config 里不传 element，默认用 $('<div></div>') 构建
       var widget = new Widget()
-      expect(widget.element[0].tagName).toBe('DIV')
+      expect(widget.element[0].tagName).to.equal('DIV')
 
       // 如果传入 selector，会自动转为为 $ 对象
       widget = new Widget({ element: '#a' })
-      expect(widget.element[0].id).toBe('a')
+      expect(widget.element[0].id).to.equal('a')
 
       // 如果传入 DOM 对象，会自动转换为 $ 对象
       widget = new Widget({ element: document.getElementById('a') })
-      expect(widget.element[0].id).toBe('a')
+      expect(widget.element[0].id).to.equal('a')
 
       // 如果传入 $ 对象，保持不变
       widget = new Widget({ element: $('#a') })
-      expect(widget.element[0].id).toBe('a')
+      expect(widget.element[0].id).to.equal('a')
 
       // 如果传入的 dom 对象不存在，则报错
       try {
         new Widget({ element: '#b' })
-        expect('应该抛错').toBe('没有抛错')
+        expect('应该抛错').to.equal('没有抛错')
       } catch (e) {
       }
 
       // 同时传入 template 和 element 时，element 优先
       widget = new Widget({ element: '#a', template: '<span></span>' })
-      expect(widget.element[0].tagName).toBe('DIV')
+      expect(widget.element[0].tagName).to.equal('DIV')
 
       // 只传入 template 时，从 template 构建
       widget = new Widget({ template: '<span></span>' })
-      expect(widget.element[0].tagName).toBe('SPAN')
+      expect(widget.element[0].tagName).to.equal('SPAN')
 
       div.remove()
     })
 
-    test('parse data attrs', function() {
+    it('parse data attrs', function() {
 
       // 默认解析 data-api
       var widget = new Widget()
@@ -98,10 +99,10 @@ define(function(require) {
       var dataset = DAParser.parseElement(widget.element)
       delete dataset['widgetCid']
 
-      expect(dataset).toEqual({})
+      expect(dataset).to.eql({})
     })
 
-    test('delegateEvents / undelegateEvents', function() {
+    it('delegateEvents / undelegateEvents', function() {
       var counter = 0
       var event = {}, that = {}
 
@@ -132,20 +133,20 @@ define(function(require) {
       }).render()
 
       widget.$('p').trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
 
       counter = 0
       widget.$('li').trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
 
       counter = 0
       widget.element.trigger('click')
-      expect(counter).toBe(0)
+      expect(counter).to.equal(0)
 
       counter = 0
       widget.$('span').trigger('mouseenter')
-      expect(event.currentTarget.tagName).toBe('SPAN')
-      expect(that).toBe(widget)
+      expect(event.currentTarget.tagName).to.equal('SPAN')
+      expect(that).to.equal(widget)
 
 
       // 通过实例添加事件
@@ -164,15 +165,15 @@ define(function(require) {
 
       counter = 0
       widget.$('li').trigger('click')
-      expect(counter).toBe(2)
+      expect(counter).to.equal(2)
 
       counter = 0
       widget.$('p').trigger('click')
-      expect(counter).toBe(2)
+      expect(counter).to.equal(2)
 
       counter = 0
       widget.$('span').trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
 
 
       // 注销事件
@@ -180,27 +181,27 @@ define(function(require) {
        counter = 0
        widget.undelegateEvents('click p', 'fn2')
        widget.$('p').trigger('click')
-       expect(counter).toBe(1)
+       expect(counter).to.equal(1)
 
        counter = 0
        widget.undelegateEvents('click li', incr)
        widget.$('li').trigger('click')
-       expect(counter).toBe(1)
+       expect(counter).to.equal(1)
        */
 
       counter = 0
       widget.undelegateEvents('click p')
       widget.$('p').trigger('click')
-      expect(counter).toBe(0)
+      expect(counter).to.equal(0)
 
       counter = 0
       widget.undelegateEvents()
       widget.$('li').trigger('click')
       widget.$('p').trigger('click')
-      expect(counter).toBe(0)
+      expect(counter).to.equal(0)
     })
 
-    test('events hash can be a function', function() {
+    it('events hash can be a function', function() {
       var counter = 0
 
       var TestWidget = Widget.extend({
@@ -222,14 +223,14 @@ define(function(require) {
       }).render()
 
       widget.$('h3').trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
 
       counter = 0
       widget.$('p').trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
     })
 
-    test('the default event target is `this.element`', function() {
+    it('the default event target is `this.element`', function() {
       var counter = 0
 
       var TestWidget = Widget.extend({
@@ -247,10 +248,10 @@ define(function(require) {
 
       var widget = new TestWidget().render()
       widget.element.trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
     })
 
-    test('parentNode is a document fragment', function() {
+    it('parentNode is a document fragment', function() {
       var id = 'test' + new Date()
       var divs = $('<div id="' + id + '"></div><div></div>')
 
@@ -259,10 +260,10 @@ define(function(require) {
         parentNode: document.body
       }).render()
 
-      expect(document.getElementById(id).nodeType).toBe(1)
+      expect(document.getElementById(id).nodeType).to.equal(1)
     })
 
-    test('template in delegate-events', function() {
+    it('template in delegate-events', function() {
       var counter = 0
 
       var A = Widget.extend({
@@ -286,14 +287,14 @@ define(function(require) {
       }).render()
 
       a.$('p').trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
 
       counter = 0
       $(a.get('buttons')).trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
     })
 
-    test('delegate events inherited from ancestors', function() {
+    it('delegate events inherited from ancestors', function() {
       var counter = 0
 
       function incr() {
@@ -321,18 +322,18 @@ define(function(require) {
 
       counter = 0
       object.$('p').trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
 
       counter = 0
       object.$('div').trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
 
       counter = 0
       object.$('span').trigger('click')
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
     })
 
-    test('ignore null element during delegating events', function() {
+    it('ignore null element during delegating events', function() {
       var counter = 0
 
       function incr() {
@@ -353,7 +354,7 @@ define(function(require) {
       // no error occurs
     })
 
-    test('#76: set default attrs automatically', function() {
+    it('#76: set default attrs automatically', function() {
 
       var A = Widget.extend({
         attrs: {
@@ -367,15 +368,15 @@ define(function(require) {
       })
 
       var a = new A({ b: 2 })
-      expect(a.get('a')).toBe(1)
-      expect(a.get('b')).toBe(2)
-      expect(a.a).toBeUndefined()
+      expect(a.get('a')).to.equal(1)
+      expect(a.get('b')).to.equal(2)
+      expect(a.a).to.equal(undefined)
 
       a.render()
-      expect(a.a).toBe(1)
+      expect(a.a).to.equal(1)
     })
 
-    test('set attribute before render method', function() {
+    it('set attribute before render method', function() {
       var r = [], p = []
 
       var A = Widget.extend({
@@ -393,11 +394,11 @@ define(function(require) {
       a.set('a', 3)
       a.render()
 
-      expect(r.join()).toBe('3')
-      expect(p.join()).toBe('')
+      expect(r.join()).to.equal('3')
+      expect(p.join()).to.equal('')
     })
 
-    test('default values in attrs', function() {
+    it('default values in attrs', function() {
       var counter = 0
 
       function incr() {
@@ -430,11 +431,11 @@ define(function(require) {
       })
 
       var a = new A()
-      expect(counter).toBe(0)
+      expect(counter).to.equal(0)
 
       // 只有 bool / str2 / fn3 的改变会触发事件
       a.render()
-      expect(counter).toBe(3)
+      expect(counter).to.equal(3)
 
       // 测试 onXxx
       counter = 0
@@ -443,13 +444,13 @@ define(function(require) {
       })
 
       // 未调用 render() 之前都未执行
-      expect(counter).toBe(0)
+      expect(counter).to.equal(0)
 
       b.render()
-      expect(counter).toBe(2); //  bool 和 fn3 属性的改变有效
+      expect(counter).to.equal(2); //  bool 和 fn3 属性的改变有效
     })
 
-    test('call render() after first render', function() {
+    it('call render() after first render', function() {
       var counter = 0
 
       function incr() {
@@ -466,36 +467,36 @@ define(function(require) {
 
       var a = new A()
       a.render()
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
 
       a.render()
-      expect(counter).toBe(1)
+      expect(counter).to.equal(1)
     })
 
-    test('statics white list', function() {
+    it('statics white list', function() {
 
       var A = Widget.extend()
 
-      expect(typeof A.autoRender).toBe('function')
-      expect(typeof A.autoRenderAll).toBe('undefined')
+      expect(typeof A.autoRender).to.equal('function')
+      expect(typeof A.autoRenderAll).to.equal('undefined')
     })
 
-    test('data attr api', function() {
+    it('data attr api', function() {
       var div = $('<div id="data-attr-api-test" data-a=1 data-b="b" data-arr="[1,2,3]" data-c="true" data-d=\'{"num": 1, "str": "s", "bool": true}\'></div>')
           .appendTo(document.body)
 
       var t = new Widget({ element: '#data-attr-api-test', b: 'b2' })
 
-      expect(t.get('a')).toBe(1)
-      expect(t.get('b')).toBe('b2')
-      expect(t.get('c')).toBe(true)
-      expect(t.get('d').num).toBe(1)
-      expect(t.get('d').str).toBe('s')
-      expect(t.get('d').bool).toBe(true)
-      expect(t.get('arr')).toEqual([1, 2, 3])
+      expect(t.get('a')).to.equal(1)
+      expect(t.get('b')).to.equal('b2')
+      expect(t.get('c')).to.equal(true)
+      expect(t.get('d').num).to.equal(1)
+      expect(t.get('d').str).to.equal('s')
+      expect(t.get('d').bool).to.equal(true)
+      expect(t.get('arr')).to.eql([1, 2, 3])
     })
 
-    test('onXx setter in attrs', function() {
+    it('onXx setter in attrs', function() {
       var counter = 0
 
       function incr() {
@@ -526,10 +527,10 @@ define(function(require) {
       var t = new TestWidget({ onYy: 'a' })
       t.test()
 
-      expect(counter).toBe(2)
+      expect(counter).to.equal(2)
     })
 
-    test('inherited attrs', function() {
+    it('inherited attrs', function() {
 
       var A = Widget.extend({
         attrs: {
@@ -553,22 +554,22 @@ define(function(require) {
 
       var c = new C()
 
-      expect(c.get('a')).toBe('2')
-      expect(c.get('b')).toBe('b')
+      expect(c.get('a')).to.equal('2')
+      expect(c.get('b')).to.equal('b')
     })
 
-    test('#3: parentNode is a jQuery object', function() {
+    it('#3: parentNode is a jQuery object', function() {
 
       $('<div id="test1"></div>').appendTo('body');
 
       var w = new Widget({ parentNode: $('#test1') })
       w.render()
 
-      expect($('#test1 div').html()).toBe('')
+      expect($('#test1 div').html()).to.equal('')
       $('#test1').remove();
     })
 
-    test('override object in prototype', function() {
+    it('override object in prototype', function() {
 
       var B = Widget.extend({
         o: { p1: '1' }
@@ -579,11 +580,11 @@ define(function(require) {
       })
 
       var c = new C()
-      expect(c.o.p1).toBe(undefined)
-      expect(c.o.p2).toBe('2')
+      expect(c.o.p1).to.equal(undefined)
+      expect(c.o.p2).to.equal('2')
     })
 
-    test('mix events object in prototype', function() {
+    it('mix events object in prototype', function() {
 
       var B = Widget.extend({
         events: { p1: '1' }
@@ -594,8 +595,8 @@ define(function(require) {
       })
 
       var c = new C()
-      expect(c.events.p1).toBe('1')
-      expect(c.events.p2).toBe('2')
+      expect(c.events.p1).to.equal('1')
+      expect(c.events.p2).to.equal('2')
     })
 
   })

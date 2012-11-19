@@ -5,6 +5,7 @@ define(function(require) {
 
   var Handlebars = require('handlebars')
   var $ = require('$')
+  var expect = chai.expect;
 
 
   describe('Templatable', function() {
@@ -13,7 +14,7 @@ define(function(require) {
       Implements: Templatable
     })
 
-    test('normal usage', function() {
+    it('normal usage', function() {
 
       var widget = new TemplatableWidget({
         template: '<div><h3>{{title}}</h3><p>{{content}}</p></div>',
@@ -23,11 +24,11 @@ define(function(require) {
         }
       })
 
-      expect(widget.$('h3').text()).toBe('Big Bang')
-      expect(widget.$('p').text()).toBe('It is very cool.')
+      expect(widget.$('h3').text()).to.equal('Big Bang')
+      expect(widget.$('p').text()).to.equal('It is very cool.')
     })
 
-    test('Handlebars helpers', function() {
+    it('Handlebars helpers', function() {
 
       var TestWidget = TemplatableWidget.extend({
         templateHelpers: {
@@ -47,10 +48,10 @@ define(function(require) {
         }
       })
 
-      expect(widget.element.html().toLowerCase()).toBe('<a href="http://google.com/">google</a>')
+      expect(widget.element.html().toLowerCase()).to.equal('<a href="http://google.com/">google</a>')
     })
 
-    test('renderPartial', function() {
+    it('renderPartial', function() {
 
       var t = new TemplatableWidget({
         template: '<div id="t"><h3>{{title}}</h3><div>{{content}}</div></div>',
@@ -61,17 +62,17 @@ define(function(require) {
       })
 
       t.render()
-      expect($('#t')[0]).toBe(t.element[0])
+      expect($('#t')[0]).to.equal(t.element[0])
 
       t.model = { title: 'xxx' }
       t.renderPartial('h3')
-      expect(t.$('h3').html()).toBe('xxx')
+      expect(t.$('h3').html()).to.equal('xxx')
 
       // destroy
       t.element.remove()
     })
 
-    test('template expression in invalid place', function() {
+    it('template expression in invalid place', function() {
 
       var t = new TemplatableWidget({
         template: '<table id="t"><tbody><tr><td>&lt;!--{{xx}}--&gt;</td>{{#each items}}<td class="item-{{this}}">{{this}}</td>{{/each}}</tr></tbody></table>',
@@ -82,22 +83,22 @@ define(function(require) {
       })
 
       t.render()
-      expect($('#t tbody td').length).toBe(10)
-      expect($('#t tbody td').eq(1).hasClass('item-1')).toBe(true)
-      expect($('#t tbody td').eq(0).html()).toBe('&lt;!--xx--&gt;')
+      expect($('#t tbody td').length).to.equal(10)
+      expect($('#t tbody td').eq(1).hasClass('item-1')).to.equal(true)
+      expect($('#t tbody td').eq(0).html()).to.equal('&lt;!--xx--&gt;')
 
       t.model = { xx: 'xx', items: [1, 2, 3, 4, 5] }
       t.renderPartial('tbody tr')
 
-      expect($('#t tbody td').length).toBe(6)
-      expect($('#t tbody td').eq(1).hasClass('item-1')).toBe(true)
-      expect($('#t tbody td').eq(0).html()).toBe('&lt;!--xx--&gt;')
+      expect($('#t tbody td').length).to.equal(6)
+      expect($('#t tbody td').eq(1).hasClass('item-1')).to.equal(true)
+      expect($('#t tbody td').eq(0).html()).to.equal('&lt;!--xx--&gt;')
 
       // destroy
       t.element.remove()
     })
 
-    test('model.toJSON()', function() {
+    it('model.toJSON()', function() {
 
       var A = TemplatableWidget.extend({
       })
@@ -114,10 +115,10 @@ define(function(require) {
       })
 
       a.render()
-      expect(a.element.html()).toBe('xx')
+      expect(a.element.html()).to.equal('xx')
     })
 
-    test('#10: src expression in template string', function() {
+    it('#10: src expression in template string', function() {
 
       var t = new TemplatableWidget({
         template: '<div id="t10"><h3>{{title}}</h3><div class="content">{{content}}<img src="{{src}}"></div></div>',
@@ -134,12 +135,12 @@ define(function(require) {
       t.model.content = 'content 2'
       t.renderPartial('div.content')
 
-      expect(t.$('div.content').html().indexOf('content 2') === 0).toBe(true)
-      expect(t.$('div.content').html().toLowerCase().indexOf('img') > 0).toBe(true)
+      expect(t.$('div.content').html().indexOf('content 2') === 0).to.equal(true)
+      expect(t.$('div.content').html().toLowerCase().indexOf('img') > 0).to.equal(true)
 
     })
 
-    test('#7: render twice', function() {
+    it('#7: render twice', function() {
 
       var n = 0
 
@@ -165,13 +166,13 @@ define(function(require) {
       var t = new WidgetA({ content: '2' })
 
       t.render()
-      expect(n).toBe(1)
+      expect(n).to.equal(1)
 
       t.set('content', '2')
-      expect(n).toBe(1)
+      expect(n).to.equal(1)
 
       t.set('content', '3')
-      expect(n).toBe(2)
+      expect(n).to.equal(2)
 
     })
 

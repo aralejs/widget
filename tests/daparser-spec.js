@@ -3,55 +3,56 @@ define(function(require) {
   var DAParser = require('../src/daparser')
   var $ = require('$')
   var body = document.body
+  var expect = chai.expect;
 
 
   describe('DAParser', function() {
 
-    test('single data-xx', function() {
+    it('single data-xx', function() {
       var div = $('<div data-key="value"></div>').appendTo(body)
       var dataset = DAParser.parseElement(div)
 
-      expect(dataset.key).toBe('value')
+      expect(dataset.key).to.equal('value')
 
       div.remove()
     })
 
-    test('multi data-xx', function() {
+    it('multi data-xx', function() {
       var div = $('<div data-key="value" data-key2="val2"></div>').appendTo(body)
       var dataset = DAParser.parseElement(div)
 
-      expect(dataset['key']).toBe('value')
-      expect(dataset['key2']).toBe('val2')
+      expect(dataset['key']).to.equal('value')
+      expect(dataset['key2']).to.equal('val2')
 
       div.remove()
     })
 
-    test('convert dash-name to camelCasedName', function() {
+    it('convert dash-name to camelCasedName', function() {
       var div = $('<div data-x-y-123a-_B="val" data-x-y="val" data-AbcD-x="val"></div>').appendTo(body)
       var dataset = DAParser.parseElement(div)
 
       //console.dir(div[0].dataset)
       //console.dir(dataset)
 
-      //expect(dataset['xY-123a-_b']).toBe('val')
+      //expect(dataset['xY-123a-_b']).to.equal('val')
       // chrome 和 firefox 的处理不同，悲催的兼容性，苦逼的前端呀。
       // 在 chrome 下:
-      //expect(dataset['xY-123a-_b']).toBe(undefined)
+      //expect(dataset['xY-123a-_b']).to.equal(undefined)
       // 在 firefox 下：
-      //expect(dataset['xY-123a-_b']).toBe(val)
+      //expect(dataset['xY-123a-_b']).to.equal(val)
 
 
-      expect(dataset['xY']).toBe('val')
-      expect(dataset['abcdX']).toBe('val')
+      expect(dataset['xY']).to.equal('val')
+      expect(dataset['abcdX']).to.equal('val')
 
       div.remove()
     })
 
-    test('table element', function() {
+    it('table element', function() {
       var table = $('<table><tr><td data-x="1"></td></tr></table>').appendTo(body)
       var dataset = DAParser.parseElement(table.find('td')[0])
 
-      expect(dataset['x']).toBe(1)
+      expect(dataset['x']).to.equal(1)
       table.remove()
     })
 
