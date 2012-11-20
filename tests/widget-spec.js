@@ -3,7 +3,6 @@ define(function(require) {
   var Widget = require('../src/widget')
   var DAParser = require('../src/daparser')
   var $ = require('$')
-  var expect = chai.expect;
 
 
   describe('Widget', function() {

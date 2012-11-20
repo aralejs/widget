@@ -3,7 +3,6 @@ define(function(require) {
   var DAParser = require('../src/daparser')
   var $ = require('$')
   var body = document.body
-  var expect = chai.expect;
 
 
   describe('DAParser', function() {

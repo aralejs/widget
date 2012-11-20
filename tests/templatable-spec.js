@@ -5,7 +5,6 @@ define(function(require) {
 
   var Handlebars = require('handlebars')
   var $ = require('$')
-  var expect = chai.expect;
 
 
   describe('Templatable', function() {
