@@ -2,7 +2,7 @@ define(function(require, exports, module) {
 
   var $ = require('$')
   var Handlebars = require('handlebars')
-  var compiledTemplates = {};
+  var compiledTemplates = {}
 
 
   // 提供 Template 模板支持，默认引擎是 Handlebars
