@@ -2,6 +2,7 @@ define(function(require, exports, module) {
 
   var $ = require('$')
   var Handlebars = require('handlebars')
+  var compiledTemplates = {};
 
 
   // 提供 Template 模板支持，默认引擎是 Handlebars
@@ -39,8 +40,12 @@ define(function(require, exports, module) {
         }
       }
 
+      var compiledTemplate = compiledTemplates[template]
+      if (!compiledTemplate) {
+        compiledTemplate = compiledTemplates[template] = Handlebars.compile(template)
+      }
       // 生成 html
-      var html = Handlebars.compile(template)(model)
+      var html = compiledTemplate(model)
 
       // 卸载 helpers
       if (helpers) {
