@@ -71,6 +71,13 @@ define(function(require, exports, module) {
   // Helpers
   // -------
 
+  var _compile = Handlebars.compile
+
+  Handlebars.compile = function (template) {
+    return typeof template === "function" ? template : _compile.call(Handlebars, template)
+  }
+
+
   // 将 template 字符串转换成对应的 DOM-like object
   function convertTemplateToObject(template) {
     return $(encode(template))
