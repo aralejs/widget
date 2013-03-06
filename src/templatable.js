@@ -2,6 +2,7 @@ define(function(require, exports, module) {
 
   var $ = require('$')
   var Handlebars = require('handlebars')
+
   var compiledTemplates = {}
 
 
@@ -73,10 +74,10 @@ define(function(require, exports, module) {
 
   var _compile = Handlebars.compile
 
-  Handlebars.compile = function (template) {
-    return typeof template === "function" ? template : _compile.call(Handlebars, template)
+  Handlebars.compile = function(template) {
+    return typeof template === "function" ?
+        template : _compile.call(Handlebars, template)
   }
-
 
   // 将 template 字符串转换成对应的 DOM-like object
   function convertTemplateToObject(template) {
@@ -106,6 +107,16 @@ define(function(require, exports, module) {
     return template
         .replace(/(?:<|&lt;)!--({{[^}]+}})--(?:>|&gt;)/g, '$1')
         .replace(/data-templatable-/ig, '')
+  }
+
+
+  // 在 IE6-7 下降级
+  if (!document.documentElement.hasAttribute) {
+    convertObjectToTemplate = function() {}
+    module.exports.renderPartial = function() {
+      this.element.html(this.compile())
+    }
+
   }
 
 });
