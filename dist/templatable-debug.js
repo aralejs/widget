@@ -54,6 +54,10 @@ define("arale/widget/1.0.3/templatable-debug", [ "$-debug", "gallery/handlebars/
     };
     // Helpers
     // -------
+    var _compile = Handlebars.compile;
+    Handlebars.compile = function(template) {
+        return typeof template === "function" ? template : _compile.call(Handlebars, template);
+    };
     // 将 template 字符串转换成对应的 DOM-like object
     function convertTemplateToObject(template) {
         return $(encode(template));
