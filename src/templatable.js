@@ -41,7 +41,7 @@ define(function(require, exports, module) {
         }
       }
 
-      var compiledTemplate = compiledTemplates[template]
+      var compiledTemplate = typeof template === 'function' ? template : compiledTemplates[template]
       if (!compiledTemplate) {
         compiledTemplate = compiledTemplates[template] = Handlebars.compile(template)
       }

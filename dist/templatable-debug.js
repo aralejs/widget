@@ -29,7 +29,7 @@ define("arale/widget/1.0.3/templatable-debug", [ "$-debug", "gallery/handlebars/
                     }
                 }
             }
-            var compiledTemplate = compiledTemplates[template];
+            var compiledTemplate = typeof template === "function" ? template : compiledTemplates[template];
             if (!compiledTemplate) {
                 compiledTemplate = compiledTemplates[template] = Handlebars.compile(template);
             }
@@ -48,7 +48,11 @@ define("arale/widget/1.0.3/templatable-debug", [ "$-debug", "gallery/handlebars/
         // 刷新 selector 指定的局部区域
         renderPartial: function(selector) {
             var template = convertObjectToTemplate(this.templateObject, selector);
-            this.$(selector).html(this.compile(template));
+            if (template) {
+                this.$(selector).html(this.compile(template));
+            } else {
+                this.element.html(this.compile());
+            }
             return this;
         }
     };
@@ -56,14 +60,15 @@ define("arale/widget/1.0.3/templatable-debug", [ "$-debug", "gallery/handlebars/
     // -------
     var _compile = Handlebars.compile;
     Handlebars.compile = function(template) {
-        return typeof template === "function" ? template : _compile.call(Handlebars, template);
+        return isFunction(template) ? template : _compile.call(Handlebars, template);
     };
     // 将 template 字符串转换成对应的 DOM-like object
     function convertTemplateToObject(template) {
-        return $(encode(template));
+        return isFunction(template) ? null : $(encode(template));
     }
     // 根据 selector 得到 DOM-like template object，并转换为 template 字符串
     function convertObjectToTemplate(templateObject, selector) {
+        if (!templateObject) return;
         var element = templateObject.find(selector);
         if (element.length === 0) {
             throw new Error("Invalid template selector: " + selector);
@@ -75,5 +80,8 @@ define("arale/widget/1.0.3/templatable-debug", [ "$-debug", "gallery/handlebars/
     }
     function decode(template) {
         return template.replace(/(?:<|&lt;)!--({{[^}]+}})--(?:>|&gt;)/g, "$1").replace(/data-templatable-/gi, "");
+    }
+    function isFunction(obj) {
+        return typeof obj === "function";
     }
 });
