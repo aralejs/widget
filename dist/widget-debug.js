@@ -316,7 +316,18 @@ define("arale/widget/1.0.3/widget-debug", [ "./daparser-debug", "./auto-render-d
         destroy: function() {
             this.undelegateEvents();
             delete cachedInstances[this.cid];
+            // For memory leak
+            if (this.element) {
+                this.element.off();
+                this.element = null;
+            }
             Widget.superclass.destroy.call(this);
+        }
+    });
+    // For memory leak
+    $(window).unload(function() {
+        for (var cid in cachedInstances) {
+            cachedInstances[cid].destroy();
         }
     });
     // 查询与 selector 匹配的第一个 DOM 节点，得到与该 DOM 节点相关联的 Widget 实例
