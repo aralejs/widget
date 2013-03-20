@@ -257,10 +257,23 @@ define(function(require, exports, module) {
     destroy: function() {
       this.undelegateEvents()
       delete cachedInstances[this.cid]
+
+      // For memory leak
+      if (this.element) {
+        this.element.off();
+        this.element = null
+      }
+
       Widget.superclass.destroy.call(this)
     }
   })
 
+  // For memory leak
+  $(window).unload(function() {
+    for(var cid in cachedInstances) {
+      cachedInstances[cid].destroy()
+    }
+  })
 
   // 查询与 selector 匹配的第一个 DOM 节点，得到与该 DOM 节点相关联的 Widget 实例
   Widget.query = function(selector) {

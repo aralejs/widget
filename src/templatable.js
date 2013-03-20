@@ -3,6 +3,8 @@ define(function(require, exports, module) {
   var $ = require('$')
   var Handlebars = require('handlebars')
 
+  var compiledTemplates = {}
+
 
   // 提供 Template 模板支持，默认引擎是 Handlebars
   module.exports = {
@@ -39,8 +41,12 @@ define(function(require, exports, module) {
         }
       }
 
+      var compiledTemplate = typeof template === 'function' ? template : compiledTemplates[template]
+      if (!compiledTemplate) {
+        compiledTemplate = compiledTemplates[template] = Handlebars.compile(template)
+      }
       // 生成 html
-      var html = Handlebars.compile(template)(model)
+      var html = compiledTemplate(model)
 
       // 卸载 helpers
       if (helpers) {
@@ -57,7 +63,14 @@ define(function(require, exports, module) {
     // 刷新 selector 指定的局部区域
     renderPartial: function(selector) {
       var template = convertObjectToTemplate(this.templateObject, selector)
-      this.$(selector).html(this.compile(template))
+
+      if (template) {
+        this.$(selector).html(this.compile(template))
+      }
+      else {
+        this.element.html(this.compile())
+      }
+
       return this
     }
   }
@@ -66,13 +79,22 @@ define(function(require, exports, module) {
   // Helpers
   // -------
 
+  var _compile = Handlebars.compile
+
+  Handlebars.compile = function(template) {
+    return isFunction(template) ?
+        template : _compile.call(Handlebars, template)
+  }
+
   // 将 template 字符串转换成对应的 DOM-like object
   function convertTemplateToObject(template) {
-    return $(encode(template))
+    return isFunction(template) ? null : $(encode(template))
   }
 
   // 根据 selector 得到 DOM-like template object，并转换为 template 字符串
   function convertObjectToTemplate(templateObject, selector) {
+    if (!templateObject) return
+
     var element = templateObject.find(selector)
     if (element.length === 0) {
       throw new Error('Invalid template selector: ' + selector)
@@ -94,6 +116,10 @@ define(function(require, exports, module) {
     return template
         .replace(/(?:<|&lt;)!--({{[^}]+}})--(?:>|&gt;)/g, '$1')
         .replace(/data-templatable-/ig, '')
+  }
+
+  function isFunction(obj) {
+    return typeof obj === "function"
   }
 
 });
