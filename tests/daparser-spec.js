@@ -1,7 +1,9 @@
 define(function(require) {
 
+  var expect = require('expect')
   var DAParser = require('../src/daparser')
   var $ = require('$')
+    
   var body = document.body
 
 
