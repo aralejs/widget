@@ -1,7 +1,8 @@
 define(function(require) {
 
-  var Widget = require('../src/widget')
-  var DAParser = require('../src/daparser')
+  var Widget = require('widget')
+  var DAParser = require('daparser')
+  var expect = require('expect')
   var $ = require('$')
 
 

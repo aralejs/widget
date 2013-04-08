@@ -1,9 +1,10 @@
 define(function(require) {
 
-  var Widget = require('../src/widget')
-  var Templatable = require('../src/templatable')
+  var Widget = require('widget')
+  var Templatable = require('templatable')
 
   var Handlebars = require('handlebars')
+  var expect = require('expect')
   var $ = require('$')
 
 

@@ -15,8 +15,16 @@
   "spm": {
     "alias": {
       "$": "$",
-      "handlebars": "gallery/handlebars/1.0.0/handlebars",
+      "handlebars": "gallery/handlebars/1.0.1/handlebars",
       "base": "arale/base/1.0.1/base"
+    },
+    "devAlias": {
+      "$": "jquery/jquery/1.7.2/jquery",
+      "mocha": "gallery/mocha/1.9.0/mocha",
+      "expect": "gallery/expect/0.2.0/expect"
+    },
+    "engines": {
+      "seajs": "seajs/seajs/2.0.0/sea"
     },
     "output": ["widget.js", "templatable.js"]
   }
