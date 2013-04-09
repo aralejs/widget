@@ -1,10 +1,10 @@
 {
   "family": "arale",
   "name": "widget",
-  "version": "1.1.0",
+  "version": "1.0.4",
   "description": "Widget 是 UI 组件的基础类，约定了组件的基本生命周期，实现了一些通用功能。基于 Widget 可以构建出任何你想要的 Web 界面组件。",
-  "keywords": ["infrastructure"],
-  "homepage": "http://aralejs.org/widget",
+  "keywords": ["infrastructure", "ui"],
+  "homepage": "http://aralejs.org/widget/",
   "repository": {
     "type": "git",
     "url": "https://github.com/aralejs/widget.git"
@@ -17,14 +17,6 @@
       "$": "$",
       "handlebars": "gallery/handlebars/1.0.1/handlebars",
       "base": "arale/base/1.0.1/base"
-    },
-    "devAlias": {
-      "$": "jquery/jquery/1.7.2/jquery",
-      "mocha": "gallery/mocha/1.9.0/mocha",
-      "expect": "gallery/expect/0.2.0/expect"
-    },
-    "engines": {
-      "seajs": "seajs/seajs/2.0.0/sea"
     },
     "output": ["widget.js", "templatable.js"]
   }

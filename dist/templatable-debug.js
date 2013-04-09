@@ -1,4 +1,4 @@
-define("arale/widget/1.1.0/templatable-debug", [ "$-debug", "gallery/handlebars/1.0.1/handlebars-debug" ], function(require, exports, module) {
+define("arale/widget/1.0.4/templatable-debug", [ "$-debug", "gallery/handlebars/1.0.1/handlebars-debug" ], function(require, exports, module) {
     var $ = require("$-debug");
     var Handlebars = require("gallery/handlebars/1.0.1/handlebars-debug");
     var compiledTemplates = {};
