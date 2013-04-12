@@ -4,6 +4,7 @@ define(function(require) {
   var DAParser = require('daparser')
   var expect = require('expect')
   var $ = require('$')
+  var sinon = require('sinon')
 
 
   describe('Widget', function() {
@@ -399,11 +400,15 @@ define(function(require) {
     })
 
     it('default values in attrs', function() {
-      var counter = 0
-
-      function incr() {
-        counter++
-      }
+      var boolSpy = sinon.spy()
+      var strSpy = sinon.spy()
+      var str2Spy = sinon.spy()
+      var objSpy = sinon.spy()
+      var obj2Spy = sinon.spy()
+      var arrSpy = sinon.spy()
+      var nullSpy = sinon.spy()
+      var undefinedSpy = sinon.spy()
+      var functionSpy = sinon.spy()
 
       var A = Widget.extend({
         attrs: {
@@ -411,43 +416,58 @@ define(function(require) {
           str: '',
           str2: 'x',
           obj: {},
+          obj2: {a: 1},
           arr: [],
-          fn: null,
-          obj2: null,
-          fn2: undefined,
-          fn3: function() {
-          }
+          n: null,
+          u: undefined,
+          fn: function() {}
         },
 
-        _onRenderBool: incr,
-        _onRenderStr: incr,
-        _onRenderStr2: incr,
-        _onRenderObj: incr,
-        _onRenderObj2: incr,
-        _onRenderArr: incr,
-        _onRenderFn: incr,
-        _onRenderFn2: incr,
-        _onRenderFn3: incr
+        _onRenderBool: boolSpy,
+        _onRenderStr: strSpy,
+        _onRenderStr2: str2Spy,
+        _onRenderObj: objSpy,
+        _onRenderObj2: obj2Spy,
+        _onRenderArr: arrSpy,
+        _onRenderN: nullSpy,
+        _onRenderU: undefinedSpy,
+        _onRenderFn: functionSpy
       })
 
       var a = new A()
-      expect(counter).to.equal(0)
+
+      // 未调用 render() 之前都未执行
+      console.dir(boolSpy)
+      expect(boolSpy.calledOnce).not.to.be.ok()
+      expect(strSpy.calledOnce).not.to.be.ok()
+      expect(str2Spy.calledOnce).not.to.be.ok()
+      expect(objSpy.calledOnce).not.to.be.ok()
+      expect(obj2Spy.calledOnce).not.to.be.ok()
+      expect(arrSpy.calledOnce).not.to.be.ok()
+      expect(nullSpy.calledOnce).not.to.be.ok()
+      expect(undefinedSpy.calledOnce).not.to.be.ok()
+      expect(functionSpy.calledOnce).not.to.be.ok()
 
       // 只有 bool / str2 / fn3 的改变会触发事件
       a.render()
-      expect(counter).to.equal(3)
+      expect(boolSpy.calledOnce).to.be.ok()
+      expect(strSpy.calledOnce).to.be.ok()
+      expect(str2Spy.calledOnce).to.be.ok()
+      expect(objSpy.calledOnce).to.be.ok()
+      expect(obj2Spy.calledOnce).to.be.ok()
+      expect(arrSpy.calledOnce).to.be.ok()
+      expect(nullSpy.calledOnce).not.to.be.ok()
+      expect(undefinedSpy.calledOnce).not.to.be.ok()
+      expect(functionSpy.calledOnce).to.be.ok()
 
       // 测试 onXxx
-      counter = 0
       var b = new A({
+        bool: null,
         str2: ''
-      })
+      }).render()
 
-      // 未调用 render() 之前都未执行
-      expect(counter).to.equal(0)
-
-      b.render()
-      expect(counter).to.equal(2); //  bool 和 fn3 属性的改变有效
+      expect(boolSpy.calledOnce).to.be.ok()
+      expect(str2Spy.calledTwice).to.be.ok()
     })
 
     it('call render() after first render', function() {

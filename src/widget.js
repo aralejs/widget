@@ -386,11 +386,9 @@ define(function(require, exports, module) {
   }
 
 
-  // 对于 attrs 的 value 来说，以下值都认为是空值： null, undefined, '', [], {}
+  // 对于 attrs 的 value 来说，以下值都认为是空值： null, undefined
   function isEmptyAttrValue(o) {
-    return o == null || // null, undefined
-        (isString(o) || $.isArray(o)) && o.length === 0 || // '', []
-        $.isPlainObject(o) && isEmptyObject(o); // {}
+    return o == null || o === undefined
   }
 
 });
