@@ -174,7 +174,7 @@ define(function(require, exports, module) {
         args = parseEventKey(eventKey, this)
       }
 
-      this.element.off(args.type, args.selector)
+      this.element && this.element.off(args.type, args.selector)
       return this
     },
 

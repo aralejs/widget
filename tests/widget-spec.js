@@ -437,7 +437,6 @@ define(function(require) {
       var a = new A()
 
       // 未调用 render() 之前都未执行
-      console.dir(boolSpy)
       expect(boolSpy.calledOnce).not.to.be.ok()
       expect(strSpy.calledOnce).not.to.be.ok()
       expect(str2Spy.calledOnce).not.to.be.ok()
@@ -632,6 +631,17 @@ define(function(require) {
       expect(A.element).to.be(null)
     })
 
+    it('#25 destroy is called twice', function() {
+
+      var A = new Widget({
+        template: '<div id="destroy"><a></a></div>'
+      }).render()
+
+      expect(function() {
+        A.destroy()
+        A.destroy()
+      }).to.not.throwError()
+    })
   })
 
 
