@@ -8,6 +8,14 @@ define(function(require) {
 
 
   describe('Widget', function() {
+    var globalVar = {}
+
+    afterEach(function() {
+      for (var v in globalVar) {
+        globalVar[v].destroy(); 
+      }
+      globalVar = {}
+    })
 
     it('initAttrs', function() {
       var div = $('<div id="a"></div>').appendTo(document.body)
@@ -24,7 +32,7 @@ define(function(require) {
         }
       })
 
-      var a = new WidgetA({
+      var a = globalVar.a = new WidgetA({
         element: '#a',
         bar: 'bar',
         template: '<a></a>',
@@ -56,19 +64,19 @@ define(function(require) {
       var div = $('<div id="a"></div>').appendTo(document.body)
 
       // 如果 config 里不传 element，默认用 $('<div></div>') 构建
-      var widget = new Widget()
+      var widget = globalVar.widget = new Widget()
       expect(widget.element[0].tagName).to.equal('DIV')
 
       // 如果传入 selector，会自动转为为 $ 对象
-      widget = new Widget({ element: '#a' })
+      widget = globalVar.widget = new Widget({ element: '#a' })
       expect(widget.element[0].id).to.equal('a')
 
       // 如果传入 DOM 对象，会自动转换为 $ 对象
-      widget = new Widget({ element: document.getElementById('a') })
+      widget = globalVar.widget = new Widget({ element: document.getElementById('a') })
       expect(widget.element[0].id).to.equal('a')
 
       // 如果传入 $ 对象，保持不变
-      widget = new Widget({ element: $('#a') })
+      widget = globalVar.widget = new Widget({ element: $('#a') })
       expect(widget.element[0].id).to.equal('a')
 
       // 如果传入的 dom 对象不存在，则报错
@@ -79,11 +87,11 @@ define(function(require) {
       }
 
       // 同时传入 template 和 element 时，element 优先
-      widget = new Widget({ element: '#a', template: '<span></span>' })
+      widget = globalVar.widget = new Widget({ element: '#a', template: '<span></span>' })
       expect(widget.element[0].tagName).to.equal('DIV')
 
       // 只传入 template 时，从 template 构建
-      widget = new Widget({ template: '<span></span>' })
+      widget = globalVar.widget = new Widget({ template: '<span></span>' })
       expect(widget.element[0].tagName).to.equal('SPAN')
 
       div.remove()
@@ -92,7 +100,7 @@ define(function(require) {
     it('parse data attrs', function() {
 
       // 默认解析 data-api
-      var widget = new Widget()
+      var widget = globalVar.widget = new Widget()
 
       // 可通过选项关闭 data-api
       document.body.setAttribute('data-api', 'off')
@@ -129,7 +137,7 @@ define(function(require) {
         }
       })
 
-      var widget = new TestWidget({
+      var widget = globalVar.widget = new TestWidget({
         template: '<div><p></p><ul><li></li></ul><span></span></div>'
       }).render()
 
@@ -219,7 +227,7 @@ define(function(require) {
         }
       })
 
-      var widget = new TestWidget({
+      var widget = globalVar.widget = new TestWidget({
         template: '<div><h3></h3><p></p></div>'
       }).render()
 
@@ -247,7 +255,7 @@ define(function(require) {
         }
       })
 
-      var widget = new TestWidget().render()
+      var widget = globalVar.widget = new TestWidget().render()
       widget.element.trigger('click')
       expect(counter).to.equal(1)
     })
@@ -283,7 +291,7 @@ define(function(require) {
         }
       })
 
-      var a = new A({
+      var a = globalVar.a = new A({
         template: '<div><header>x</header><button>x</button><p>x</p><div id="ttt"></div></div>'
       }).render()
 
@@ -314,7 +322,7 @@ define(function(require) {
         }
       })
 
-      var object = new B({
+      var object = globalVar.object = new B({
         template: '<section><p></p><div></div><span></span></section>',
         events: {
           'click span': incr
@@ -368,7 +376,7 @@ define(function(require) {
         }
       })
 
-      var a = new A({ b: 2 })
+      var a = globalVar.a = new A({ b: 2 })
       expect(a.get('a')).to.equal(1)
       expect(a.get('b')).to.equal(2)
       expect(a.a).to.equal(undefined)
@@ -391,7 +399,7 @@ define(function(require) {
         }
       })
 
-      var a = new A({ a: 2 })
+      var a = globalVar.a = new A({ a: 2 })
       a.set('a', 3)
       a.render()
 
@@ -434,7 +442,7 @@ define(function(require) {
         _onRenderFn: functionSpy
       })
 
-      var a = new A()
+      var a = globalVar.a = new A()
 
       // 未调用 render() 之前都未执行
       expect(boolSpy.calledOnce).not.to.be.ok()
@@ -460,7 +468,7 @@ define(function(require) {
       expect(functionSpy.calledOnce).to.be.ok()
 
       // 测试 onXxx
-      var b = new A({
+      var b = globalVar.b = new A({
         bool: null,
         str2: ''
       }).render()
@@ -484,7 +492,7 @@ define(function(require) {
         _onRenderA: incr
       })
 
-      var a = new A()
+      var a = globalVar.a = new A()
       a.render()
       expect(counter).to.equal(1)
 
@@ -504,7 +512,7 @@ define(function(require) {
       var div = $('<div id="data-attr-api-test" data-a=1 data-b="b" data-arr="[1,2,3]" data-c="true" data-d=\'{"num": 1, "str": "s", "bool": true}\'></div>')
           .appendTo(document.body)
 
-      var t = new Widget({ element: '#data-attr-api-test', b: 'b2' })
+      var t = globalVar.t = new Widget({ element: '#data-attr-api-test', b: 'b2' })
 
       expect(t.get('a')).to.equal(1)
       expect(t.get('b')).to.equal('b2')
@@ -543,7 +551,7 @@ define(function(require) {
         }
       })
 
-      var t = new TestWidget({ onYy: 'a' })
+      var t = globalVar.t = new TestWidget({ onYy: 'a' })
       t.test()
 
       expect(counter).to.equal(2)
@@ -571,7 +579,7 @@ define(function(require) {
         }
       })
 
-      var c = new C()
+      var c = globalVar.c = new C()
 
       expect(c.get('a')).to.equal('2')
       expect(c.get('b')).to.equal('b')
@@ -581,7 +589,7 @@ define(function(require) {
 
       $('<div id="test1"></div>').appendTo('body');
 
-      var w = new Widget({ parentNode: $('#test1') })
+      var w = globalVar.w = new Widget({ parentNode: $('#test1') })
       w.render()
 
       expect($('#test1 div').html()).to.equal('')
@@ -598,7 +606,7 @@ define(function(require) {
         o: { p2: '2' }
       })
 
-      var c = new C()
+      var c = globalVar.c = new C()
       expect(c.o.p1).to.equal(undefined)
       expect(c.o.p2).to.equal('2')
     })
@@ -613,7 +621,7 @@ define(function(require) {
         events: { p2: '2' }
       })
 
-      var c = new C()
+      var c = globalVar.c = new C()
       expect(c.events.p1).to.equal('1')
       expect(c.events.p2).to.equal('2')
     })

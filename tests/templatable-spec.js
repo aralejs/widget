@@ -9,6 +9,14 @@ define(function(require) {
 
 
   describe('Templatable', function() {
+    var globalVar = {}
+
+    afterEach(function() {
+      for (var v in globalVar) {
+        globalVar[v].destroy(); 
+      }
+      globalVar = {}
+    })
 
     var TemplatableWidget = Widget.extend({
       Implements: Templatable
@@ -16,7 +24,7 @@ define(function(require) {
 
     it('normal usage', function() {
 
-      var widget = new TemplatableWidget({
+      var widget = globalVar.widget = new TemplatableWidget({
         template: '<div><h3>{{title}}</h3><p>{{content}}</p></div>',
         model: {
           title: 'Big Bang',
@@ -38,7 +46,7 @@ define(function(require) {
         }
       })
 
-      var widget = new TestWidget({
+      var widget = globalVar.widget = new TestWidget({
         template: '<p>{{link item}}</p>',
         model: {
           item: {
@@ -53,7 +61,7 @@ define(function(require) {
 
     it('renderPartial', function() {
 
-      var t = new TemplatableWidget({
+      var t = globalVar.t = new TemplatableWidget({
         template: '<div id="t"><h3>{{title}}</h3><div>{{content}}</div></div>',
         model: {
           title: 'This is a title',
@@ -67,14 +75,11 @@ define(function(require) {
       t.model = { title: 'xxx' }
       t.renderPartial('h3')
       expect(t.$('h3').html()).to.equal('xxx')
-
-      // destroy
-      t.element.remove()
     })
 
     it('template expression in invalid place', function() {
 
-      var t = new TemplatableWidget({
+      var t = globalVar.t = new TemplatableWidget({
         template: '<table id="t"><tbody><tr><td>&lt;!--{{xx}}--&gt;</td>{{#each items}}<td class="item-{{this}}">{{this}}</td>{{/each}}</tr></tbody></table>',
         model: {
           xx: 'xx',
@@ -93,9 +98,6 @@ define(function(require) {
       expect($('#t tbody td').length).to.equal(6)
       expect($('#t tbody td').eq(1).hasClass('item-1')).to.equal(true)
       expect($('#t tbody td').eq(0).html()).to.equal('&lt;!--xx--&gt;')
-
-      // destroy
-      t.element.remove()
     })
 
     it('model.toJSON()', function() {
@@ -103,7 +105,7 @@ define(function(require) {
       var A = TemplatableWidget.extend({
       })
 
-      var a = new A({
+      var a = globalVar.a = new A({
         template: '<div>{{content}}</div>',
         model: {
           toJSON: function() {
@@ -120,7 +122,7 @@ define(function(require) {
 
     it('#10: src expression in template string', function() {
 
-      var t = new TemplatableWidget({
+      var t = globalVar.t = new TemplatableWidget({
         template: '<div id="t10"><h3>{{title}}</h3><div class="content">{{content}}<img src="{{src}}"></div></div>',
         model: {
           title: 'This is a title',
@@ -163,7 +165,7 @@ define(function(require) {
         }
       })
 
-      var t = new WidgetA({ content: '2' })
+      var t = globalVar.t = new WidgetA({ content: '2' })
 
       t.render()
       expect(n).to.equal(1)
