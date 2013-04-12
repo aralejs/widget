@@ -44,9 +44,9 @@ define(function(require, exports, module) {
     // 属性列表
     attrs: {
       // 基本属性
-      id: '',
-      className: '',
-      style: {},
+      id: null,
+      className: null,
+      style: null,
 
       // 组件的默认父节点
       parentNode: document.body
