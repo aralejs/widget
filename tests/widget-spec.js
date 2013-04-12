@@ -619,6 +619,19 @@ define(function(require) {
       expect(c.events.p2).to.equal('2')
     })
 
+    it('#38 destroy', function() {
+
+      var A = new Widget({
+        template: '<div id="destroy"><a></a></div>'
+      }).render()
+
+      expect(A.element[0]).to.eql($('#destroy')[0])
+
+      A.destroy()
+      expect($('#destroy')[0]).to.be(undefined)
+      expect(A.element).to.be(null)
+    })
+
   })
 
 

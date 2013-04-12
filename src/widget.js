@@ -260,7 +260,9 @@ define(function(require, exports, module) {
 
       // For memory leak
       if (this.element) {
-        this.element.off();
+        this.element.off()
+        // 如果是 widget 生成的 element 则去除
+        this.get('template') && this.element.remove()
         this.element = null
       }
 
