@@ -116,6 +116,8 @@ define(function(require) {
       var event = {}, that = {}
 
       // 通过 events 注册事件代理
+      var spy1 = sinon.spy();
+      var spy2 = sinon.spy();
       var TestWidget = Widget.extend({
         events: {
           'click p': 'fn1',
@@ -123,13 +125,9 @@ define(function(require) {
           'mouseenter span': 'fn3'
         },
 
-        fn1: function() {
-          counter++
-        },
+        fn1: spy1,
 
-        fn2: function() {
-          counter++
-        },
+        fn2: spy2,
 
         fn3: function(ev) {
           event = ev
@@ -142,48 +140,49 @@ define(function(require) {
       }).render()
 
       widget.$('p').trigger('click')
-      expect(counter).to.equal(1)
+      expect(spy1.called).to.be.ok()
+      spy1.reset()
 
-      counter = 0
       widget.$('li').trigger('click')
-      expect(counter).to.equal(1)
+      expect(spy2.called).to.be.ok()
+      spy2.reset()
 
-      counter = 0
       widget.element.trigger('click')
-      expect(counter).to.equal(0)
+      expect(spy1.called).not.to.be.ok()
+      expect(spy2.called).not.to.be.ok()
+      spy1.reset()
+      spy2.reset()
 
-      counter = 0
       widget.$('span').trigger('mouseenter')
       expect(event.currentTarget.tagName).to.equal('SPAN')
       expect(that).to.equal(widget)
 
 
       // 通过实例添加事件
+      var spy3 = sinon.spy()
+      var spy4 = sinon.spy()
       widget.delegateEvents({
         'click p': 'fn2',
-        'click span': function() {
-          counter++
-        }
+        'click span': spy3
       })
 
-      function incr() {
-        counter++
-      }
+      widget.delegateEvents('click li', spy4)
 
-      widget.delegateEvents('click li', incr)
-
-      counter = 0
       widget.$('li').trigger('click')
-      expect(counter).to.equal(2)
+      expect(spy2.called).to.be.ok()
+      expect(spy4.called).to.be.ok()
+      spy2.reset()
+      spy4.reset()
 
-      counter = 0
       widget.$('p').trigger('click')
-      expect(counter).to.equal(2)
+      expect(spy1.called).to.be.ok()
+      expect(spy2.called).to.be.ok()
+      spy1.reset()
+      spy2.reset()
 
-      counter = 0
       widget.$('span').trigger('click')
-      expect(counter).to.equal(1)
-
+      expect(spy3.called).to.be.ok()
+      spy3.reset()
 
       // 注销事件
       /* 不支持第二个参数
@@ -198,16 +197,42 @@ define(function(require) {
        expect(counter).to.equal(1)
        */
 
-      counter = 0
       widget.undelegateEvents('click p')
       widget.$('p').trigger('click')
-      expect(counter).to.equal(0)
+      expect(spy1.called).not.to.be.ok()
+      expect(spy2.called).not.to.be.ok()
+      spy1.reset()
+      spy2.reset()
 
-      counter = 0
       widget.undelegateEvents()
       widget.$('li').trigger('click')
       widget.$('p').trigger('click')
-      expect(counter).to.equal(0)
+      expect(spy1.called).not.to.be.ok()
+      expect(spy2.called).not.to.be.ok()
+      expect(spy3.called).not.to.be.ok()
+      expect(spy4.called).not.to.be.ok()
+      spy1.reset()
+      spy2.reset()
+      spy3.reset()
+      spy4.reset()
+
+      var dom = $('<div><a href=""></a></div>')
+      var spy5 = sinon.spy()
+      var spy6 = sinon.spy()
+      widget.delegateEvents(dom, 'click', spy5)
+      widget.delegateEvents(dom, 'click a', spy6)
+
+      dom.trigger('click')
+      expect(spy5.called).to.be.ok()
+      expect(spy6.called).not.to.be.ok()
+      spy5.reset()
+      spy6.reset()
+
+      dom.find('a').trigger('click')
+      expect(spy5.called).to.be.ok()
+      expect(spy6.called).to.be.ok()
+      spy5.reset()
+      spy6.reset()
     })
 
     it('events hash can be a function', function() {

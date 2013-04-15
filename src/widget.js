@@ -116,11 +116,32 @@ define(function(require, exports, module) {
     },
 
     // 注册事件代理
-    delegateEvents: function(events, handler) {
+    delegateEvents: function(element, events, handler) {
       events || (events = getEvents(this))
       if (!events) return
 
-      // 允许使用：widget.delegateEvents('click p', function(ev) { ... })
+      // widget.delegateEvents({
+      //   'click p': 'fn1',
+      //   'click li': 'fn2'
+      // )
+      if (arguments.length === 1) {
+        events = element
+        element = this.element
+      }
+
+      // widget.delegateEvents('click p', function(ev) { ... })
+      else if (arguments.length === 2) {
+        handler = events
+        events = element
+        element = this.element
+      }
+
+      // widget.delegateEvents(element, 'click p', function(ev) { ... })
+      else {
+        element || (element = this.element)
+      }
+
+      // 'click p' => {'click p': handler}
       if (isString(events) && isFunction(handler)) {
         var o = {}
         o[events] = handler
@@ -147,12 +168,12 @@ define(function(require, exports, module) {
 
           // delegate
           if (selector) {
-            widget.element.on(eventType, selector, callback)
+            $(element).on(eventType, selector, callback)
           }
           // normal bind
           // 分开写是为了兼容 zepto，zepto 的判断不如 jquery 强劲有力
           else {
-            widget.element.on(eventType, callback)
+            $(element).on(eventType, callback)
           }
 
         })(events[key], this)
