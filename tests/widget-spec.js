@@ -111,128 +111,216 @@ define(function(require) {
       expect(dataset).to.eql({})
     })
 
-    it('delegateEvents / undelegateEvents', function() {
-      var counter = 0
-      var event = {}, that = {}
+    describe('delegateEvents / undelegateEvents', function() {
+      it('delegateEvents()', function() {
+        var spy1 = sinon.spy();
+        var spy2 = sinon.spy();
+        var TestWidget = Widget.extend({
+          events: {
+            'click p': 'fn1',
+            'click li': 'fn2',
+            'mouseenter span': 'fn3'
+          },
+          fn1: spy1,
+          fn2: spy2,
+          fn3: function(ev) {
+            event = ev
+            that = this
+          }
+        })
 
-      // 通过 events 注册事件代理
-      var spy1 = sinon.spy();
-      var spy2 = sinon.spy();
-      var TestWidget = Widget.extend({
-        events: {
+        var widget = globalVar.widget = new TestWidget({
+          template: '<div><p></p><ul><li></li></ul><span></span></div>'
+        }).render()
+
+        widget.$('p').trigger('click')
+        expect(spy1.called).to.be.ok()
+        spy1.reset()
+  
+        widget.$('li').trigger('click')
+        expect(spy2.called).to.be.ok()
+        spy2.reset()
+  
+        widget.element.trigger('click')
+        expect(spy1.called).not.to.be.ok()
+        expect(spy2.called).not.to.be.ok()
+        spy1.reset()
+        spy2.reset()
+  
+        widget.$('span').trigger('mouseenter')
+        expect(event.currentTarget.tagName).to.equal('SPAN')
+        expect(that).to.equal(widget)
+      })
+
+      it('delegateEvents(eventsObject)', function() {
+        var spy1 = sinon.spy()
+        var spy2 = sinon.spy()
+        var TestWidget = Widget.extend({
+          fn1: spy1
+        })
+        var widget = globalVar.widget = new TestWidget({
+          template: '<div><p></p><ul><li></li></ul><span></span></div>'
+        }).render()
+
+        widget.delegateEvents({
           'click p': 'fn1',
-          'click li': 'fn2',
-          'mouseenter span': 'fn3'
-        },
+          'click span': spy2
+        })
 
-        fn1: spy1,
+        widget.$('p').trigger('click')
+        expect(spy1.called).to.be.ok()
 
-        fn2: spy2,
+        widget.$('span').trigger('click')
+        expect(spy1.called).to.be.ok()
+      });
 
-        fn3: function(ev) {
-          event = ev
-          that = this
-        }
+      it('delegateEvents(events, handler)', function() {
+        var spy = sinon.spy()
+        var widget = globalVar.widget = new Widget({
+          template: '<div><p></p><ul><li></li></ul><span></span></div>'
+        }).render()
+
+        widget.delegateEvents('click p', spy)
+        widget.$('p').trigger('click')
+        expect(spy.called).to.be.ok()
+      });
+
+      it('delegateEvents(element, events, handler)', function() {
+        var dom = $('<div><p></p></div>')
+        var spy1 = sinon.spy()
+        var spy2 = sinon.spy()
+        var widget = globalVar.widget = new Widget({
+          template: '<div><p></p><ul><li></li></ul><span></span></div>'
+        }).render()
+
+        widget.delegateEvents(dom, 'click', spy1)
+        widget.delegateEvents(dom, 'click p', spy2)
+
+        widget.$('p').trigger('click')
+        expect(spy2.called).not.to.be.ok()
+
+        dom.trigger('click')
+        expect(spy1.called).to.be.ok()
+        expect(spy2.called).not.to.be.ok()
+        spy1.reset()
+        spy2.reset()
+
+        dom.find('p').trigger('click')
+        expect(spy1.called).to.be.ok()
+        expect(spy2.called).to.be.ok()
+      });
+
+      it('undelegateEvents()', function() {
+        var spy1 = sinon.spy()
+        var spy2 = sinon.spy()
+        var spy3 = sinon.spy()
+        var widget = globalVar.widget = new Widget({
+          template: '<div><p></p><ul><li></li></ul><span></span></div>'
+        }).render()
+
+        widget.delegateEvents({
+          'click p': spy1,
+          'mouseenter': spy2
+        })
+
+        var dom = $('<div></div>')
+        widget.delegateEvents(dom, 'click', spy3)
+
+        widget.$('p').trigger('click')
+        widget.element.trigger('mouseenter')
+        dom.trigger('click')
+        expect(spy1.called).to.be.ok()
+        expect(spy2.called).to.be.ok()
+        expect(spy3.called).to.be.ok()
+        spy1.reset()
+        spy2.reset()
+        spy3.reset()
+
+        widget.undelegateEvents()
+        widget.$('p').trigger('click')
+        widget.element.trigger('mouseenter')
+        dom.trigger('click')
+        expect(spy1.called).not.to.be.ok()
+        expect(spy2.called).not.to.be.ok()
+        expect(spy3.called).not.to.be.ok()
+      });
+
+      it('undelegateEvents(events)', function() {
+        var spy1 = sinon.spy()
+        var spy2 = sinon.spy()
+        var spy3 = sinon.spy()
+        var widget = globalVar.widget = new Widget({
+          template: '<div><p></p><ul><li></li></ul><span></span></div>'
+        }).render()
+
+        widget.delegateEvents({
+          'click p': spy1,
+          'click span': spy2,
+          'click li': spy3
+        })
+
+        widget.$('p').trigger('click')
+        widget.$('span').trigger('click')
+        widget.$('li').trigger('click')
+        expect(spy1.called).to.be.ok()
+        expect(spy2.called).to.be.ok()
+        expect(spy3.called).to.be.ok()
+        spy1.reset()
+        spy2.reset()
+        spy3.reset()
+
+        widget.undelegateEvents('click span')
+        widget.$('p').trigger('click')
+        widget.$('span').trigger('click')
+        widget.$('li').trigger('click')
+        expect(spy1.called).to.be.ok()
+        expect(spy2.called).not.to.be.ok()
+        expect(spy3.called).to.be.ok()
+        spy1.reset()
+        spy2.reset()
+        spy3.reset()
+
+        widget.undelegateEvents('click')
+        widget.$('p').trigger('click')
+        widget.$('span').trigger('click')
+        widget.$('li').trigger('click')
+        expect(spy1.called).not.to.be.ok()
+        expect(spy2.called).not.to.be.ok()
+        expect(spy3.called).not.to.be.ok()
       })
 
-      var widget = globalVar.widget = new TestWidget({
-        template: '<div><p></p><ul><li></li></ul><span></span></div>'
-      }).render()
+      it('undelegateEvents(element, events)', function() {
+        var dom = $('<div><p></p><ul><li></li></ul><span></span></div>')
+        var spy1 = sinon.spy()
+        var spy2 = sinon.spy()
+        var spy3 = sinon.spy()
+        var widget = globalVar.widget = new Widget({
+          template: '<div><p></p><ul><li></li></ul><span></span></div>'
+        }).render()
 
-      widget.$('p').trigger('click')
-      expect(spy1.called).to.be.ok()
-      spy1.reset()
+        widget.delegateEvents(dom, 'click p', spy1)
+        widget.delegateEvents(dom, 'click li', spy2)
+        widget.delegateEvents(dom, 'click span', spy3)
 
-      widget.$('li').trigger('click')
-      expect(spy2.called).to.be.ok()
-      spy2.reset()
+        widget.undelegateEvents(dom, 'click li')
+        dom.find('p').trigger('click')
+        dom.find('li').trigger('click')
+        dom.find('span').trigger('click')
+        expect(spy1.called).to.be.ok()
+        expect(spy2.called).not.to.be.ok()
+        expect(spy3.called).to.be.ok()
+        spy1.reset()
+        spy2.reset()
+        spy3.reset()
 
-      widget.element.trigger('click')
-      expect(spy1.called).not.to.be.ok()
-      expect(spy2.called).not.to.be.ok()
-      spy1.reset()
-      spy2.reset()
-
-      widget.$('span').trigger('mouseenter')
-      expect(event.currentTarget.tagName).to.equal('SPAN')
-      expect(that).to.equal(widget)
-
-
-      // 通过实例添加事件
-      var spy3 = sinon.spy()
-      var spy4 = sinon.spy()
-      widget.delegateEvents({
-        'click p': 'fn2',
-        'click span': spy3
+        widget.undelegateEvents(dom, 'click')
+        dom.find('p').trigger('click')
+        dom.find('li').trigger('click')
+        dom.find('span').trigger('click')
+        expect(spy1.called).not.to.be.ok()
+        expect(spy2.called).not.to.be.ok()
+        expect(spy3.called).not.to.be.ok()
       })
-
-      widget.delegateEvents('click li', spy4)
-
-      widget.$('li').trigger('click')
-      expect(spy2.called).to.be.ok()
-      expect(spy4.called).to.be.ok()
-      spy2.reset()
-      spy4.reset()
-
-      widget.$('p').trigger('click')
-      expect(spy1.called).to.be.ok()
-      expect(spy2.called).to.be.ok()
-      spy1.reset()
-      spy2.reset()
-
-      widget.$('span').trigger('click')
-      expect(spy3.called).to.be.ok()
-      spy3.reset()
-
-      // 注销事件
-      /* 不支持第二个参数
-       counter = 0
-       widget.undelegateEvents('click p', 'fn2')
-       widget.$('p').trigger('click')
-       expect(counter).to.equal(1)
-
-       counter = 0
-       widget.undelegateEvents('click li', incr)
-       widget.$('li').trigger('click')
-       expect(counter).to.equal(1)
-       */
-
-      widget.undelegateEvents('click p')
-      widget.$('p').trigger('click')
-      expect(spy1.called).not.to.be.ok()
-      expect(spy2.called).not.to.be.ok()
-      spy1.reset()
-      spy2.reset()
-
-      widget.undelegateEvents()
-      widget.$('li').trigger('click')
-      widget.$('p').trigger('click')
-      expect(spy1.called).not.to.be.ok()
-      expect(spy2.called).not.to.be.ok()
-      expect(spy3.called).not.to.be.ok()
-      expect(spy4.called).not.to.be.ok()
-      spy1.reset()
-      spy2.reset()
-      spy3.reset()
-      spy4.reset()
-
-      var dom = $('<div><a href=""></a></div>')
-      var spy5 = sinon.spy()
-      var spy6 = sinon.spy()
-      widget.delegateEvents(dom, 'click', spy5)
-      widget.delegateEvents(dom, 'click a', spy6)
-
-      dom.trigger('click')
-      expect(spy5.called).to.be.ok()
-      expect(spy6.called).not.to.be.ok()
-      spy5.reset()
-      spy6.reset()
-
-      dom.find('a').trigger('click')
-      expect(spy5.called).to.be.ok()
-      expect(spy6.called).to.be.ok()
-      spy5.reset()
-      spy6.reset()
     })
 
     it('events hash can be a function', function() {

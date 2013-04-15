@@ -117,14 +117,17 @@ define(function(require, exports, module) {
 
     // 注册事件代理
     delegateEvents: function(element, events, handler) {
-      events || (events = getEvents(this))
-      if (!events) return
+      // widget.delegateEvents()
+      if (arguments.length === 0) {
+        events = getEvents(this)
+        element = this.element
+      }
 
       // widget.delegateEvents({
       //   'click p': 'fn1',
       //   'click li': 'fn2'
       // )
-      if (arguments.length === 1) {
+      else if (arguments.length === 1) {
         events = element
         element = this.element
       }
@@ -139,6 +142,8 @@ define(function(require, exports, module) {
       // widget.delegateEvents(element, 'click p', function(ev) { ... })
       else {
         element || (element = this.element)
+        this._delegateElements || (this._delegateElements = [])
+        this._delegateElements.push(element)
       }
 
       // 'click p' => {'click p': handler}
@@ -183,19 +188,42 @@ define(function(require, exports, module) {
     },
 
     // 卸载事件代理
-    undelegateEvents: function(eventKey) {
-      var args = {}
+    undelegateEvents: function(element, eventKey) {
+      if (!eventKey) {
+        eventKey = element
+        element = null
+      }
 
       // 卸载所有
+      // .undelegateEvents()
       if (arguments.length === 0) {
-        args.type = DELEGATE_EVENT_NS + this.cid
-      }
-      // 卸载特定类型：widget.undelegateEvents('click li')
-      else {
-        args = parseEventKey(eventKey, this)
-      }
+        var type = DELEGATE_EVENT_NS + this.cid
 
-      this.element && this.element.off(args.type, args.selector)
+        this.element && this.element.off(type)
+
+        // 卸载所有外部传入的 element
+        if (this._delegateElements) {
+          for (var de in this._delegateElements) {
+            if (!this._delegateElements.hasOwnProperty(de)) continue
+            this._delegateElements[de].off(type)
+          }
+        }
+
+      } else {
+        var args = parseEventKey(eventKey, this)
+
+        // 卸载 this.element
+        // .undelegateEvents(events)
+        if (!element) {
+this.element && this.element.off(args.type, args.selector)
+        }
+
+        // 卸载外部 element
+        // .undelegateEvents(element, events)
+        else {
+          $(element).off(args.type, args.selector)
+        }
+      }
       return this
     },
 
