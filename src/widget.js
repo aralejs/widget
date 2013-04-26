@@ -215,20 +215,21 @@ define(function(require, exports, module) {
         if (!attrs.hasOwnProperty(attr)) continue
         var m = ON_RENDER + ucfirst(attr)
 
-       if (this[m]) {
+       if (typeof this[m] === 'function') {
          var val = this.get(attr)
 
            //让属性的初始值生效。注：默认空值不触发
-         if (!isEmptyAttrValue(val)) {
-           this[m](val, undefined, attr)
-         }
+          // console.log(attr,attrs)
+           if (!isEmptyAttrValue(val)) {
+               this[m](val, undefined, attr)
+            }
 
           //将 _onRenderXx 自动绑定到 change:xx 事件上
-         (function(m) {
-           widget.on('change:' + attr, function(val, prev, key) {
-             widget[m](val, prev, key)
-           })
-         })(m)
+            (function(m) {
+               widget.on('change:' + attr, function(val, prev, key) {
+                 widget[m](val, prev, key)
+               })
+            })(m)
         }else{
            widget.on('change:' + attr, function(val, prev, key) {
              widget.renderPartial();
@@ -242,7 +243,6 @@ define(function(require, exports, module) {
     renderPartial:function(){
     },
     _parseWidgetExtension:function(){
-        
     },
     _onRenderId: function(val) {
       this.element.attr('id', val)
