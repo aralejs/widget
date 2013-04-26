@@ -219,7 +219,6 @@ define(function(require, exports, module) {
          var val = this.get(attr)
 
            //让属性的初始值生效。注：默认空值不触发
-          // console.log(attr,attrs)
            if (!isEmptyAttrValue(val)) {
                this[m](val, undefined, attr)
             }
