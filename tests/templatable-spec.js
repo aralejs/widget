@@ -17,15 +17,23 @@ define(function(require) {
     it('normal usage', function() {
 
       var widget = new TemplatableWidget({
-        template: '<div><h3>{{title}}</h3><p>{{content}}</p></div>',
-        model: {
-          title: 'Big Bang',
-          content: 'It is very cool.'
-        }
+        template: '<div><h3 data-widget-role="title">{{title}}</h3><p>{{content}}</p></div>',
+        title: 'Big Bang',
+        content: 'It is very cool.'
       })
-
+      widget.render();
       expect(widget.$('h3').text()).to.equal('Big Bang')
       expect(widget.$('p').text()).to.equal('It is very cool.')
+      
+      widget.set('title','templateWidget');
+      expect(widget.$('h3').text()).to.equal('templateWidget')
+      
+      widget.set('content','content');
+      expect(widget.$('p').text()).to.equal('content')
+      
+      widget.title.text('123');
+      expect(widget.$('h3').text()).to.equal('123')
+      
     })
 
     it('Handlebars helpers', function() {

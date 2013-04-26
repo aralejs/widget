@@ -24,8 +24,20 @@ define(function(require, exports, module) {
     // 编译模板，混入数据，返回 html 结果
     compile: function(template, model) {
       template || (template = this.template)
-
-      model || (model = this.model)
+      //优先使用model
+     // model || (model = this.model)
+      if(!model){
+          model = this.model;
+          if(model){
+              console && console.warn && console.warn('请使用attrs来代替model！');
+          }else{
+              var model = {};
+              for(var key in this.attrs){
+                  model[key] = this.get(key);
+              }
+          }
+      }
+     
       if (model.toJSON) {
         model = model.toJSON()
       }
@@ -59,18 +71,32 @@ define(function(require, exports, module) {
 
       return html
     },
-
+    //解析一些自定义的属性
+    //data-widget-role
+    //在渲染dom后被调用
+    _parseWidgetExtension:function(){
+        var self = this;
+        this.$('[data-widget-role]').each(function(){
+            var $this = $(this),
+                role = $this.attr('data-widget-role');
+            self[role] = $this;
+        });
+        return this;
+    },
     // 刷新 selector 指定的局部区域
     renderPartial: function(selector) {
+      
       var template = convertObjectToTemplate(this.templateObject, selector)
 
-      if (template) {
+      if (template && selector) {
         this.$(selector).html(this.compile(template))
+      }else if(template){
+          //如果没有选择器就更新自身
+          this.element.html(this.compile(template));
       }
       else {
         this.element.html(this.compile())
       }
-
       return this
     }
   }
@@ -94,8 +120,12 @@ define(function(require, exports, module) {
   // 根据 selector 得到 DOM-like template object，并转换为 template 字符串
   function convertObjectToTemplate(templateObject, selector) {
     if (!templateObject) return
-
-    var element = templateObject.find(selector)
+    var element;
+    if(selector){
+        element = templateObject.find(selector)
+    } else{
+        element = templateObject;
+    }
     if (element.length === 0) {
       throw new Error('Invalid template selector: ' + selector)
     }
