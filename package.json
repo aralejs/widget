@@ -18,10 +18,6 @@
       "handlebars": "gallery/handlebars/1.0.1/handlebars",
       "base": "arale/base/1.1.0/base"
     },
-    "engines": {
-      "seajs": "seajs/seajs/2.0.0/sea.js",
-      "jquery": "jquery/jquery/1.7.2/jquery.js"
-    },
     "output": ["widget.js", "templatable.js"]
   }
 }
