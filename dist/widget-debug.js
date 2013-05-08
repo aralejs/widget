@@ -139,6 +139,7 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
             // 让渲染相关属性的初始值生效，并绑定到 change 事件
             if (!this.rendered) {
                 this._renderAndBindAttrs();
+                this._parseWidgetExtension();
                 this.rendered = true;
             }
             // 插入到文档流中
@@ -149,27 +150,40 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
             return this;
         },
         // 让属性的初始值生效，并绑定到 change:attr 事件上
+        //设置属性的改变会自动刷新模版
+        //如果有_onRenderProperty方法则优先调用此方法
+        //否则实现粗粒度的替换
         _renderAndBindAttrs: function() {
             var widget = this;
             var attrs = widget.attrs;
             for (var attr in attrs) {
                 if (!attrs.hasOwnProperty(attr)) continue;
                 var m = ON_RENDER + ucfirst(attr);
-                if (this[m]) {
+                if (typeof this[m] === "function") {
                     var val = this.get(attr);
-                    // 让属性的初始值生效。注：默认空值不触发
+                    //让属性的初始值生效。注：默认空值不触发
+                    // console.log(attr,attrs)
                     if (!isEmptyAttrValue(val)) {
                         this[m](val, undefined, attr);
                     }
-                    // 将 _onRenderXx 自动绑定到 change:xx 事件上
+                    //将 _onRenderXx 自动绑定到 change:xx 事件上
                     (function(m) {
                         widget.on("change:" + attr, function(val, prev, key) {
                             widget[m](val, prev, key);
                         });
                     })(m);
+                } else {
+                    widget.on("change:" + attr, function(val, prev, key) {
+                        widget.renderPartial();
+                        //重新解析一次
+                        widget._parseWidgetExtension();
+                    });
                 }
             }
         },
+        //给模版使用
+        renderPartial: function() {},
+        _parseWidgetExtension: function() {},
         _onRenderId: function(val) {
             this.element.attr("id", val);
         },
