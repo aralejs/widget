@@ -59,7 +59,7 @@ define(function(require, exports, module) {
 
       // 初始化 attrs
       var dataAttrsConfig = this._parseDataAttrsConfig(config)
-      this.initAttrs(config, dataAttrsConfig)
+      this.initAttrs(config ? $.extend(dataAttrsConfig, config) : dataAttrsConfig)
 
       // 初始化 props
       this.parseElement()

@@ -636,7 +636,8 @@ define(function(require) {
       expect(t.get('arr')).to.eql([1, 2, 3])
     })
 
-    it('onXx setter in attrs', function() {
+    // base 1.1.0 不再支持这种写法
+    xit('onXx setter in attrs', function() {
       var counter = 0
 
       function incr() {
