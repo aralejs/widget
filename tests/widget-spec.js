@@ -579,6 +579,8 @@ define(function(require) {
       expect(nullSpy.calledOnce).not.to.be.ok()
       expect(undefinedSpy.calledOnce).not.to.be.ok()
       expect(functionSpy.calledOnce).to.be.ok()
+      boolSpy.reset()
+      str2Spy.reset()
 
       // 测试 onXxx
       var b = globalVar.b = new A({
@@ -586,8 +588,8 @@ define(function(require) {
         str2: ''
       }).render()
 
-      expect(boolSpy.calledOnce).to.be.ok()
-      expect(str2Spy.calledTwice).to.be.ok()
+      expect(boolSpy.called).not.to.be.ok()
+      expect(str2Spy.calledOnce).to.be.ok()
     })
 
     it('call render() after first render', function() {
