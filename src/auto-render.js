@@ -38,11 +38,17 @@ define(function(require, exports) {
           // 已经渲染过
           if (element.attr(DATA_WIDGET_AUTO_RENDERED)) continue
 
-          // 调用自动渲染接口
-          SubWidget.autoRender && SubWidget.autoRender({
-            element: element,
+          var config = {
+            initElement: element,
             renderType: 'auto'
-          })
+          };
+
+          // data-widget-role 是指将当前的 DOM 作为 role 的属性去实例化，默认的 role 为 element
+          var role = element.attr('data-widget-role')
+          config[role ? role : 'element'] = element
+
+          // 调用自动渲染接口
+          SubWidget.autoRender && SubWidget.autoRender(config)
 
           // 标记已经渲染过
           element.attr(DATA_WIDGET_AUTO_RENDERED, 'true')

@@ -23,7 +23,7 @@ define(function(require, exports, module) {
   var Widget = Base.extend({
 
     // config 中的这些键值会直接添加到实例上，转换成 properties
-    propsInAttrs: ['element', 'template', 'model', 'events'],
+    propsInAttrs: ['initElement', 'element', 'template', 'model', 'events'],
 
     // 与 widget 关联的 DOM 元素
     element: null,
@@ -58,6 +58,8 @@ define(function(require, exports, module) {
     initialize: function(config) {
       this.cid = uniqueCid()
 
+      this._initElement(config)
+
       // 初始化 attrs
       var dataAttrsConfig = this._parseDataAttrsConfig(config)
       this.initAttrs(config ? $.extend(dataAttrsConfig, config) : dataAttrsConfig)
@@ -76,10 +78,16 @@ define(function(require, exports, module) {
       this._stamp()
     },
 
+    _initElement: function(config) {
+      
+    },
+
     // 解析通过 data-attr 设置的 api
     _parseDataAttrsConfig: function(config) {
       var element, dataAttrsConfig
-      config && (element = $(config.element))
+      if (config) {
+        element = config.initElement ? $(config.initElement) : $(config.element)
+      }
 
       // 解析 data-api 时，只考虑用户传入的 element，不考虑来自继承或从模板构建的
       if (element && element[0] && !AutoRender.isDataApiOff(element)) {
@@ -301,9 +309,9 @@ this.element && this.element.off(args.type, args.selector)
 
     // 让 element 与 Widget 实例建立关联
     _stamp: function() {
-      var cid = this.cid
+      var cid = this.cid;
 
-      this.element.attr(DATA_WIDGET_CID, cid)
+      (this.initElement || this.element).attr(DATA_WIDGET_CID, cid)
       cachedInstances[cid] = this
     },
 
