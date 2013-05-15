@@ -32,5 +32,19 @@ define(function(require) {
         done();
       });
     });
+
+    it('autoRender template', function(done) {
+      var dom = $('<div id="tpl"><p>element</p></div>').appendTo(document.body);
+      var trigger = $('<div id="test3" data-widget="widget" data-widget-role="trigger" data-template="#tpl"></div>');
+      trigger.appendTo(document.body);
+      Widget.autoRenderAll(function() {
+        var test = Widget.query('#test3');
+        expect(test.element.html()).to.be('<p>element</p>');
+        trigger.remove();
+        dom.remove();
+        test.destroy();
+        done();
+      });
+    });
   });
 });
