@@ -378,13 +378,6 @@ this.element && this.element.off(args.type, args.selector)
     return toString.call(val) === '[object Function]'
   }
 
-  function isEmptyObject(o) {
-    for (var p in o) {
-      if (o.hasOwnProperty(p)) return false
-    }
-    return true
-  }
-
   // Zepto 上没有 contains 方法
   var contains = $.contains || function(a, b) {
     //noinspection JSBitwiseOperatorUsage

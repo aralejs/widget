@@ -5,7 +5,7 @@ define(function(require) {
 
   describe('AutoRender', function() {
     it('autoRenderAll', function(done) {
-      var dom = $('<div id="test1" data-widget="widget" data-class-name="widget"></div>');
+      var dom = $('<div data-widget="widget" data-class-name="widget" data-id="test1"></div>');
       dom.appendTo(document.body);
       Widget.autoRenderAll(function() {
         var test = Widget.query('#test1');

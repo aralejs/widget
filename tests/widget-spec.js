@@ -766,6 +766,17 @@ define(function(require) {
         A.destroy()
       }).to.not.throwError()
     })
+
+    it('style attribute', function() {
+      var A = new Widget({
+        style: {
+          padding: '1px'
+        },
+        template: '<div id="destroy"><a></a></div>'
+      }).render()
+
+      expect(A.element.css('paddingTop')).to.be('1px')
+    })
   })
 
 
