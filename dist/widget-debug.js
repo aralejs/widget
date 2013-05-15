@@ -1,10 +1,10 @@
-define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug", "$-debug", "./daparser-debug", "./auto-render-debug" ], function(require, exports, module) {
+define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.1.0/events-debug", "$-debug", "./daparser-debug", "./auto-render-debug" ], function(require, exports, module) {
     // Widget
     // ---------
     // Widget 是与 DOM 元素相关联的非工具类组件，主要负责 View 层的管理。
     // Widget 组件具有四个要素：描述状态的 attributes 和 properties，描述行为的 events
     // 和 methods。Widget 基类约定了这四要素创建时的基本流程和最佳实践。
-    var Base = require("arale/base/1.0.1/base-debug");
+    var Base = require("arale/base/1.1.0/base-debug");
     var $ = require("$-debug");
     var DAParser = require("./daparser-debug");
     var AutoRender = require("./auto-render-debug");
@@ -13,9 +13,10 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
     var DATA_WIDGET_CID = "data-widget-cid";
     // 所有初始化过的 Widget 实例
     var cachedInstances = {};
+    var outerBoxClass = parseModuleId(module.uri);
     var Widget = Base.extend({
         // config 中的这些键值会直接添加到实例上，转换成 properties
-        propsInAttrs: [ "element", "template", "model", "events" ],
+        propsInAttrs: [ "initElement", "element", "template", "model", "events" ],
         // 与 widget 关联的 DOM 元素
         element: null,
         // 默认模板
@@ -32,9 +33,9 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
         // 属性列表
         attrs: {
             // 基本属性
-            id: "",
-            className: "",
-            style: {},
+            id: null,
+            className: null,
+            style: null,
             // 组件的默认父节点
             parentNode: document.body
         },
@@ -44,7 +45,7 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
             this.cid = uniqueCid();
             // 初始化 attrs
             var dataAttrsConfig = this._parseDataAttrsConfig(config);
-            this.initAttrs(config, dataAttrsConfig);
+            this.initAttrs(config ? $.extend(dataAttrsConfig, config) : dataAttrsConfig);
             // 初始化 props
             this.parseElement();
             this.initProps();
@@ -58,7 +59,9 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
         // 解析通过 data-attr 设置的 api
         _parseDataAttrsConfig: function(config) {
             var element, dataAttrsConfig;
-            config && (element = $(config.element));
+            if (config) {
+                element = config.initElement ? $(config.initElement) : $(config.element);
+            }
             // 解析 data-api 时，只考虑用户传入的 element，不考虑来自继承或从模板构建的
             if (element && element[0] && !AutoRender.isDataApiOff(element)) {
                 dataAttrsConfig = DAParser.parseElement(element);
@@ -85,10 +88,24 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
         // 负责 properties 的初始化，提供给子类覆盖
         initProps: function() {},
         // 注册事件代理
-        delegateEvents: function(events, handler) {
-            events || (events = getEvents(this));
-            if (!events) return;
-            // 允许使用：widget.delegateEvents('click p', function(ev) { ... })
+        delegateEvents: function(element, events, handler) {
+            // widget.delegateEvents()
+            if (arguments.length === 0) {
+                events = getEvents(this);
+                element = this.element;
+            } else if (arguments.length === 1) {
+                events = element;
+                element = this.element;
+            } else if (arguments.length === 2) {
+                handler = events;
+                events = element;
+                element = this.element;
+            } else {
+                element || (element = this.element);
+                this._delegateElements || (this._delegateElements = []);
+                this._delegateElements.push(element);
+            }
+            // 'click p' => {'click p': handler}
             if (isString(events) && isFunction(handler)) {
                 var o = {};
                 o[events] = handler;
@@ -110,24 +127,42 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
                     };
                     // delegate
                     if (selector) {
-                        widget.element.on(eventType, selector, callback);
+                        $(element).on(eventType, selector, callback);
                     } else {
-                        widget.element.on(eventType, callback);
+                        $(element).on(eventType, callback);
                     }
                 })(events[key], this);
             }
             return this;
         },
         // 卸载事件代理
-        undelegateEvents: function(eventKey) {
-            var args = {};
-            // 卸载所有
-            if (arguments.length === 0) {
-                args.type = DELEGATE_EVENT_NS + this.cid;
-            } else {
-                args = parseEventKey(eventKey, this);
+        undelegateEvents: function(element, eventKey) {
+            if (!eventKey) {
+                eventKey = element;
+                element = null;
             }
-            this.element.off(args.type, args.selector);
+            // 卸载所有
+            // .undelegateEvents()
+            if (arguments.length === 0) {
+                var type = DELEGATE_EVENT_NS + this.cid;
+                this.element && this.element.off(type);
+                // 卸载所有外部传入的 element
+                if (this._delegateElements) {
+                    for (var de in this._delegateElements) {
+                        if (!this._delegateElements.hasOwnProperty(de)) continue;
+                        this._delegateElements[de].off(type);
+                    }
+                }
+            } else {
+                var args = parseEventKey(eventKey, this);
+                // 卸载 this.element
+                // .undelegateEvents(events)
+                if (!element) {
+                    this.element && this.element.off(args.type, args.selector);
+                } else {
+                    $(element).off(args.type, args.selector);
+                }
+            }
             return this;
         },
         // 提供给子类覆盖的初始化方法
@@ -144,7 +179,15 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
             // 插入到文档流中
             var parentNode = this.get("parentNode");
             if (parentNode && !isInDocument(this.element[0])) {
-                this.element.appendTo(parentNode);
+                // 隔离样式，添加统一的命名空间
+                // 只处理 template 的情况，不处理传入的 element
+                // https://github.com/aliceui/aliceui.org/issues/9
+                if (outerBoxClass) {
+                    var outerBox = $("<div></div>").attr("className", outerBoxClass);
+                    outerBox.append(this.element).appendTo(parentNode);
+                } else {
+                    this.element.appendTo(parentNode);
+                }
             }
             return this;
         },
@@ -182,7 +225,7 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
         // 让 element 与 Widget 实例建立关联
         _stamp: function() {
             var cid = this.cid;
-            this.element.attr(DATA_WIDGET_CID, cid);
+            (this.initElement || this.element).attr(DATA_WIDGET_CID, cid);
             cachedInstances[cid] = this;
         },
         // 在 this.element 内寻找匹配节点
@@ -195,6 +238,8 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
             // For memory leak
             if (this.element) {
                 this.element.off();
+                // 如果是 widget 生成的 element 则去除
+                this.get("template") && this.element.remove();
                 this.element = null;
             }
             Widget.superclass.destroy.call(this);
@@ -229,12 +274,6 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
     }
     function isFunction(val) {
         return toString.call(val) === "[object Function]";
-    }
-    function isEmptyObject(o) {
-        for (var p in o) {
-            if (o.hasOwnProperty(p)) return false;
-        }
-        return true;
     }
     // Zepto 上没有 contains 方法
     var contains = $.contains || function(a, b) {
@@ -289,15 +328,23 @@ define("arale/widget/1.0.4/widget-debug", [ "arale/base/1.0.1/base-debug", "aral
             return INVALID_SELECTOR;
         });
     }
-    // 对于 attrs 的 value 来说，以下值都认为是空值： null, undefined, '', [], {}
+    // 对于 attrs 的 value 来说，以下值都认为是空值： null, undefined
     function isEmptyAttrValue(o) {
-        return o == null || // null, undefined
-        (isString(o) || $.isArray(o)) && o.length === 0 || // '', []
-        $.isPlainObject(o) && isEmptyObject(o);
+        return o == null || o === undefined;
+    }
+    // seajs moduleid -> family-name-version
+    function parseModuleId(id) {
+        var re = /([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)\/(\d+\.\d+\.\d+)\/[a-zA-Z0-9-]+.js$/;
+        var arr = (id || "").match(re);
+        if (arr && arr.length > 0) {
+            return [ arr[1], "-", arr[2], "-", arr[3].replace(/\./g, "_") ].join("");
+        } else {
+            return "";
+        }
     }
 });
 
-define("arale/widget/1.0.4/daparser-debug", [ "$-debug" ], function(require, DAParser) {
+define("arale/widget/1.1.0/daparser-debug", [ "$-debug" ], function(require, DAParser) {
     // DAParser
     // --------
     // data api 解析器，提供对单个 element 的解析，可用来初始化页面中的所有 Widget 组件。
@@ -368,7 +415,7 @@ define("arale/widget/1.0.4/daparser-debug", [ "$-debug" ], function(require, DAP
     }
 });
 
-define("arale/widget/1.0.4/auto-render-debug", [ "$-debug" ], function(require, exports) {
+define("arale/widget/1.1.0/auto-render-debug", [ "$-debug" ], function(require, exports) {
     var $ = require("$-debug");
     var DATA_WIDGET_AUTO_RENDERED = "data-widget-auto-rendered";
     // 自动渲染接口，子类可根据自己的初始化逻辑进行覆盖
@@ -397,11 +444,15 @@ define("arale/widget/1.0.4/auto-render-debug", [ "$-debug" ], function(require, 
                     var element = $(elements[i]);
                     // 已经渲染过
                     if (element.attr(DATA_WIDGET_AUTO_RENDERED)) continue;
-                    // 调用自动渲染接口
-                    SubWidget.autoRender && SubWidget.autoRender({
-                        element: element,
+                    var config = {
+                        initElement: element,
                         renderType: "auto"
-                    });
+                    };
+                    // data-widget-role 是指将当前的 DOM 作为 role 的属性去实例化，默认的 role 为 element
+                    var role = element.attr("data-widget-role");
+                    config[role ? role : "element"] = element;
+                    // 调用自动渲染接口
+                    SubWidget.autoRender && SubWidget.autoRender(config);
                     // 标记已经渲染过
                     element.attr(DATA_WIDGET_AUTO_RENDERED, "true");
                 }
