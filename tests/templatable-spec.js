@@ -178,6 +178,22 @@ define(function(require) {
 
     })
 
+    it('template support id selector', function() {
+      var dom = $('<div id="tpl"><div><h3>{{title}}</h3><p>{{content}}</p></div></div>').appendTo(document.body)
+
+      var widget = globalVar.widget = new TemplatableWidget({
+        template: '#tpl',
+        model: {
+          title: 'Big Bang',
+          content: 'It is very cool.'
+        }
+      })
+
+      expect(widget.$('h3').text()).to.equal('Big Bang')
+      expect(widget.$('p').text()).to.equal('It is very cool.')
+      dom.remove();
+    })
+
   })
 
 });

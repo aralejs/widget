@@ -17,6 +17,12 @@ define(function(require, exports, module) {
 
     // 根据配置的模板和传入的数据，构建 this.element 和 templateElement
     parseElementFromTemplate: function() {
+      // template 支持 id 选择器
+      var t;
+      if (/^#/.test(this.template) &&
+        (t = document.getElementById(this.template.substring(1)))) {
+        this.template = t.innerHTML
+      }
       this.templateObject = convertTemplateToObject(this.template)
       this.element = $(this.compile())
     },
