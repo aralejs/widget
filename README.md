@@ -266,36 +266,3 @@ var TabView = Widget.extend({
 查询与 selector 匹配的第一个 DOM 节点，得到与该 DOM 节点相关联的 Widget 实例。
 
 
-## Templatable
-
-可混入的功能类，提供 Handlebars 模板支持。
-
-```js
-var Templatable = require('widget-templatable');
-
-var MyWidget = Widget.extend({
-    Implements: Templatable
-});
-
-var myWidget = new MyWidget({
-    template: '<h3>{{title}}</h3><ol>{{#each list}}<li>{{item}}</li>{{/each}}',
-    model: {
-        'title': '标题',
-        'list': [
-            { 'item': '文章一' },
-            { 'item': '文章二' }
-        ]
-    },
-    parentNode: '#demo'
-});
-
-myWidget.render();
-```
-
-
-### renderPartial `widget.renderPartial(selector)`
-
-局部渲染。根据传入的 `selector` 参数，刷新匹配的区域。
-
-默认无需覆盖。需要覆盖时，请使用 `return this` 来保持该方法的链式约定。
-

@@ -15,9 +15,8 @@
   "spm": {
     "alias": {
       "$": "$",
-      "handlebars": "gallery/handlebars/1.0.1/handlebars",
       "base": "arale/base/1.1.0/base"
     },
-    "output": ["widget.js", "templatable.js"]
+    "output": ["widget.js"]
   }
 }
