@@ -58,8 +58,6 @@ define(function(require, exports, module) {
     initialize: function(config) {
       this.cid = uniqueCid()
 
-      this._initElement(config)
-
       // 初始化 attrs
       var dataAttrsConfig = this._parseDataAttrsConfig(config)
       this.initAttrs(config ? $.extend(dataAttrsConfig, config) : dataAttrsConfig)
@@ -76,10 +74,6 @@ define(function(require, exports, module) {
 
       // 保存实例信息
       this._stamp()
-    },
-
-    _initElement: function(config) {
-      
     },
 
     // 解析通过 data-attr 设置的 api
