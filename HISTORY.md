@@ -6,6 +6,8 @@
 
 `tag:fixed` [#25](https://github.com/aralejs/widget/issues/25) destroy 的 bug
 
+`tag:changed` [#47](https://github.com/aralejs/widget/issues/47) 不再使用 `this.template` 和 `this.model`
+
 `tag:changed` [#36](https://github.com/aralejs/widget/issues/36) 当属性值为空字符串时的处理
 
 `tag:new` [#39](https://github.com/aralejs/widget/issues/39) 彻底隔离样式冲突的 widget 方案
