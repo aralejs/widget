@@ -24,11 +24,11 @@ define(function(require) {
         attrs: {
           element: '#default',
           foo: 'foo',
-          template: '<span></span>'
-        },
-        model: {
-          title: 'default title',
-          content: 'default content'
+          template: '<span></span>',
+          model: {
+            title: 'default title',
+            content: 'default content'
+          }
         }
       })
 
@@ -51,8 +51,8 @@ define(function(require) {
       expect(a.get('template')).to.equal('<a></a>')
 
       // 混入的
-      expect(a.model.title).to.equal('title a')
-      expect(a.model.content).to.equal('default content')
+      expect(a.get('model').title).to.equal('title a')
+      expect(a.get('model').content).to.equal('default content')
 
       // attr 式属性
       expect(a.element[0].id).to.equal('a')
