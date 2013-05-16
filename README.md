@@ -88,7 +88,68 @@ widget.set('a', 2); // => 2
 
 ### 模板渲染
 
+每个 Widget 只会对应一个 element，会对他的 DOM 及事件进行操作。
+
+element 的生成有两种情况
+
+1. 实例化的时候传入
+2. 由 template 生成
+
+Widget 默认处理模板的方式是直接转换成 jQuery 对象，但不能处理数据。涉及到复杂的模板可以覆盖 `parseElementFromTemplate` 方法，可以继承覆盖也可以混入（比如 [templatable](http://aralejs.org/templatable/)）。
+
 ### 事件代理
 
+事件代理是 Widget 非常好用的特性，将所有的事件都代理到 `this.element` 上。这样可以使得对应的
+DOM 内容有修改时，无需重新绑定，在 destroy 的时候也会销毁这些事件。
 
+`widget.delegateEvents()` 会在实例初始化时自动调用，这时会从 `this.events` 中取得声明的代理事件，比如
 
+```js
+var MyWidget = Widget.extend({
+    events: {
+        "dblclick": "open",
+        "click .icon.doc": "select",
+        "mouseover .date": "showTooltip"
+    },
+    open: function() {
+        ...
+    },
+    select: function() {
+        ...
+    },
+    ...
+});
+```
+
+`events` 中每一项的格式是：`"event selector": "callback"`，当省略 `selector`
+时，默认会将事件绑定到 `this.element` 上。`callback` 可以是字符串，表示当前实例上的方法名；
+也可以直接传入函数。
+
+`events` 还可以是方法，返回一个 events hash 对象即可。比如
+
+```js
+var MyWidget = Widget.extend({
+    events: function() {
+        var hash = {
+            "click": "open",
+            "click .close": "close"
+        };
+
+        return hash;
+    },
+    ...
+});
+```
+
+`events` 中，还支持 `{{name}}` 表达式，比如上面的代码，可以简化为：
+
+```js
+var MyWidget = Widget.extend({
+    events: {
+        "click": "open",
+        "click .close": "close",
+        "mouseover {{attrs.panels}}": "hover"
+    },
+    ...
+});
+```

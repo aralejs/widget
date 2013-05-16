@@ -130,63 +130,7 @@ initProps: function() {
 
 ### delegateEvents `.delegateEvents()`
 
-
-注册事件代理。在 Widget 组件的设计里，推荐使用代理的方式来注册事件。这样可以使得对应的
-DOM 内容有修改时，无需重新绑定，在 destroy 的时候也会销毁这些事件。
-
-`widget.delegateEvents()` 会在实例初始化时自动调用，这时会从 `this.events` 中取得声明的代理事件，比如
-
-```js
-var MyWidget = Widget.extend({
-    events: {
-        "dblclick": "open",
-        "click .icon.doc": "select",
-        "mouseover .date": "showTooltip"
-    },
-    open: function() {
-        ...
-    },
-    select: function() {
-        ...
-    },
-    ...
-});
-```
-
-`events` 中每一项的格式是：`"event selector": "callback"`，当省略 `selector`
-时，默认会将事件绑定到 `this.element` 上。`callback` 可以是字符串，表示当前实例上的方法名；
-也可以直接传入函数。
-
-`events` 还可以是方法，返回一个 events hash 对象即可。比如
-
-```js
-var MyWidget = Widget.extend({
-    events: function() {
-        var hash = {
-            "click": "open",
-            "click .close": "close"
-        };
-
-        return hash;
-    },
-    ...
-});
-```
-
-`events` 中，还支持 `{{name}}` 表达式，比如上面的代码，可以简化为：
-
-```js
-var MyWidget = Widget.extend({
-    events: {
-        "click": "open",
-        "click .close": "close",
-        "mouseover {{attrs.panels}}": "hover"
-    },
-    ...
-});
-```
-
-实例化后，还可以通过 `delegateEvents` 方法动态添加事件代理：
+通过 `delegateEvents` 方法动态添加事件代理：
 
 ```js
 var myWidget = new Widget();
