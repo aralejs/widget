@@ -11,7 +11,11 @@ Widget 是 UI 组件的基础类，约定了组件的基本生命周期，实现
 
 ## 使用说明
 
-### extend `Widget.extend(properties)`
+
+
+### API
+
+### extend `.extend(properties)`
 
 使用 `extend` 方法，可以基于 `Widget` 来创建子类。
 
@@ -79,7 +83,7 @@ this.setup();
 下面逐一讲述。
 
 
-### initAttrs `widget.initAttrs(config, [dataAttrsConfig])`
+### initAttrs `.initAttrs(config)`
 
 属性的初始化方法。通过该方法，会将用户传入的配置与所继承的默认属性进行合并，并进行初始化操作。
 
@@ -96,7 +100,6 @@ var MyWidget = Widget.extend({
         // 之后做点处理
     }
 });
-
 ```
 
 **注意**：一般情况下不需要覆盖 `initAttrs`。
@@ -117,15 +120,15 @@ var MyWidget = Widget.extend({
 如果 `config` 参数中未传入 `element` 属性，则会根据 `template` 属性来构建
 `this.element`。 默认的 `template` 是 `<div></div>`。
 
-子类可覆盖该方法，以支持 Handlebars、Mustache 等模板引擎。
+子类可覆盖该方法，以支持 Handlebars、Mustache 等模板引擎，可以使用 [templatable](http://aralejs.org/templatable/) 混入使用。
 
 
-### element `widget.element`
+### element `.element`
 
-widget 实例对应的 DOM 根节点，是一个 jQuery / Zepto 对象。
+widget 实例对应的 DOM 根节点，是一个 jQuery / Zepto 对象，每个 widget 只有一个 element。
 
 
-### initProps `widget.initProps()`
+### initProps `.initProps()`
 
 properties 的初始化方法，提供给子类覆盖，比如：
 
@@ -136,12 +139,11 @@ initProps: function() {
 ```
 
 
-### delegateEvents `widget.delegateEvents([events])`
+### delegateEvents `.delegateEvents()`
 
-### delegateEvents `widget.delegateEvents(eventType, handler)`
 
 注册事件代理。在 Widget 组件的设计里，推荐使用代理的方式来注册事件。这样可以使得对应的
-DOM 内容有修改时，无需重新绑定。
+DOM 内容有修改时，无需重新绑定，在 destroy 的时候也会销毁这些事件。
 
 `widget.delegateEvents()` 会在实例初始化时自动调用，这时会从 `this.events` 中取得声明的代理事件，比如
 
@@ -189,7 +191,6 @@ var MyWidget = Widget.extend({
     events: {
         "click": "open",
         "click .close": "close",
-        "mouseover {{attrs.trigger}}": "open",
         "mouseover {{attrs.panels}}": "hover"
     },
     ...
@@ -201,18 +202,35 @@ var MyWidget = Widget.extend({
 ```js
 var myWidget = new Widget();
 
-myWidget.delegateEvents('click .move', function() {
-  // ...
-});
+myWidget.delegateEvents()
+myWidget.delegateEvents({
+  'click p': 'fn1',
+  'click li': function() {}
+})
+myWidget.delegateEvents('click p', fn1)
+myWidget.delegateEvents('click p', function() {})
 ```
 
+也可以通过 `delegateEvents` 代理在 `element` 以外的 DOM 上
 
-### undelegateEvents `widget.undelegateEvents([eventType])`
+```js
+this.delegateEvents('#trigger', 'click p', fn1)
+this.delegateEvents($('#trigger'), 'click', function() {})
+```
+
+以上等价于 `$('#trigger').on('click', 'p', fn1)`
+
+### undelegateEvents `.undelegateEvents()`
 
 卸载事件代理。不带参数时，表示卸载所有事件。
 
+```js
+.undelegateEvents(); // 卸载全部事件
+.undelegateEvents(events); // 卸载指定事件的全部 handler
+.undelegateEvents(element, events); // 卸载指定 element 指定事件的全部 handler
+```
 
-### setup `widget.setup()`
+### setup `.setup()`
 
 提供给子类覆盖的初始化方法。可以在此处理更多初始化信息，比如
 
@@ -227,24 +245,24 @@ var TabView = Widget.extend({
 ```
 
 
-### render `widget.render()`
+### render `.render()`
 
 提供给子类覆盖的初始化方法。render 方法只干一件事件：将 `this.element` 渲染到页面上。
 
 默认无需覆盖。需要覆盖时，请使用 `return this` 来保持该方法的链式约定。
 
 
-### $ `widget.$(selector)`
+### $ `.$(selector)`
 
 在 `this.element` 内查找匹配节点。
 
 
-### destroy `widget.destroy()`
+### destroy `.destroy()`
 
 销毁实例。
 
 
-### on `widget.on(event, callback, [context])`
+### on `.on(event, callback, [context])`
 
 这是从 Events 中自动混入进来的方法。还包括 `off` 和 `trigger`。
 
