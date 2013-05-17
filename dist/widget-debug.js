@@ -16,13 +16,9 @@ define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "aral
     var outerBoxClass = parseModuleId(module.uri);
     var Widget = Base.extend({
         // config 中的这些键值会直接添加到实例上，转换成 properties
-        propsInAttrs: [ "initElement", "element", "template", "model", "events" ],
+        propsInAttrs: [ "initElement", "element", "events" ],
         // 与 widget 关联的 DOM 元素
         element: null,
-        // 默认模板
-        template: "<div></div>",
-        // 默认数据模型
-        model: null,
         // 事件代理，格式为：
         //   {
         //     'mousedown .title': 'edit',
@@ -36,6 +32,10 @@ define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "aral
             id: null,
             className: null,
             style: null,
+            // 默认模板
+            template: "<div></div>",
+            // 默认数据模型
+            model: null,
             // 组件的默认父节点
             parentNode: document.body
         },
@@ -43,6 +43,8 @@ define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "aral
         // 初始化 attrs --》 初始化 props --》 初始化 events --》 子类的初始化
         initialize: function(config) {
             this.cid = uniqueCid();
+            // 是否由 template 初始化
+            this._isTemplate = !!(config && config.template);
             // 初始化 attrs
             var dataAttrsConfig = this._parseDataAttrsConfig(config);
             this.initAttrs(config ? $.extend(dataAttrsConfig, config) : dataAttrsConfig);
@@ -239,7 +241,7 @@ define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "aral
             if (this.element) {
                 this.element.off();
                 // 如果是 widget 生成的 element 则去除
-                this.get("template") && this.element.remove();
+                this._isTemplate && this.element.remove();
                 this.element = null;
             }
             Widget.superclass.destroy.call(this);
