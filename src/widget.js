@@ -58,9 +58,6 @@ define(function(require, exports, module) {
     initialize: function(config) {
       this.cid = uniqueCid()
 
-      // 是否由 template 初始化
-      this._isTemplate = !!(config && config.template)
-
       // 初始化 attrs
       var dataAttrsConfig = this._parseDataAttrsConfig(config)
       this.initAttrs(config ? $.extend(dataAttrsConfig, config) : dataAttrsConfig)
@@ -77,6 +74,9 @@ define(function(require, exports, module) {
 
       // 保存实例信息
       this._stamp()
+
+      // 是否由 template 初始化
+      this._isTemplate = !(config && config.element)
     },
 
     // 解析通过 data-attr 设置的 api

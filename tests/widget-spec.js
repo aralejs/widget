@@ -777,6 +777,20 @@ define(function(require) {
 
       expect(A.element.css('paddingTop')).to.be('1px')
     })
+
+    it('_isTemplate', function() {
+      var dom = $('<p id="test"></p>').appendTo(document.body)
+      var A = new Widget({element: '#test'})
+      expect(A._isTemplate).not.to.be.ok()
+
+      var B = new Widget()
+      expect(B._isTemplate).to.be.ok()
+
+      var C = new Widget({template: '<p></p>'})
+      expect(C._isTemplate).to.be.ok()
+
+      dom.remove()
+    })
   })
 
 
