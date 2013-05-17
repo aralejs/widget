@@ -43,8 +43,6 @@ define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "aral
         // 初始化 attrs --》 初始化 props --》 初始化 events --》 子类的初始化
         initialize: function(config) {
             this.cid = uniqueCid();
-            // 是否由 template 初始化
-            this._isTemplate = !!(config && config.template);
             // 初始化 attrs
             var dataAttrsConfig = this._parseDataAttrsConfig(config);
             this.initAttrs(config ? $.extend(dataAttrsConfig, config) : dataAttrsConfig);
@@ -57,6 +55,8 @@ define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "aral
             this.setup();
             // 保存实例信息
             this._stamp();
+            // 是否由 template 初始化
+            this._isTemplate = !(config && config.element);
         },
         // 解析通过 data-attr 设置的 api
         _parseDataAttrsConfig: function(config) {
