@@ -791,6 +791,20 @@ define(function(require) {
 
       dom.remove()
     })
+
+    it('attr change callback', function() {
+      var spy = sinon.spy();
+      var Test = Widget.extend({
+        attrs: {
+          a: 1
+        },
+        _onChangeA: spy
+      })
+
+      var test = new Test();
+      test.set('a', 2)
+      expect(spy.calledOnce).to.be.ok()
+    })
   })
 
 
