@@ -255,7 +255,7 @@ this.element && this.element.off(args.type, args.selector)
         // 只处理 template 的情况，不处理传入的 element
         // https://github.com/aliceui/aliceui.org/issues/9
         if (outerBoxClass) {
-          var outerBox = $('<div></div>').attr('className', outerBoxClass)
+          var outerBox = this._outerBox = $('<div></div>').addClass(outerBoxClass)
           outerBox.append(this.element).appendTo(parentNode)
         } else {
           this.element.appendTo(parentNode)
@@ -325,7 +325,7 @@ this.element && this.element.off(args.type, args.selector)
       if (this.element) {
         this.element.off()
         // 如果是 widget 生成的 element 则去除
-        this._isTemplate && this.element.remove()
+        this._isTemplate && (this._outerBox || this.element).remove()
         this.element = null
       }
 
