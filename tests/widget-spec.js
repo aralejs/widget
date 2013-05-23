@@ -820,6 +820,24 @@ define(function(require) {
       expect($('.arale-text-widget-1_0_0')[0]).not.to.be.ok()
       container.remove()
     })
+
+    it('set call onRender', function() {
+      var spy = sinon.spy()
+      var A = Widget.extend({
+        attrs: {
+          a: 1
+        },
+        _onRenderA: spy
+      })
+
+      var a = new A()
+
+      a.render()
+      expect(spy.calledOnce).to.be.ok()
+
+      a.set('a', 2)
+      expect(spy.calledTwice).to.be.ok()
+    })
   })
 
 
