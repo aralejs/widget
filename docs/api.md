@@ -180,7 +180,7 @@ var TabView = Widget.extend({
 
 ### render `.render()`
 
-提供给子类覆盖的初始化方法。render 方法只干一件事件：将 `this.element` 渲染到页面上。
+提供给子类覆盖的初始化方法。render 方法只干一件事情：将 `this.element` 渲染到页面上。
 
 默认无需覆盖。需要覆盖时，请使用 `return this` 来保持该方法的链式约定。
 
