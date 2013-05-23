@@ -18,8 +18,6 @@ define(function(require, exports, module) {
   // 所有初始化过的 Widget 实例
   var cachedInstances = {}
 
-  var outerBoxClass = parseModuleId(module.uri)
-
   var Widget = Base.extend({
 
     // config 中的这些键值会直接添加到实例上，转换成 properties
@@ -254,6 +252,7 @@ this.element && this.element.off(args.type, args.selector)
         // 隔离样式，添加统一的命名空间
         // 只处理 template 的情况，不处理传入的 element
         // https://github.com/aliceui/aliceui.org/issues/9
+        var outerBoxClass = this.constructor.outerBoxClass
         if (outerBoxClass) {
           var outerBox = this._outerBox = $('<div></div>').addClass(outerBoxClass)
           outerBox.append(this.element).appendTo(parentNode)
@@ -447,17 +446,6 @@ this.element && this.element.off(args.type, args.selector)
   // 对于 attrs 的 value 来说，以下值都认为是空值： null, undefined
   function isEmptyAttrValue(o) {
     return o == null || o === undefined
-  }
-
-  // seajs moduleid -> family-name-version
-  function parseModuleId(id) {
-    var re = /([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)\/(\d+\.\d+\.\d+)\/[a-zA-Z0-9-]+.js$/
-    var arr = (id || '').match(re)
-    if (arr && arr.length > 0) {
-      return [arr[1], '-', arr[2], '-', arr[3].replace(/\./g, '_')].join('')
-    } else {
-      return ''
-    }
   }
 
 });
