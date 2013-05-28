@@ -39,7 +39,7 @@ define(function(require) {
       trigger.appendTo(document.body);
       Widget.autoRenderAll(function() {
         var test = Widget.query('#test3');
-        expect(test.element.html()).to.be('<p>element</p>');
+        expect(test.element.html().toLowerCase()).to.be('<p>element</p>');
         trigger.remove();
         dom.remove();
         test.destroy();
