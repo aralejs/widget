@@ -115,6 +115,8 @@ define(function(require) {
       it('delegateEvents()', function() {
         var spy1 = sinon.spy();
         var spy2 = sinon.spy();
+        var spy3 = sinon.spy();
+        var event;
         var TestWidget = Widget.extend({
           events: {
             'click p': 'fn1',
@@ -124,6 +126,7 @@ define(function(require) {
           fn1: spy1,
           fn2: spy2,
           fn3: function(ev) {
+            spy3()
             event = ev
             that = this
           }
@@ -148,6 +151,7 @@ define(function(require) {
         spy2.reset()
   
         widget.$('span').trigger('mouseenter')
+        expect(spy3.called).to.be.ok()
         expect(event.currentTarget.tagName).to.equal('SPAN')
         expect(that).to.equal(widget)
       })
@@ -638,8 +642,7 @@ define(function(require) {
       expect(t.get('arr')).to.eql([1, 2, 3])
     })
 
-    // base 1.1.0 不再支持这种写法
-    xit('onXx setter in attrs', function() {
+    it('onXx setter in attrs', function() {
       var counter = 0
 
       function incr() {
