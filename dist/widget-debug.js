@@ -181,7 +181,6 @@ define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "aral
             var parentNode = this.get("parentNode");
             if (parentNode && !isInDocument(this.element[0])) {
                 // 隔离样式，添加统一的命名空间
-                // 只处理 template 的情况，不处理传入的 element
                 // https://github.com/aliceui/aliceui.org/issues/9
                 var outerBoxClass = this.constructor.outerBoxClass;
                 if (outerBoxClass) {
