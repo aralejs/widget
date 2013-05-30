@@ -214,6 +214,21 @@ define(function(require) {
         expect(spy2.called).to.be.ok()
       });
 
+      it('delegateEvents support normal element', function() {
+        var dom = $('<div><p></p></div>')[0];
+        var spy = sinon.spy()
+        var widget = new Widget({
+          template: '<div><p></p><ul><li></li></ul><span></span></div>'
+        }).render()
+
+        widget.delegateEvents(dom, 'click', spy)
+
+        $(dom).trigger('click')
+        expect(spy.called).to.be.ok()
+
+        widget.destroy()
+      })
+
       it('undelegateEvents()', function() {
         var spy1 = sinon.spy()
         var spy2 = sinon.spy()

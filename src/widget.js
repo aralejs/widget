@@ -147,7 +147,7 @@ define(function(require, exports, module) {
       else {
         element || (element = this.element)
         this._delegateElements || (this._delegateElements = [])
-        this._delegateElements.push(element)
+        this._delegateElements.push($(element))
       }
 
       // 'click p' => {'click p': handler}
