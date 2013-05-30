@@ -104,7 +104,7 @@ define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "aral
             } else {
                 element || (element = this.element);
                 this._delegateElements || (this._delegateElements = []);
-                this._delegateElements.push(element);
+                this._delegateElements.push($(element));
             }
             // 'click p' => {'click p': handler}
             if (isString(events) && isFunction(handler)) {
