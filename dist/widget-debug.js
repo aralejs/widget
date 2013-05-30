@@ -1,4 +1,4 @@
-define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.1.0/events-debug", "$-debug", "./daparser-debug", "./auto-render-debug" ], function(require, exports, module) {
+define("arale/widget/1.1.0/widget-debug", [ "arale/base/1.1.0/base-debug", "arale/class/1.1.0/class-debug", "arale/events/1.1.0/events-debug", "$-debug", "./daparser-debug", "./auto-render-debug" ], function(require, exports, module) {
     // Widget
     // ---------
     // Widget 是与 DOM 元素相关联的非工具类组件，主要负责 View 层的管理。
