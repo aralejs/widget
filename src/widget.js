@@ -130,7 +130,7 @@ define(function(require, exports, module) {
       // widget.delegateEvents({
       //   'click p': 'fn1',
       //   'click li': 'fn2'
-      // )
+      // })
       else if (arguments.length === 1) {
         events = element
         element = this.element
@@ -219,7 +219,7 @@ define(function(require, exports, module) {
         // 卸载 this.element
         // .undelegateEvents(events)
         if (!element) {
-this.element && this.element.off(args.type, args.selector)
+          this.element && this.element.off(args.type, args.selector)
         }
 
         // 卸载外部 element
@@ -250,7 +250,6 @@ this.element && this.element.off(args.type, args.selector)
       var parentNode = this.get('parentNode')
       if (parentNode && !isInDocument(this.element[0])) {
         // 隔离样式，添加统一的命名空间
-        // 只处理 template 的情况，不处理传入的 element
         // https://github.com/aliceui/aliceui.org/issues/9
         var outerBoxClass = this.constructor.outerBoxClass
         if (outerBoxClass) {
