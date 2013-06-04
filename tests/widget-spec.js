@@ -856,6 +856,30 @@ define(function(require) {
       a.set('a', 2)
       expect(spy.calledTwice).to.be.ok()
     })
+
+    xit('destroy once', function() {
+      var calledA = 0, calledB = 0
+      var A = Widget.extend({
+        destroy: function() {
+          calledA++
+          A.superclass.destroy.call(this)
+        }
+      })
+
+      var B = A.extend({
+        destroy: function() {
+          calledB++
+          B.superclass.destroy.call(this)
+        }
+      })
+
+      var c = new B().render()
+      c.destroy()
+      c.destroy()
+
+      expect(calledA).to.be(1)
+      expect(calledB).to.be(1)
+    })
   })
 
 
