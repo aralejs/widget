@@ -857,7 +857,7 @@ define(function(require) {
       expect(spy.calledTwice).to.be.ok()
     })
 
-    xit('destroy once', function() {
+    it('destroy once', function() {
       var calledA = 0, calledB = 0
       var A = Widget.extend({
         destroy: function() {
