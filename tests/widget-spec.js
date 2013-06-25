@@ -880,6 +880,18 @@ define(function(require) {
       expect(calledA).to.be(1)
       expect(calledB).to.be(1)
     })
+
+    // https://github.com/aralejs/base/issues/22
+    it('set attribute to htmlElement', function() {
+      var A = Widget.extend({
+        attrs: {
+          testElement: null
+        }
+      })
+      var a = new A();
+      a.set('testElement', document.body)
+      expect(a.get('testElement')).to.be(document.body)
+    })
   })
 
 
