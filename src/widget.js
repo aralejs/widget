@@ -323,7 +323,11 @@ define(function(require, exports, module) {
       if (this.element && this._isTemplate) {
         this.element.off()
         // 如果是 widget 生成的 element 则去除
-        (this._outerBox || this.element).remove()
+        if (this._outerBox) {
+          this._outerBox.remove()
+        } else {
+          this.element.remove()
+        }
       }
       this.element = null
 
