@@ -1,4 +1,4 @@
-define(function(require, DAParser) {
+define(function(require, exports) {
 
   // DAParser
   // --------
@@ -8,7 +8,7 @@ define(function(require, DAParser) {
 
 
   // 得到某个 DOM 元素的 dataset
-  DAParser.parseElement = function(element, raw) {
+  exports.parseElement = function(element, raw) {
     element = $(element)[0]
     var dataset = {}
 
