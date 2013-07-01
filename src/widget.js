@@ -320,12 +320,12 @@ define(function(require, exports, module) {
       delete cachedInstances[this.cid]
 
       // For memory leak
-      if (this.element) {
+      if (this.element && this._isTemplate) {
         this.element.off()
         // 如果是 widget 生成的 element 则去除
-        this._isTemplate && (this._outerBox || this.element).remove()
-        this.element = null
+        (this._outerBox || this.element).remove()
       }
+      this.element = null
 
       Widget.superclass.destroy.call(this)
     }
