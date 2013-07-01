@@ -2,6 +2,10 @@
 
 ---
 
+## 1.1.1
+
+`tag:improved` 升级依赖 arale/base 到 1.1.1
+
 ## 1.1.0 [milestone](https://github.com/aralejs/widget/issues/37)
 
 `tag:fixed` [#25](https://github.com/aralejs/widget/issues/25) destroy 的 bug
