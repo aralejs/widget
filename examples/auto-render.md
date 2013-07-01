@@ -27,7 +27,7 @@
 ### HTML
 
 ````html
-<div id="example1" data-widget="widget" data-class-name="box">
+<div id="example1" data-widget="widget" data-class-name="box" data-test="{'a':'a', 'b':1}">
 I am a box.
 </div>
 
@@ -50,6 +50,8 @@ seajs.use(['widget', 'jquery'], function(Widget, $) {
 
         // 对实例进行一些操作
         example1.element.html('I am rendered automatically.')
+
+        // example1.get('test') => {a: "a", b: 1} 
 
         // 操作第二个实例
         var example2 = Widget.query('div.example')
