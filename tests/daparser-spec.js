@@ -57,6 +57,14 @@ define(function(require) {
       table.remove()
     })
 
+    it('object', function() {
+      var div = $('<div data-object="{\'a\':\'a\', \'b\':1}"></div>').appendTo(body)
+      var dataset = DAParser.parseElement(div)
+
+      expect(dataset['object']).to.eql({a:'a', b: 1})
+      div.remove()
+    })
+
   })
 
 });
