@@ -237,12 +237,16 @@ define("arale/widget/1.1.1/widget-debug", [ "arale/base/1.1.1/base-debug", "aral
             this.undelegateEvents();
             delete cachedInstances[this.cid];
             // For memory leak
-            if (this.element) {
+            if (this.element && this._isTemplate) {
                 this.element.off();
                 // 如果是 widget 生成的 element 则去除
-                this._isTemplate && (this._outerBox || this.element).remove();
-                this.element = null;
+                if (this._outerBox) {
+                    this._outerBox.remove();
+                } else {
+                    this.element.remove();
+                }
             }
+            this.element = null;
             Widget.superclass.destroy.call(this);
         }
     });
@@ -335,13 +339,13 @@ define("arale/widget/1.1.1/widget-debug", [ "arale/base/1.1.1/base-debug", "aral
     }
 });
 
-define("arale/widget/1.1.1/daparser-debug", [ "$-debug" ], function(require, DAParser) {
+define("arale/widget/1.1.1/daparser-debug", [ "$-debug" ], function(require, exports) {
     // DAParser
     // --------
     // data api 解析器，提供对单个 element 的解析，可用来初始化页面中的所有 Widget 组件。
     var $ = require("$-debug");
     // 得到某个 DOM 元素的 dataset
-    DAParser.parseElement = function(element, raw) {
+    exports.parseElement = function(element, raw) {
         element = $(element)[0];
         var dataset = {};
         // ref: https://developer.mozilla.org/en/DOM/element.dataset
