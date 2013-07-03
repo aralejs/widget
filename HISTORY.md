@@ -4,6 +4,10 @@
 
 ## 1.1.1
 
+`tag:fixed` #55 修复 destroy 时会把之前绑定的事件清除的问题
+
+`tag:improved` #54 标准化 DAParser 的写法
+
 `tag:improved` 升级依赖 arale/base 到 1.1.1
 
 ## 1.1.0 [milestone](https://github.com/aralejs/widget/issues/37)
