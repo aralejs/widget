@@ -63,7 +63,7 @@ new Xbox({
 
 ### data-api
 
-如果 `data-api=off`，则不会实例化。body 上设置的话所有都不会实例化。 
+如果 `data-api=off`，则不会实例化。如果在 body 上设置的话所有基于 Widget 扩展的组件, 都不会实例化。
 
 ### data-attr
 
