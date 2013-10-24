@@ -164,6 +164,8 @@ define(function(require, exports, module) {
         var args = parseEventKey(key, this)
         var eventType = args.type
         var selector = args.selector
+        
+        if (selector === undefined) return this
 
         ;(function(handler, widget) {
 
@@ -215,6 +217,8 @@ define(function(require, exports, module) {
 
       } else {
         var args = parseEventKey(eventKey, this)
+        
+        if (args.selector === undefined) return this
 
         // 卸载 this.element
         // .undelegateEvents(events)
