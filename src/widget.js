@@ -121,8 +121,9 @@ define(function(require, exports, module) {
 
     // 注册事件代理
     delegateEvents: function(element, events, handler) {
+      var argus = trimRightUndefine(Array.prototype.slice.call(arguments));
       // widget.delegateEvents()
-      if (arguments.length === 0) {
+      if (argus.length === 0) {
         events = getEvents(this)
         element = this.element
       }
@@ -131,13 +132,13 @@ define(function(require, exports, module) {
       //   'click p': 'fn1',
       //   'click li': 'fn2'
       // })
-      else if (arguments.length === 1) {
+      else if (argus.length === 1) {
         events = element
         element = this.element
       }
 
       // widget.delegateEvents('click p', function(ev) { ... })
-      else if (arguments.length === 2) {
+      else if (argus.length === 2) {
         handler = events
         events = element
         element = this.element
@@ -193,6 +194,8 @@ define(function(require, exports, module) {
 
     // 卸载事件代理
     undelegateEvents: function(element, eventKey) {
+      var argus = trimRightUndefine(Array.prototype.slice.call(arguments));
+
       if (!eventKey) {
         eventKey = element
         element = null
@@ -200,7 +203,7 @@ define(function(require, exports, module) {
 
       // 卸载所有
       // .undelegateEvents()
-      if (arguments.length === 0) {
+      if (argus.length === 0) {
         var type = DELEGATE_EVENT_NS + this.cid
 
         this.element && this.element.off(type)
@@ -449,6 +452,17 @@ define(function(require, exports, module) {
   // 对于 attrs 的 value 来说，以下值都认为是空值： null, undefined
   function isEmptyAttrValue(o) {
     return o == null || o === undefined
+  }
+
+  function trimRightUndefine(argus) {
+    for (var i = argus.length - 1; i >= 0; i--) {
+      if (argus[i] === undefined) {
+        argus.pop();
+      } else {
+        break;
+      }
+    }
+    return argus;
   }
 
 });

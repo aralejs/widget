@@ -340,6 +340,27 @@ define(function(require) {
         expect(spy2.called).not.to.be.ok()
         expect(spy3.called).not.to.be.ok()
       })
+
+      it('#66 extend delegateEvents', function() {
+        var spy = sinon.spy()
+        var TestWidget = Widget.extend({
+          events: {
+            'click p': spy
+          },
+          delegateEvents: function(element, events, handler) {
+            return TestWidget.superclass.delegateEvents.call(this, element, events, handler);
+          },
+          undelegateEvents: function(element, eventKey) {
+            return TestWidget.superclass.undelegateEvents.call(this, element, eventKey);
+          }
+        })
+        var widget = globalVar.widget = new TestWidget({
+          template: '<div><p></p><ul><li></li></ul><span></span></div>'
+        }).render()
+
+        widget.$('p').trigger('click')
+        expect(spy.called).to.be.ok()
+      });
     })
 
     it('events hash can be a function', function() {
