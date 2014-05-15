@@ -2,6 +2,7 @@
 
 ---------
 
+[![spm package](http://spmjs.io/badge/arale-widget)](http://spmjs.io/package/arale-widget)
 [![Build Status](https://travis-ci.org/aralejs/widget.png?branch=master)](https://travis-ci.org/aralejs/widget) [![Coverage Status](https://coveralls.io/repos/aralejs/widget/badge.png?branch=master)](https://coveralls.io/r/aralejs/widget?branch=master)
 
 Widget 是 UI 组件的基础类，约定了组件的基本生命周期，实现了一些通用功能。基于 Widget
@@ -153,7 +154,3 @@ var MyWidget = Widget.extend({
     ...
 });
 ```
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/aralejs/widget/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-

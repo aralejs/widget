@@ -19,3 +19,4 @@ build
 _site
 sea-modules
 .cache
+dist
