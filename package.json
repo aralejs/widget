@@ -25,6 +25,7 @@
             "expect.js": "0.3.1",
             "sinon": "1.6.0"
         },
-        "main": "widget.js"
+        "main": "widget.js",
+        "buildArgs": "--ignore jquery"
     }
 }
