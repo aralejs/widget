@@ -153,7 +153,7 @@ seajs.use(['widget', 'jquery'], function(Widget, $) {
     // 彩蛋：增加一点小趣味
     var counter = 1;
 
-    $('#egg').click(function() {
+    $('#egg').on('click', function() {
         if (counter < 4) {
             tabView.add('哈哈', '你居然点击了 ' + counter++ + ' 次')
                     .switchTo(tabView.size() - 1);
@@ -162,9 +162,8 @@ seajs.use(['widget', 'jquery'], function(Widget, $) {
             tabView.setActiveContent('囧，你居然还点击，手真贱呀');
         }
         else {
-            tabView.element.remove();
+            tabView.element.replaceWith('悄悄的我走了，带走了所有代码⋯⋯');
             $(this).remove();
-            $('.example').html('悄悄的我走了，不带走一行代码⋯⋯');
         }
     });
 
