@@ -10,7 +10,7 @@ describe('Widget', function() {
 
   afterEach(function() {
     for (var v in globalVar) {
-      globalVar[v].destroy(); 
+      globalVar[v].destroy()
     }
     globalVar = {}
   })
@@ -363,23 +363,27 @@ describe('Widget', function() {
 
   it('events hash can be a function', function() {
     var counter = 0
-
+    var value = ''
     var TestWidget = Widget.extend({
 
       events: function() {
         return {
           'click h3': 'incr',
-          'click p': 'incr'
+          'click p': 'incr',
+          'textChange input': 'change'
         }
       },
 
       incr: function() {
         counter++
+      },
+      change:function (e,val){
+        value = val
       }
     })
 
     var widget = globalVar.widget = new TestWidget({
-      template: '<div><h3></h3><p></p></div>'
+      template: '<div><h3></h3><p></p><input type="text"/></div>'
     }).render()
 
     widget.$('h3').trigger('click')
@@ -388,6 +392,9 @@ describe('Widget', function() {
     counter = 0
     widget.$('p').trigger('click')
     expect(counter).to.equal(1)
+
+    widget.$('input').trigger('textChange',['newValue'])
+    expect(value).to.equal('newValue')
   })
 
   it('the default event target is `this.element`', function() {
