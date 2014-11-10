@@ -3,7 +3,8 @@
 ---------
 
 [![spm package](http://spmjs.io/badge/arale-widget)](http://spmjs.io/package/arale-widget)
-[![Build Status](https://travis-ci.org/aralejs/widget.png?branch=master)](https://travis-ci.org/aralejs/widget) [![Coverage Status](https://coveralls.io/repos/aralejs/widget/badge.png?branch=master)](https://coveralls.io/r/aralejs/widget?branch=master)
+[![Build Status](https://img.shields.io/travis/aralejs/widget.svg?style=flat)](https://travis-ci.org/aralejs/widget)
+[![Coverage Status](https://img.shields.io/coveralls/aralejs/widget.svg?style=flat)](https://coveralls.io/r/aralejs/widget)
 
 Widget 是 UI 组件的基础类，约定了组件的基本生命周期，实现了一些通用功能。基于 Widget
 可以构建出任何你想要的 Web 界面组件。

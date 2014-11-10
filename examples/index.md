@@ -54,7 +54,7 @@
 ### JavaScript
 
 ````js
-seajs.use(['widget', '$'], function(Widget, $) {
+seajs.use(['widget', 'jquery'], function(Widget, $) {
 
     var WidgetA = Widget.extend({
 
