@@ -119,7 +119,8 @@ var Widget = Base.extend({
 
   // 注册事件代理
   delegateEvents: function(element, events, handler) {
-    var argus = trimRightUndefine(Array.prototype.slice.call(arguments));
+    var argus = trimRightUndefine(Array.prototype.slice.call(arguments))
+
     // widget.delegateEvents()
     if (argus.length === 0) {
       events = getEvents(this)
@@ -192,7 +193,7 @@ var Widget = Base.extend({
 
   // 卸载事件代理
   undelegateEvents: function(element, eventKey) {
-    var argus = trimRightUndefine(Array.prototype.slice.call(arguments));
+    var argus = trimRightUndefine(Array.prototype.slice.call(arguments))
 
     if (!eventKey) {
       eventKey = element
@@ -305,9 +306,9 @@ var Widget = Base.extend({
 
   // 让 element 与 Widget 实例建立关联
   _stamp: function() {
-    var cid = this.cid;
+    var cid = this.cid
 
-    (this.initElement || this.element).attr(DATA_WIDGET_CID, cid)
+    ;(this.initElement || this.element).attr(DATA_WIDGET_CID, cid)
     cachedInstances[cid] = this
   },
 
@@ -455,10 +456,10 @@ function isEmptyAttrValue(o) {
 function trimRightUndefine(argus) {
   for (var i = argus.length - 1; i >= 0; i--) {
     if (argus[i] === undefined) {
-      argus.pop();
+      argus.pop()
     } else {
-      break;
+      break
     }
   }
-  return argus;
+  return argus
 }
