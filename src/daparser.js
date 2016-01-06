@@ -38,7 +38,7 @@ exports.parseElement = function(element, raw) {
 
 var RE_DASH_WORD = /-([a-z])/g
 var JSON_LITERAL_PATTERN = /^\s*[\[{].*[\]}]\s*$/
-var parseJSON = this.JSON ? JSON.parse : $.parseJSON
+var parseJSON = window.JSON ? JSON.parse : $.parseJSON
 
 // 仅处理字母开头的，其他情况转换为小写："data-x-y-123-_A" --> xY-123-_a
 function camelCase(str) {
