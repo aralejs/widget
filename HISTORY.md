@@ -2,6 +2,10 @@
 
 ---
 
+## 1.2.1
+
+`fix` 修复 this -> window
+
 ## 1.2.0
 
 `improved` 升级到 spm@3.x 规范。
