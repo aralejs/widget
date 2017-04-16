@@ -168,10 +168,11 @@ var Widget = Base.extend({
       ;(function(handler, widget) {
 
         var callback = function(ev) {
+          var args = Array.prototype.slice.call(arguments)
           if (isFunction(handler)) {
-            handler.call(widget, ev)
+            handler.apply(widget, args)
           } else {
-            widget[handler](ev)
+            widget[handler].apply(widget, args)
           }
         }
 
